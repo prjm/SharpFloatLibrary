@@ -33,15 +33,23 @@
 
 namespace SharpFloat.Helpers {
 
-    public static partial class UShortHelpers {
+    public partial struct UInt128 {
 
         /// <summary>
-        ///     get the exponent value without sign of a ExtF80
+        ///     subtract two 128-bit numbers
         /// </summary>
         /// <param name="a64"></param>
+        /// <param name="a0"></param>
+        /// <param name="b64"></param>
+        /// <param name="b0"></param>
         /// <returns></returns>
-        public static ushort ExpExtF80UI64(this ushort a64)
-            => (ushort)(a64 & 0x7FFF);
+        public static UInt128 Sub128(ulong a64, ulong a0, ulong b64, ulong b0)
+            => new UInt128() {
+                v0 = a0 - b0,
+                v64 = a64 - b64 - ((a0 < b0) ? 1UL : 0UL)
+            };
+
+
 
     }
 }

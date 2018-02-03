@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =============================================================================*/
 
 using SharpFloat.Globals;
+using SharpFloat.Helpers;
 
 namespace SharpFloat.ExtF80 {
     public partial struct ExtF80 {
@@ -248,7 +249,7 @@ namespace SharpFloat.ExtF80 {
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         packReturn:
-            uZ.signExp = PackToExtF80UI64(sign, (ushort)exp);
+            uZ.signExp = exp.PackToExtF80UI64(sign);
             uZ.signif = sig;
             return uZ;
 

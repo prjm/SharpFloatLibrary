@@ -97,7 +97,7 @@ namespace SharpFloat.ExtF80 {
                 if (expB == 0x7FFF) {
                     if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
                         goto propagateNaN;
-                    uiZ64 = PackToExtF80UI64(signZ, 0x7FFF);
+                    uiZ64 = 0x7FFF.PackToExtF80UI64(signZ);
                     uiZ0 = uiB0;
                     goto uiZ;
                 }

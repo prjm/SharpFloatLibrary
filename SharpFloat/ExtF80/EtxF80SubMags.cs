@@ -98,8 +98,7 @@ namespace SharpFloat.ExtF80 {
                 goto aBigger;
             if (sigA < sigB)
                 goto bBigger;
-            uiZ64 =
-                PackToExtF80UI64(Settings.roundingMode.Value == RoundingMode.Minimum, 0);
+            uiZ64 = 0.PackToExtF80UI64(Settings.roundingMode.Value == RoundingMode.Minimum);
             uiZ0 = 0;
             goto uiZ;
         /*------------------------------------------------------------------------
@@ -108,7 +107,7 @@ namespace SharpFloat.ExtF80 {
             if (expB == 0x7FFF) {
                 if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
                     goto propagateNaN;
-                uiZ64 = PackToExtF80UI64(((signZ ? 1 : 0) ^ 1) != 0, 0x7FFF);
+                uiZ64 = 0x7FFF.PackToExtF80UI64(((signZ ? 1 : 0) ^ 1) != 0);
                 uiZ0 = 0x8000000000000000UL;
                 goto uiZ;
             }
@@ -125,7 +124,7 @@ namespace SharpFloat.ExtF80 {
             expZ = expB;
         bBigger:
             signZ = !signZ;
-            sig128 = Sub128(sigB, 0, sigA, sigExtra);
+            sig128 = UInt128.Sub128(sigB, 0, sigA, sigExtra);
             goto normRoundPack;
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
@@ -149,7 +148,7 @@ namespace SharpFloat.ExtF80 {
         newlyAlignedABigger:
             expZ = expA;
         aBigger:
-            sig128 = Sub128(sigA, 0, sigB, sigExtra);
+            sig128 = UInt128.Sub128(sigA, 0, sigB, sigExtra);
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         normRoundPack:

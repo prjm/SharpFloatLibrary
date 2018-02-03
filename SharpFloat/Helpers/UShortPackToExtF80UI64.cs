@@ -36,12 +36,23 @@ namespace SharpFloat.Helpers {
     public static partial class UShortHelpers {
 
         /// <summary>
-        ///     get the exponent value without sign of a ExtF80
+        ///     combine a sign bit and an ExtF80 exponent
         /// </summary>
-        /// <param name="a64"></param>
+        /// <param name="exp">exponent</param>
+        /// <param name="sign">sign</param>
         /// <returns></returns>
-        public static ushort ExpExtF80UI64(this ushort a64)
-            => (ushort)(a64 & 0x7FFF);
+        public static ushort PackToExtF80UI64(this ushort exp, bool sign)
+            => sign ? (ushort)(0x8000U | exp) : exp;
+
+        /// <summary>
+        ///     combine a sign bit and an ExtF80 exponent
+        /// </summary>
+        /// <param name="exp">exponent</param>
+        /// <param name="sign">sign</param>
+        /// <returns></returns>
+        public static ushort PackToExtF80UI64(this int exp, bool sign)
+            => sign ? (ushort)(0x8000U | exp) : (ushort)exp;
 
     }
+
 }

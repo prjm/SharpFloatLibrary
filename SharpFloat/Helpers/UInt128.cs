@@ -33,15 +33,19 @@
 
 namespace SharpFloat.Helpers {
 
-    public static partial class UShortHelpers {
+    /// <summary>
+    ///     128-bit unsigned integer helper structure
+    /// </summary>
+    public partial struct UInt128 {
 
         /// <summary>
-        ///     get the exponent value without sign of a ExtF80
+        ///     lower half (bits 0 to 63)
         /// </summary>
-        /// <param name="a64"></param>
-        /// <returns></returns>
-        public static ushort ExpExtF80UI64(this ushort a64)
-            => (ushort)(a64 & 0x7FFF);
+        public ulong v0;
 
+        /// <summary>
+        ///     upper half (bits 64 to 127)
+        /// </summary>
+        public ulong v64;
     }
 }
