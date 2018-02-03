@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =============================================================================*/
 
 using SharpFloat.Globals;
+using SharpFloat.Helpers;
 
 namespace SharpFloat.ExtF80 {
 
@@ -63,9 +64,9 @@ namespace SharpFloat.ExtF80 {
 
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
-            expA = ExpExtF80UI64(uiA64);
+            expA = uiA64.ExpExtF80UI64();
             sigA = uiA0;
-            expB = ExpExtF80UI64(uiB64);
+            expB = uiB64.ExpExtF80UI64();
             sigB = uiB0;
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/

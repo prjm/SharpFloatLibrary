@@ -35,13 +35,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
+namespace SharpFloat.Helpers {
 
-namespace SharpFloat.Globals {
+    public static partial class UShortHelpers {
 
-    internal struct Exp32Sig64 { public int exp; public ulong sig; }
-    internal struct UInt128 { public ulong v0, v64; };
-    internal struct UInt64Extra { public ulong extra, v; };
-    //internal struct UInt128Extra { public ulong extra; public UInt128 v; };
+        /// <summary>
+        ///     get the exponent value without sign of a ExtF80
+        /// </summary>
+        /// <param name="a64"></param>
+        /// <returns></returns>
+        public static ushort ExpExtF80UI64(this ushort a64)
+            => (ushort)(a64 & 0x7FFF);
 
-
+    }
 }

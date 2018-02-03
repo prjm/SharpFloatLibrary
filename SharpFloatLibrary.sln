@@ -5,7 +5,12 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloat", "SharpFloat\SharpFloat.csproj", "{A2CA5D91-878D-45E0-B26D-553D5058A0B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShartFloatTests", "ShartFloatTests\ShartFloatTests.csproj", "{4268BEF8-8828-4536-992F-6DCF04B39172}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloatTests", "ShartFloatTests\SharpFloatTests.csproj", "{4268BEF8-8828-4536-992F-6DCF04B39172}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14F01D46-F0CD-4C8F-86C0-7243A7597726}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

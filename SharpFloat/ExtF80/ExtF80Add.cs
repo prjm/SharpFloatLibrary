@@ -36,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =============================================================================*/
 
 
+using SharpFloat.Helpers;
+
 namespace SharpFloat.ExtF80 {
 
     /// <summary>
@@ -48,8 +50,8 @@ namespace SharpFloat.ExtF80 {
             var uiA0 = a.signif;
             var uiB64 = b.signExp;
             var uiB0 = b.signif;
-            var signA = SignExtF80UI64(uiA64);
-            var signB = SignExtF80UI64(uiB64);
+            var signA = uiA64.SignExtF80UI64();
+            var signB = uiB64.SignExtF80UI64();
 
             if (signA == signB) {
                 return AddMagsExtF80(uiA64, uiA0, uiB64, uiB0, signA);

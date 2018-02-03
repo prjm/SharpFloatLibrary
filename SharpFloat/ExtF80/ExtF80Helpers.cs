@@ -42,12 +42,6 @@ namespace SharpFloat.ExtF80 {
 
     public partial struct ExtF80 {
 
-        private static bool SignExtF80UI64(ushort a64)
-            => (a64 >> 15) != 0;
-
-        private static ushort ExpExtF80UI64(ushort a64)
-            => (ushort)(a64 & 0x7FFF);
-
         private static ushort PackToExtF80UI64(bool sign, ushort exp)
             => ((ushort)((sign ? 1 : 0) << 15 | (exp)));
 
