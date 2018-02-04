@@ -31,23 +31,30 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace SharpFloat.ExtF80 {
+namespace SharpFloat.Helpers {
 
-    /// <summary>
-    ///     type definition for 80-bit floating point arithmetics
-    /// </summary>
-    public partial struct ExtF80 {
+    public partial struct UInt128 {
 
-        /// <summary>
-        ///     exponent and sign
-        /// </summary>
-        public ushort signExp;
+        public static UInt128 ShiftRightJam128(ulong a64, ulong a0, int dist) {
+            UInt128 z;
 
-        /// <summary>
-        ///     value (significant)
-        /// </summary>
-        public ulong signif;
+            if (dist < 64) {
+                var u8NegDist = (byte)-dist;
+                z.v64 = a64 >> dist;
+                z.v0 = (a64 << (u8NegDist & 63))
+                        | (a0 >> dist)
+                        | (a0 << (u8NegDist & 63) != 0 ? 1UL : 0UL);
+            }
+            else {
+                z.v64 = 0;
+                if (dist < 127)
+                    z.v0 = a64 >> (dist & 63)
+                            | ((((a64 & (((ulong)1 << (dist & 63)) - 1)) | a0) != 0 ? 1UL : 0UL));
+                else
+                    z.v0 = ((a64 | a0) != 0 ? 1UL : 0UL);
+            }
 
+            return z;
+        }
     }
-
 }

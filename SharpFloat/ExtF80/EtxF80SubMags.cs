@@ -117,7 +117,7 @@ namespace SharpFloat.ExtF80 {
                 if (expDiff == 0)
                     goto newlyAlignedBBigger;
             }
-            sig128 = ShiftRightJam128(sigA, 0, -expDiff);
+            sig128 = UInt128.ShiftRightJam128(sigA, 0, -expDiff);
             sigA = sig128.v64;
             sigExtra = sig128.v0;
         newlyAlignedBBigger:
@@ -142,7 +142,7 @@ namespace SharpFloat.ExtF80 {
                 if (expDiff == 0)
                     goto newlyAlignedABigger;
             }
-            sig128 = ShiftRightJam128(sigB, 0, expDiff);
+            sig128 = UInt128.ShiftRightJam128(sigB, 0, expDiff);
             sigB = sig128.v64;
             sigExtra = sig128.v0;
         newlyAlignedABigger:

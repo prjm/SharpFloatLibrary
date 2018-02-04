@@ -276,7 +276,7 @@ namespace SharpFloat.ExtF80 {
             shiftDist = sig.CountLeadingZeroes();
             exp -= shiftDist;
             if (shiftDist != 0) {
-                sig128 = ShortShiftLeft128(sig, sigExtra, shiftDist);
+                sig128 = UInt128.ShortShiftLeft128(sig, sigExtra, shiftDist);
                 sig = sig128.v64;
                 sigExtra = sig128.v0;
             }

@@ -38,30 +38,6 @@ namespace SharpFloat.ExtF80 {
 
     public partial struct ExtF80 {
 
-        private static UInt128 ShiftRightJam128(ulong a64, ulong a0, int dist) {
-            byte u8NegDist;
-            UInt128 z;
-
-            if (dist < 64) {
-                u8NegDist = (byte)-dist;
-                z.v64 = a64 >> dist;
-                z.v0 =
-                    a64 << (((u8NegDist & 63) | (int)(a0 >> dist))
-                        | (((ulong)(a0 << (u8NegDist & 63)) != 0) ? 1 : 0));
-            }
-            else {
-                z.v64 = 0;
-                z.v0 =
-                    (dist < 127)
-                        ? a64 >> (dist & 63)
-                              | ((((a64 & (((ulong)1 << (dist & 63)) - 1)) | a0)
-                                     != 0 ? 1UL : 0UL))
-                        : ((a64 | a0) != 0 ? 1 : 0UL);
-            }
-            return z;
-
-        }
-
 
         private static UInt64Extra ShiftRightJam64Extra(ulong a, ulong extra, int dist) {
             UInt64Extra z;
@@ -83,16 +59,6 @@ namespace SharpFloat.ExtF80 {
             z.extra = a << (-dist & 63) | (extra != 0 ? 1UL : 0UL);
             return z;
         }
-
-        private static UInt128 ShortShiftLeft128(ulong a64, ulong a0, byte dist) {
-            UInt128 z;
-
-            z.v64 = a64 << dist | a0 >> (-dist & 63);
-            z.v0 = a0 << dist;
-            return z;
-
-        }
-
 
         private static UInt128 PropagateNaNExtF80UI(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0) {
             bool isSigNaNA, isSigNaNB;
