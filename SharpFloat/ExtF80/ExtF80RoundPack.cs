@@ -168,7 +168,7 @@ namespace SharpFloat.ExtF80 {
                         || (exp < 0)
                         || !doIncrement
                         || (sig < 0xFFFFFFFFFFFFFFFFUL);
-                    sig64Extra = ShiftRightJam64Extra(sig, sigExtra, 1 - exp);
+                    sig64Extra = UInt64Extra.ShiftRightJam64Extra(sig, sigExtra, 1 - exp);
                     exp = 0;
                     sig = sig64Extra.v;
                     sigExtra = sig64Extra.extra;

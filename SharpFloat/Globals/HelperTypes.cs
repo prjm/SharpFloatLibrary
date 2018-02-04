@@ -40,8 +40,4 @@ namespace SharpFloat.Globals {
 
     internal struct Exp32Sig64 { public int exp; public ulong sig; }
 
-    internal struct UInt64Extra { public ulong extra, v; };
-    //internal struct UInt128Extra { public ulong extra; public UInt128 v; };
-
-
 }

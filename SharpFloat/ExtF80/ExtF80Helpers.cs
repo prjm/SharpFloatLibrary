@@ -39,27 +39,6 @@ namespace SharpFloat.ExtF80 {
     public partial struct ExtF80 {
 
 
-        private static UInt64Extra ShiftRightJam64Extra(ulong a, ulong extra, int dist) {
-            UInt64Extra z;
-            if (dist < 64) {
-                z.v = a >> dist;
-                z.extra = a << (-dist & 63);
-            }
-            else {
-                z.v = 0;
-                z.extra = (dist == 64) ? a : ((a != 0) ? 1UL : 0UL);
-            }
-            z.extra |= (extra != 0) ? 1UL : 0UL;
-            return z;
-        }
-
-        private static UInt64Extra ShortShiftRightJam64Extra(ulong a, ulong extra, byte dist) {
-            UInt64Extra z;
-            z.v = a >> dist;
-            z.extra = a << (-dist & 63) | (extra != 0 ? 1UL : 0UL);
-            return z;
-        }
-
         private static UInt128 PropagateNaNExtF80UI(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0) {
             bool isSigNaNA, isSigNaNB;
             ulong uiNonsigA0, uiNonsigB0;

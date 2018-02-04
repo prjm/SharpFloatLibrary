@@ -108,7 +108,7 @@ namespace SharpFloat.ExtF80 {
                     if (expDiff == 0)
                         goto newlyAligned;
                 }
-                sig64Extra = ShiftRightJam64Extra(sigA, 0, -expDiff);
+                sig64Extra = UInt64Extra.ShiftRightJam64Extra(sigA, 0, -expDiff);
                 sigA = sig64Extra.v;
                 sigZExtra = sig64Extra.extra;
             }
@@ -127,7 +127,7 @@ namespace SharpFloat.ExtF80 {
                     if (expDiff == 0)
                         goto newlyAligned;
                 }
-                sig64Extra = ShiftRightJam64Extra(sigB, 0, expDiff);
+                sig64Extra = UInt64Extra.ShiftRightJam64Extra(sigB, 0, expDiff);
                 sigB = sig64Extra.v;
                 sigZExtra = sig64Extra.extra;
             }
@@ -138,7 +138,7 @@ namespace SharpFloat.ExtF80 {
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
             shiftRight1:
-            sig64Extra = ShortShiftRightJam64Extra(sigZ, sigZExtra, 1);
+            sig64Extra = UInt64Extra.ShortShiftRightJam64Extra(sigZ, sigZExtra, 1);
             sigZ = sig64Extra.v | 0x8000000000000000UL;
             sigZExtra = sig64Extra.extra;
             ++expZ;
