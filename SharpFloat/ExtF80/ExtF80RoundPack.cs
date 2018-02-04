@@ -91,7 +91,7 @@ namespace SharpFloat.ExtF80 {
                     isTiny = (Settings.detectTininess.Value == DetectTininess.BeforeRounding)
                         || (exp < 0)
                         || (sig <= (ulong)(sig + roundIncrement));
-                    sig = ShiftRightJam64(sig, (byte)(1 - exp));
+                    sig = sig.ShiftRightJam64((byte)(1 - exp));
                     roundBits = sig & roundMask;
                     if (roundBits != 0) {
                         if (isTiny)

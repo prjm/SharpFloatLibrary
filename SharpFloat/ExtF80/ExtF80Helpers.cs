@@ -38,30 +38,6 @@ namespace SharpFloat.ExtF80 {
 
     public partial struct ExtF80 {
 
-        /// <summary>
-        ///     test if an ExtF80 number is NaN
-        /// </summary>
-        /// <param name="a64">exponent</param>
-        /// <param name="a0">significant</param>
-        /// <returns></returns>
-        public static bool IsNaNExtF80UI(ushort a64, ulong a0)
-            => (((a64 & 0x7FFF) == 0x7FFF) && ((a0 & 0x7FFFFFFFFFFFFFFFUL) != 0));
-
-        /// <summary>
-        ///     test if ExtF80 number is a signaling NaN
-        /// </summary>
-        /// <param name="uiA64">exponent</param>
-        /// <param name="uiA0">significant</param>
-        /// <returns></returns>
-        public static bool IsSigNaNExtF80UI(ushort uiA64, ulong uiA0)
-            => ((((uiA64) & 0x7FFF) == 0x7FFF) &&
-                (0 == (uiA0 & 0x4000000000000000UL)) &&
-                (0 != (uiA0 & 0x3FFFFFFFFFFFFFFFUL)));
-
-        private static ulong ShiftRightJam64(ulong a, byte dist) {
-            return (dist < 63) ? a >> dist | (((ulong)(a << (-dist & 63)) != 0) ? 1UL : 0UL) : (a != 0) ? 1UL : 0UL;
-        }
-
         private static UInt128 ShiftRightJam128(ulong a64, ulong a0, int dist) {
             byte u8NegDist;
             UInt128 z;
