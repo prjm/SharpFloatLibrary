@@ -15,6 +15,9 @@ namespace SharpFloatTests.Common {
             XAssert.Equal(expected, value);
         }
 
+        public static void AreEqual(byte expected, byte value) {
+            XAssert.Equal(expected, value);
+        }
 
     }
 }

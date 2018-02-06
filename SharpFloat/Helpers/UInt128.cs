@@ -47,5 +47,17 @@ namespace SharpFloat.Helpers {
         ///     upper half (bits 64 to 127)
         /// </summary>
         public ulong v64;
+
+        /// <summary>
+        ///     create a new 128-bit value
+        /// </summary>
+        /// <param name="a64">upper half</param>
+        /// <param name="a0">lower half</param>
+        public UInt128(ulong a64, ulong a0) {
+            v64 = a64;
+            v0 = a0;
+        }
+
+
     }
 }

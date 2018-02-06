@@ -149,7 +149,7 @@ namespace SharpFloat.ExtF80 {
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         propagateNaN:
-            uiZ = PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
+            uiZ = UInt128.PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
             uiZ64 = (ushort)uiZ.v64;
             uiZ0 = uiZ.v0;
         uiZ:

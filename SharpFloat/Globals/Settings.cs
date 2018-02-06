@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =============================================================================*/
 
+using System;
 using System.Threading;
 
 namespace SharpFloat.Globals {
@@ -59,8 +60,14 @@ namespace SharpFloat.Globals {
         /// <summary>
         ///     exception flags
         /// </summary>
-        public static ThreadLocal<ExceptionFlags> flags
+        private static ThreadLocal<ExceptionFlags> flags
             = new ThreadLocal<ExceptionFlags>(() => ExceptionFlags.None);
+
+        /// <summary>
+        ///     flags
+        /// </summary>
+        public static ExceptionFlags Flags
+            => flags.Value;
 
         /// <summary>
         ///     raise a flag
@@ -69,6 +76,11 @@ namespace SharpFloat.Globals {
         public static void Raise(ExceptionFlags newFlag)
             => flags.Value |= newFlag;
 
+        /// <summary>
+        ///     clear all flags
+        /// </summary>
+        public static void ClearFlags()
+            => flags.Value = ExceptionFlags.None;
 
         public static ThreadLocal<byte> extF80_roundingPrecision
             = new ThreadLocal<byte>(() => 80);

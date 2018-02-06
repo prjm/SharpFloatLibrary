@@ -32,69 +32,47 @@
  */
 
 using SharpFloat.Globals;
-using SharpFloat.Helpers;
 
-namespace SharpFloat.ExtF80 {
+namespace SharpFloat.Helpers {
 
-    public partial struct ExtF80 {
+    public partial struct UInt128 {
 
+        public static UInt128 PropagateNaNExtF80UI(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0) {
+            var isSigNaNA = ExtF80.ExtF80.IsSigNaNExtF80UI(uiA64, uiA0);
+            var isSigNaNB = ExtF80.ExtF80.IsSigNaNExtF80UI(uiB64, uiB0);
+            var uiNonsigA0 = uiA0 | 0xC000000000000000UL;
+            var uiNonsigB0 = uiB0 | 0xC000000000000000UL;
 
-        private static UInt128 PropagateNaNExtF80UI(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0) {
-            bool isSigNaNA, isSigNaNB;
-            ulong uiNonsigA0, uiNonsigB0;
-            ushort uiMagA64, uiMagB64;
-            UInt128 uiZ;
-
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
-            isSigNaNA = IsSigNaNExtF80UI(uiA64, uiA0);
-            isSigNaNB = IsSigNaNExtF80UI(uiB64, uiB0);
-            /*------------------------------------------------------------------------
-            | Make NaNs non-signaling.
-            *------------------------------------------------------------------------*/
-            uiNonsigA0 = uiA0 | 0xC000000000000000UL;
-            uiNonsigB0 = uiB0 | 0xC000000000000000UL;
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
             if (isSigNaNA | isSigNaNB) {
                 Settings.Raise(ExceptionFlags.Invalid);
                 if (isSigNaNA) {
-                    if (isSigNaNB)
-                        goto returnLargerMag;
-                    if (IsNaNExtF80UI(uiB64, uiB0))
-                        goto returnB;
-                    goto returnA;
+                    if (!isSigNaNB) {
+                        if (ExtF80.ExtF80.IsNaNExtF80UI(uiB64, uiB0))
+                            return new UInt128(uiB64, uiNonsigB0);
+                        return new UInt128(uiA64, uiNonsigA0);
+                    }
                 }
                 else {
-                    if (IsNaNExtF80UI(uiA64, uiA0))
-                        goto returnA;
-                    goto returnB;
+                    if (ExtF80.ExtF80.IsNaNExtF80UI(uiA64, uiA0))
+                        return new UInt128(uiA64, uiNonsigA0);
+                    return new UInt128(uiB64, uiNonsigB0);
                 }
             }
-        returnLargerMag:
-            uiMagA64 = (ushort)(uiA64 & 0x7FFF);
-            uiMagB64 = (ushort)(uiB64 & 0x7FFF);
+
+            var uiMagA64 = (ushort)(uiA64 & 0x7FFF);
+            var uiMagB64 = (ushort)(uiB64 & 0x7FFF);
+
             if (uiMagA64 < uiMagB64)
-                goto returnB;
+                return new UInt128(uiB64, uiNonsigB0);
             if (uiMagB64 < uiMagA64)
-                goto returnA;
+                return new UInt128(uiA64, uiNonsigA0);
             if (uiA0 < uiB0)
-                goto returnB;
+                return new UInt128(uiB64, uiNonsigB0);
             if (uiB0 < uiA0)
-                goto returnA;
+                return new UInt128(uiA64, uiNonsigA0);
             if (uiA64 < uiB64)
-                goto returnA;
-            returnB:
-            uiZ.v64 = uiB64;
-            uiZ.v0 = uiNonsigB0;
-            return uiZ;
-        returnA:
-            uiZ.v64 = uiA64;
-            uiZ.v0 = uiNonsigA0;
-            return uiZ;
-
+                return new UInt128(uiA64, uiNonsigA0);
+            return new UInt128(uiB64, uiNonsigB0);
         }
-
-
     }
 }
