@@ -31,50 +31,12 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace SharpFloat.Globals {
+namespace SharpFloat.Helpers {
 
-    public static class HelperFunctions {
+    public static partial class ByteHelpers {
 
-        public static byte CountLeadingZeroes(this ulong a) {
-
-            byte count;
-            uint a32;
-
-            count = 0;
-            a32 = (uint)(a >> 32);
-            if (a32 == 0) {
-                count = 32;
-                a32 = (uint)a;
-            }
-
-            if (a32 < 0x10000) {
-                count += 16;
-                a32 <<= 16;
-            }
-
-            if (a32 < 0x1000000) {
-                count += 8;
-                a32 <<= 8;
-            }
-
-            count += ((byte)(a32 >> 24)).CountLeadingZeroes();
-            return count;
-
-        }
-
-        public static byte CountLeadingZeroes(this uint value) {
-            byte count = 0;
-            if (value < 0x10000) {
-                count = 16;
-                value <<= 16;
-            }
-            if (value < 0x1000000) {
-                count += 8;
-                value <<= 8;
-            }
-            count += CountLeadingZeroes((byte)(value >> 24));
-            return count;
-        }
+        public static byte CountLeadingZeroes(this byte v)
+            => lookup[v];
 
         private static byte[] lookup = new byte[256] {
             /* 000 = */ 8,
@@ -334,10 +296,6 @@ namespace SharpFloat.Globals {
             /* 254 = */ 0,
             /* 255 = */ 0
         };
-
-        private static byte CountLeadingZeroes(this byte v)
-            => lookup[v];
-
 
     }
 }

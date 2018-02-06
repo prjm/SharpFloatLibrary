@@ -58,7 +58,7 @@ namespace SharpFloat.ExtF80 {
 
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
-            roundingMode = Settings.roundingMode.Value;
+            roundingMode = Settings.RoundingMode;
             roundNearEven = (roundingMode == RoundingMode.NearEven);
             if (roundingPrecision == 80)
                 goto precision80;
@@ -88,7 +88,7 @@ namespace SharpFloat.ExtF80 {
                 if (exp <= 0) {
                     /*----------------------------------------------------------------
                     *----------------------------------------------------------------*/
-                    isTiny = (Settings.detectTininess.Value == DetectTininess.BeforeRounding)
+                    isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
                         || (exp < 0)
                         || (sig <= (ulong)(sig + roundIncrement));
                     sig = sig.ShiftRightJam64((byte)(1 - exp));
@@ -164,7 +164,7 @@ namespace SharpFloat.ExtF80 {
                 if (exp <= 0) {
                     /*----------------------------------------------------------------
                     *----------------------------------------------------------------*/
-                    isTiny = (Settings.detectTininess.Value == DetectTininess.BeforeRounding)
+                    isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
                         || (exp < 0)
                         || !doIncrement
                         || (sig < 0xFFFFFFFFFFFFFFFFUL);

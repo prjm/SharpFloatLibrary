@@ -31,18 +31,13 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 namespace SharpFloat.Helpers {
 
-    public static partial class UShortHelpers {
+    public struct Exp32Sig64 {
 
-        /// <summary>
-        ///     get the sign (most-significant bit) of an ExtF80 exponent
-        /// </summary>
-        /// <param name="a64">exponent</param>
-        /// <returns>sign (true if the bit is set)</returns>
-        public static bool SignExtF80UI64(this ushort a64)
-            => (a64 >> 15) != 0;
+        public int exp;
+
+        public ulong sig;
 
     }
 }

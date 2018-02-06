@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =============================================================================*/
 
 using SharpFloat.Globals;
+using SharpFloat.Helpers;
 
 namespace SharpFloat.ExtF80 {
 

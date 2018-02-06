@@ -31,18 +31,31 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 namespace SharpFloat.Helpers {
 
-    public static partial class UShortHelpers {
+    public static partial class ULongHelpers {
 
-        /// <summary>
-        ///     get the sign (most-significant bit) of an ExtF80 exponent
-        /// </summary>
-        /// <param name="a64">exponent</param>
-        /// <returns>sign (true if the bit is set)</returns>
-        public static bool SignExtF80UI64(this ushort a64)
-            => (a64 >> 15) != 0;
+        public static byte CountLeadingZeroes(this ulong a) {
+            byte count = 0;
+            var a32 = (uint)(a >> 32);
 
+            if (a32 == 0) {
+                count = 32;
+                a32 = (uint)a;
+            }
+
+            if (a32 < 0x10000) {
+                count += 16;
+                a32 <<= 16;
+            }
+
+            if (a32 < 0x1000000) {
+                count += 8;
+                a32 <<= 8;
+            }
+
+            count += ((byte)(a32 >> 24)).CountLeadingZeroes();
+            return count;
+        }
     }
 }

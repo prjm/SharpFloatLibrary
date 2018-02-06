@@ -98,7 +98,7 @@ namespace SharpFloat.ExtF80 {
                 goto aBigger;
             if (sigA < sigB)
                 goto bBigger;
-            uiZ64 = 0.PackToExtF80UI64(Settings.roundingMode.Value == RoundingMode.Minimum);
+            uiZ64 = 0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum);
             uiZ0 = 0;
             goto uiZ;
         /*------------------------------------------------------------------------
