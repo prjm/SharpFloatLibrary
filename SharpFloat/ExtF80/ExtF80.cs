@@ -48,6 +48,17 @@ namespace SharpFloat.ExtF80 {
         /// </summary>
         public ulong signif;
 
+        /// <summary>
+        ///     create a new floating point value of extended precision
+        /// </summary>
+        /// <param name="signedExponent"></param>
+        /// <param name="significand"></param>
+        public ExtF80(ushort signedExponent, ulong significand) {
+            signExp = signedExponent;
+            signif = significand;
+        }
+
+
     }
 
 }

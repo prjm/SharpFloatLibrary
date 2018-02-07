@@ -58,8 +58,10 @@ namespace SharpFloat.Globals {
         /// <summary>
         ///     roding mode
         /// </summary>
-        public static RoundingMode RoundingMode
-            => roundingMode.Value;
+        public static RoundingMode RoundingMode {
+            get => roundingMode.Value;
+            set => roundingMode.Value = value;
+        }
 
         /// <summary>
         ///     exception flags
