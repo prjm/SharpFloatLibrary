@@ -7,8 +7,8 @@ namespace SharpFloatTests.Helpers {
 
         [TestCase]
         public void TestShortShiftRightJam64Extra() {
-            Assert.AreEqual(0xC, UInt64Extra.ShortShiftRightJam64Extra(0xCCC, 3, 8).v);
-            Assert.AreEqual(0xCC00000000000001, UInt64Extra.ShortShiftRightJam64Extra(0xCCC, 3, 8).extra);
+            Assert.EqualULong(0xC, UInt64Extra.ShortShiftRightJam64Extra(0xCCC, 3, 8).v);
+            Assert.EqualULong(0xCC00000000000001, UInt64Extra.ShortShiftRightJam64Extra(0xCCC, 3, 8).extra);
         }
 
     }

@@ -6,9 +6,9 @@ namespace SharpFloatTests.Helpers {
 
         [TestCase]
         public void TestShiftRightJam64() {
-            Assert.AreEqual(0, 0UL.ShiftRightJam64(63));
-            Assert.AreEqual(1, 0x23423423423UL.ShiftRightJam64(63));
-            Assert.AreEqual(3, 5UL.ShiftRightJam64(1));
+            Assert.EqualULong(0, 0UL.ShiftRightJam64(63));
+            Assert.EqualULong(1, 0x23423423423UL.ShiftRightJam64(63));
+            Assert.EqualULong(3, 5UL.ShiftRightJam64(1));
         }
 
     }

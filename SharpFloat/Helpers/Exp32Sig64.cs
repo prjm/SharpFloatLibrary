@@ -35,9 +35,13 @@ namespace SharpFloat.Helpers {
 
     public struct Exp32Sig64 {
 
-        public int exp;
+        public readonly int exp;
 
-        public ulong sig;
+        public readonly ulong sig;
 
+        public Exp32Sig64(int aExp, ulong aSig) {
+            exp = aExp;
+            sig = aSig;
+        }
     }
 }
