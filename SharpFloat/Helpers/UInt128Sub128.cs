@@ -44,12 +44,8 @@ namespace SharpFloat.Helpers {
         /// <param name="b0"></param>
         /// <returns></returns>
         public static UInt128 Sub128(ulong a64, ulong a0, ulong b64, ulong b0)
-            => new UInt128() {
-                v0 = a0 - b0,
-                v64 = a64 - b64 - ((a0 < b0) ? 1UL : 0UL)
-            };
-
-
-
+            => new UInt128(//
+                    a64 - b64 - ((a0 < b0) ? 1UL : 0UL),    //
+                    a0 - b0);
     }
 }

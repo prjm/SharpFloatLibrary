@@ -64,7 +64,6 @@ namespace SharpFloat.ExtF80 {
             int expZ;
             ulong sigExtra;
             UInt128 sig128, uiZ;
-            ExtF80 uZ;
 
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
@@ -162,9 +161,7 @@ namespace SharpFloat.ExtF80 {
             uiZ64 = (ushort)uiZ.v64;
             uiZ0 = uiZ.v0;
         uiZ:
-            uZ.signExp = uiZ64;
-            uZ.signif = uiZ0;
-            return uZ;
+            return new ExtF80(uiZ64, uiZ0);
 
         }
 

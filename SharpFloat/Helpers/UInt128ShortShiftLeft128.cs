@@ -35,12 +35,10 @@ namespace SharpFloat.Helpers {
 
     public partial struct UInt128 {
 
-        public static UInt128 ShortShiftLeft128(ulong a64, ulong a0, byte dist) {
-            UInt128 z;
-            z.v64 = a64 << dist | a0 >> (-dist & 63);
-            z.v0 = a0 << dist;
-            return z;
-        }
+        public static UInt128 ShortShiftLeft128(ulong a64, ulong a0, byte dist)
+            => new UInt128(//
+                a64 << dist | a0 >> (-dist & 63), //
+                a0 << dist);
 
     }
 }

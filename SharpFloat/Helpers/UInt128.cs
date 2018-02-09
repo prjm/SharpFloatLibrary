@@ -41,12 +41,12 @@ namespace SharpFloat.Helpers {
         /// <summary>
         ///     lower half (bits 0 to 63)
         /// </summary>
-        public ulong v0;
+        public readonly ulong v0;
 
         /// <summary>
         ///     upper half (bits 64 to 127)
         /// </summary>
-        public ulong v64;
+        public readonly ulong v64;
 
         /// <summary>
         ///     create a new 128-bit value

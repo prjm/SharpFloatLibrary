@@ -41,12 +41,12 @@ namespace SharpFloat.ExtF80 {
         /// <summary>
         ///     exponent and sign
         /// </summary>
-        public ushort signExp;
+        public readonly ushort signExp;
 
         /// <summary>
         ///     value (significant)
         /// </summary>
-        public ulong signif;
+        public readonly ulong signif;
 
         /// <summary>
         ///     create a new floating point value of extended precision

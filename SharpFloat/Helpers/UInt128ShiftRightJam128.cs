@@ -36,25 +36,23 @@ namespace SharpFloat.Helpers {
     public partial struct UInt128 {
 
         public static UInt128 ShiftRightJam128(ulong a64, ulong a0, int dist) {
-            UInt128 z;
 
             if (dist < 64) {
                 var u8NegDist = (byte)-dist;
-                z.v64 = a64 >> dist;
-                z.v0 = (a64 << (u8NegDist & 63))
+                return new UInt128(
+                    a64 >> dist,
+                    (a64 << (u8NegDist & 63))
                         | (a0 >> dist)
-                        | (a0 << (u8NegDist & 63) != 0 ? 1UL : 0UL);
+                        | (a0 << (u8NegDist & 63) != 0 ? 1UL : 0UL));
             }
             else {
-                z.v64 = 0;
                 if (dist < 127)
-                    z.v0 = a64 >> (dist & 63)
-                            | ((((a64 & (((ulong)1 << (dist & 63)) - 1)) | a0) != 0 ? 1UL : 0UL));
+                    return new UInt128(0,
+                            a64 >> (dist & 63)
+                            | ((((a64 & (((ulong)1 << (dist & 63)) - 1)) | a0) != 0 ? 1UL : 0UL)));
                 else
-                    z.v0 = ((a64 | a0) != 0 ? 1UL : 0UL);
+                    return new UInt128(0, ((a64 | a0) != 0 ? 1UL : 0UL));
             }
-
-            return z;
         }
     }
 }
