@@ -31,7 +31,6 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using SharpFloat.Globals;
 using SharpFloat.Helpers;
 
@@ -49,7 +48,6 @@ namespace SharpFloat.ExtF80 {
         }
 
         private static ExtF80 RoundPackToExtF80WithStandardPrecision(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
-            ulong roundMask;
             bool isTiny, doIncrement;
             UInt64Extra sig64Extra;
 
@@ -93,16 +91,16 @@ namespace SharpFloat.ExtF80 {
                     }
                     return new ExtF80(exp.PackToExtF80UI64(sign), sig);
                 }
+
                 if ((0x7FFE < exp) || ((exp == 0x7FFE) && (sig == 0xFFFFFFFFFFFFFFFFUL) && doIncrement)) {
-                    roundMask = 0;
                     Settings.Raise(ExceptionFlags.Overflow | ExceptionFlags.Inexact);
-                    if (roundingMode == RoundingMode.NearEven || (roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum))) {
+                    if (roundingMode == RoundingMode.NearEven || roundingMode == RoundingMode.NearMaximumMagnitude || roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) {
                         exp = 0x7FFF;
                         sig = 0x8000000000000000UL;
                     }
                     else {
                         exp = 0x7FFE;
-                        sig = ~roundMask;
+                        sig = ~0UL;
                     }
                     return new ExtF80(exp.PackToExtF80UI64(sign), sig);
                 }
@@ -219,35 +217,6 @@ namespace SharpFloat.ExtF80 {
             }
             sig &= ~roundMask;
             return new ExtF80(exp.PackToExtF80UI64(sign), sig);
-        }
-
-        private static ExtF80
-         NormRoundPackToExtF80(
-             bool sign,
-             int exp,
-             ulong sig,
-             ulong sigExtra,
-             byte roundingPrecision
-         ) {
-            byte shiftDist;
-            UInt128 sig128;
-
-            if (sig != 0) {
-                exp -= 64;
-                sig = sigExtra;
-                sigExtra = 0;
-            }
-            shiftDist = sig.CountLeadingZeroes();
-            exp -= shiftDist;
-            if (shiftDist != 0) {
-                sig128 = UInt128.ShortShiftLeft128(sig, sigExtra, shiftDist);
-                sig = sig128.v64;
-                sigExtra = sig128.v0;
-            }
-            return
-                RoundPackToExtF80(
-                    sign, exp, sig, sigExtra, roundingPrecision);
-
         }
 
     }
