@@ -66,7 +66,7 @@ namespace SharpFloat.ExtF80 {
                 return new ExtF80(uiA64, uiA0);
             }
 
-            int expZ = 0;
+            var expZ = 0;
             var sigZ = sigA + sigB;
             var sigZExtra = 0UL;
             if (expA == 0) {
