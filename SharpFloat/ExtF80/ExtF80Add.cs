@@ -30,6 +30,7 @@
  *    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 using SharpFloat.Helpers;
 
 namespace SharpFloat.ExtF80 {
@@ -39,20 +40,20 @@ namespace SharpFloat.ExtF80 {
     /// </summary>
     public partial struct ExtF80 {
 
-        public static ExtF80 operator +(in ExtF80 a, in ExtF80 b) {
-            var uiA64 = a.signExp;
-            var uiA0 = a.signif;
-            var uiB64 = b.signExp;
-            var uiB0 = b.signif;
-            var signA = uiA64.SignExtF80UI64();
-            var signB = uiB64.SignExtF80UI64();
+        /// <summary>
+        ///     add operation on extF80 floats
+        /// </summary>
+        /// <param name="a">first operand</param>
+        /// <param name="b">second operand</param>
+        /// <returns>sum</returns>
+        public static ExtF80 operator +(ExtF80 a, ExtF80 b) {
+            var signA = a.signExp.SignExtF80UI64();
+            var signB = b.signExp.SignExtF80UI64();
 
-            if (signA == signB) {
-                return AddMagsExtF80(uiA64, uiA0, uiB64, uiB0, signA);
-            }
-            else {
-                return SubMagsExtF80(uiA64, uiA0, uiB64, uiB0, signA);
-            }
+            if (signA == signB)
+                return AddMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
+            else
+                return SubMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
         }
 
     }

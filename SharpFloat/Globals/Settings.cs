@@ -88,10 +88,14 @@ namespace SharpFloat.Globals {
         public static void ClearFlags()
             => flags.Value = ExceptionFlags.None;
 
-        public static ThreadLocal<byte> extF80_roundingPrecision
+        private static ThreadLocal<byte> extF80_roundingPrecision
             = new ThreadLocal<byte>(() => 80);
 
-
+        /// <summary>
+        ///     used rounding precision
+        /// </summary>
+        public static byte ExtF80RoundingPrecision
+            => extF80_roundingPrecision.Value;
     }
 
 }

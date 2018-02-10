@@ -153,7 +153,7 @@ namespace SharpFloat.ExtF80 {
         normRoundPack:
             return
                 NormRoundPackToExtF80(
-                    signZ, expZ, sig128.v64, sig128.v0, Settings.extF80_roundingPrecision.Value);
+                    signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         propagateNaN:

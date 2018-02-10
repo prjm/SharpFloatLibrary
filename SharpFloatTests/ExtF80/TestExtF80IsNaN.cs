@@ -3,7 +3,7 @@ using static SharpFloat.ExtF80.ExtF80;
 
 namespace SharpFloatTests.ExtF80 {
 
-    public class TestIsNaN {
+    public class TestExtF80IsNaN {
 
         [TestCase]
         public void TestIsNaNValue() {

@@ -38,10 +38,10 @@ namespace SharpFloat.Helpers {
         /// <summary>
         ///     get the exponent value without sign of a ExtF80
         /// </summary>
-        /// <param name="a64"></param>
+        /// <param name="exponent">exponent</param>
         /// <returns></returns>
-        public static ushort ExpExtF80UI64(this ushort a64)
-            => (ushort)(a64 & 0x7FFF);
+        public static ushort ExpExtF80UI64(this ushort exponent)
+            => (ushort)(exponent & 0x7FFF);
 
     }
 }

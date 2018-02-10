@@ -1,8 +1,7 @@
 ﻿using SharpFloatTests.Common;
-using SharpFloat;
 
 namespace SharpFloatTests.ExtF80 {
-    public class TestNormSubnormalSig {
+    public class TestExtF80NormSubnormalSig {
 
         [TestCase]
         public void TestNormalSubnormalSig() {
