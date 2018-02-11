@@ -1,41 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SharpFloat.ExtF80;
 
 namespace SharpFloatTestFloatRunner {
+
+    /// <summary>
+    ///     base class for test cases
+    /// </summary>
     public abstract class TestEntry {
+
+        /// <summary>
+        ///     name of test case
+        /// </summary>
+        /// <remarks>corresponds to the test case file name</remarks>
         public abstract string Name { get; }
 
-        internal void Run(string path) {
-            var lineCount = 0UL;
+        /// <summary>
+        ///     run the test case
+        /// </summary>
+        /// <param name="path">path of the test case file</param>
+        /// <remarks>path has to be a zip file</remarks>
+        public void Run(string path) {
             using (var zip = ZipFile.Open(path, ZipArchiveMode.Read)) {
                 foreach (var entry in zip.Entries) {
-
                     using (var input = entry.Open()) {
-                        using (var stream = new StreamReader(input, Encoding.ASCII)) {
-                            while (!stream.EndOfStream) {
-                                var line = stream.ReadLine();
-                                if (string.IsNullOrWhiteSpace(line))
-                                    continue;
-
-                                try {
-                                    ProcessLine(line);
-                                    lineCount++;
-                                }
-                                catch (Exception e) {
-                                    Console.WriteLine("Line " + lineCount + ": " + line + " / " + e.Message);
-                                    //throw new Exception("Line " + lineCount + ": " + line, e);
-                                }
-                            }
-                        }
+                        ProcessTestFile(input);
                     }
 
+                }
+            }
+        }
+
+        /// <summary>
+        ///     process a test file
+        /// </summary>
+        /// <param name="input">input file stream</param>
+        private void ProcessTestFile(Stream input) {
+            var lineCount = 0UL;
+            using (var stream = new StreamReader(input, Encoding.ASCII)) {
+                while (!stream.EndOfStream) {
+                    var line = stream.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    try {
+                        ProcessLine(line);
+                        lineCount++;
+                    }
+                    catch (Exception e) {
+                        throw new InvalidComputationException(lineCount, line, e);
+                    }
                 }
             }
         }
@@ -45,7 +62,12 @@ namespace SharpFloatTestFloatRunner {
             ProcessLineInTest(data);
         }
 
-        protected ExtF80 TryStrToFloat(string value) {
+        /// <summary>
+        ///     convert a hex string to an ExtF80 value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected ExtF80 ToExtF80(string value) {
             ushort signedExponent = 0;
             ulong significant = 0;
 
@@ -58,6 +80,22 @@ namespace SharpFloatTestFloatRunner {
             return new ExtF80(signedExponent, significant);
         }
 
-        internal abstract void ProcessLineInTest(string[] data);
+        /// <summary>
+        ///     assert two equal ExtF80 values
+        /// </summary>
+        /// <param name="expected">expected value</param>
+        /// <param name="actual">actual value</param>
+        protected static void AssertEqual(ExtF80 expected, ExtF80 actual) {
+            if (expected.signExp != actual.signExp)
+                throw new NumbersNotEqualException(expected.signExp, actual.signExp);
+            if (expected.signif != actual.signif)
+                throw new NumbersNotEqualException(expected.signif, actual.signif);
+        }
+
+        /// <summary>
+        ///     process one line of the test case
+        /// </summary>
+        /// <param name="data"></param>
+        protected abstract void ProcessLineInTest(string[] data);
     }
 }

@@ -1,20 +1,26 @@
 ﻿namespace SharpFloatTestFloatRunner {
-    internal class ExtF80AddTest : TestEntry {
 
+    /// <summary>
+    ///     test ExtF80 addition
+    /// </summary>
+    public class ExtF80AddTest : TestEntry {
 
+        /// <summary>
+        ///     test name
+        /// </summary>
         public override string Name
             => "add";
 
-        internal override void ProcessLineInTest(string[] data) {
-            var op1 = TryStrToFloat(data[0]);
-            var op2 = TryStrToFloat(data[1]);
-            var gr = TryStrToFloat(data[2]);
-            var or = op1 + op2;
-            if (gr.signExp != or.signExp)
-                throw new System.Exception(gr.signExp.ToString("x") + " != " + or.signExp.ToString("x"));
-            if (gr.signif != or.signif)
-                throw new System.Exception(gr.signif.ToString("x") + " != " + or.signif.ToString("x"));
-
+        /// <summary>
+        ///     process a line of the test file: add two ExtF80 and compare
+        /// </summary>
+        /// <param name="data">test data</param>
+        protected override void ProcessLineInTest(string[] data) {
+            var op1 = ToExtF80(data[0]);
+            var op2 = ToExtF80(data[1]);
+            var expected = ToExtF80(data[2]);
+            var actual = op1 + op2;
+            AssertEqual(expected, actual);
         }
     }
 }

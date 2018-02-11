@@ -2,16 +2,29 @@
 
 namespace SharpFloatTestFloatRunner {
 
-    internal class ExtF80TestCase : TestBase {
+    /// <summary>
+    ///     test ExtF80 operations
+    /// </summary>
+    public class ExtF80TestCase : TestBase {
 
+        /// <summary>
+        ///     test case name
+        /// </summary>
         public override string Name
             => "ExtF80";
 
+        /// <summary>
+        ///     test entries
+        /// </summary>
         private TestEntry[] entries = new[] {
             new ExtF80AddTest()
         };
 
-        public override IEnumerable<TestEntry> CreateEntries()
+        /// <summary>
+        ///     get test entries
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TestEntry> GetTestEntries()
             => entries;
     }
 }
