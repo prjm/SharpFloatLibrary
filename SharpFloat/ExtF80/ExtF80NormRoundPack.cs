@@ -38,7 +38,7 @@ namespace SharpFloat.ExtF80 {
     public partial struct ExtF80 {
 
         private static ExtF80 NormRoundPackToExtF80(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
-            if (sig != 0) {
+            if (sig == 0) {
                 exp -= 64;
                 sig = sigExtra;
                 sigExtra = 0;
