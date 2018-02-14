@@ -39,6 +39,16 @@ namespace SharpFloat.ExtF80 {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     default NaN: exponent
+        /// </summary>
+        public const ushort DefaultNaNExtF80UI64 = 0xFFFF;
+
+        /// <summary>
+        ///     default NaN: significant
+        /// </summary>
+        public const ulong DefaultNaNExtF80UI0 = 0xC000000000000000UL;
+
+        /// <summary>
         ///     exponent and sign
         /// </summary>
         public readonly ushort signExp;

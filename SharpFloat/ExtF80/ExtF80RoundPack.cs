@@ -48,23 +48,21 @@ namespace SharpFloat.ExtF80 {
         }
 
         private static ExtF80 RoundPackToExtF80WithStandardPrecision(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
-            bool isTiny, doIncrement;
-            UInt64Extra sig64Extra;
-
             var roundingMode = Settings.RoundingMode;
+            var doIncrement = (0x8000000000000000UL <= sigExtra);
 
-            doIncrement = (0x8000000000000000UL <= sigExtra);
             if (roundingMode != RoundingMode.NearEven && roundingMode != RoundingMode.NearMaximumMagnitude) {
                 doIncrement = (roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) && sigExtra != 0;
             }
 
             if (0x7FFD <= (uint)(exp - 1)) {
                 if (exp <= 0) {
-                    isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
+                    var isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
                         || (exp < 0)
                         || !doIncrement
                         || (sig < 0xFFFFFFFFFFFFFFFFUL);
-                    sig64Extra = UInt64Extra.ShiftRightJam64Extra(sig, sigExtra, 1 - exp);
+
+                    var sig64Extra = UInt64Extra.ShiftRightJam64Extra(sig, sigExtra, 1 - exp);
                     exp = 0;
                     sig = sig64Extra.v;
                     sigExtra = sig64Extra.extra;
@@ -83,6 +81,7 @@ namespace SharpFloat.ExtF80 {
                                  == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) ? 1UL : 0UL)
                                 & sigExtra) != 0;
                     }
+
                     if (doIncrement) {
                         ++sig;
                         sig &=
@@ -120,8 +119,7 @@ namespace SharpFloat.ExtF80 {
                     sig = 0x8000000000000000UL;
                 }
                 else {
-                    sig &=
-                        ~(ulong)
+                    sig &= ~(ulong)
                              (((sigExtra & 0x7FFFFFFFFFFFFFFFUL) == 0 ? 1 : 0)
                                   & (roundingMode == RoundingMode.NearEven ? 1 : 0));
                 }
@@ -133,7 +131,6 @@ namespace SharpFloat.ExtF80 {
             ulong roundIncrement, roundMask, roundBits;
             bool isTiny;
             var roundingMode = Settings.RoundingMode;
-
 
             if (roundingPrecision == 64) {
                 roundIncrement = 0x0000000000000400UL;
@@ -150,15 +147,12 @@ namespace SharpFloat.ExtF80 {
             }
             roundBits = sig & roundMask;
 
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
             if (0x7FFD <= (uint)(exp - 1)) {
                 if (exp <= 0) {
-                    /*----------------------------------------------------------------
-                    *----------------------------------------------------------------*/
                     isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
                         || (exp < 0)
                         || (sig <= (ulong)(sig + roundIncrement));
+
                     sig = sig.ShiftRightJam64((byte)(1 - exp));
                     roundBits = sig & roundMask;
                     if (roundBits != 0) {
@@ -197,8 +191,7 @@ namespace SharpFloat.ExtF80 {
                     return new ExtF80(exp.PackToExtF80UI64(sign), sig);
                 }
             }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
+
             if (roundBits != 0) {
                 Settings.Raise(ExceptionFlags.Inexact);
                 if (roundingMode == RoundingMode.Odd) {
@@ -206,15 +199,18 @@ namespace SharpFloat.ExtF80 {
                     return new ExtF80(exp.PackToExtF80UI64(sign), sig);
                 }
             }
+
             sig = (ulong)(sig + roundIncrement);
             if (sig < roundIncrement) {
                 ++exp;
                 sig = 0x8000000000000000UL;
             }
+
             roundIncrement = roundMask + 1;
             if (roundingMode == RoundingMode.NearEven && (roundBits << 1 == roundIncrement)) {
                 roundMask |= roundIncrement;
             }
+
             sig &= ~roundMask;
             return new ExtF80(exp.PackToExtF80UI64(sign), sig);
         }

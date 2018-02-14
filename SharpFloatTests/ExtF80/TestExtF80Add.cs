@@ -15,6 +15,11 @@ namespace SharpFloatTests.ExtF80 {
             var caseOne = new E(0x4002, 0x8000400010000000) + new E(0xC002, 0x8040000FFFFFFFFF);
             Assert.EqualUShort(0xBFF8, caseOne.signExp);
             Assert.EqualULong(0xFF003FBFFFFFFC00, caseOne.signif);
+
+            var caseTwo = new E(0x403E, 0xFFFFFFFFFFFFFFD0) + new E(0xC03F, 0xE22ECB436FA3CAD3);
+            Assert.EqualUShort(0xC03E, caseTwo.signExp);
+            Assert.EqualULong(0xC45D9686DF4795D6, caseTwo.signif);
+
         }
 
     }

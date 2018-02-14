@@ -97,16 +97,19 @@ namespace SharpFloat.ExtF80 {
                 }
                 return new ExtF80(0x7FFF.PackToExtF80UI64(signZ), uiB0);
             }
+
             var expZ = expB;
             if (expA == 0) {
                 ++expDiff;
                 sigZExtra = 0;
             }
+
             if (expA != 0 || expDiff != 0) {
                 sig64Extra = UInt64Extra.ShiftRightJam64Extra(sigA, 0, -expDiff);
                 sigA = sig64Extra.v;
                 sigZExtra = sig64Extra.extra;
             }
+
             sigZ = sigA + sigB;
             if ((sigZ & 0x8000000000000000UL) != 0)
                 return RoundPackToExtF80(signZ, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
@@ -131,6 +134,7 @@ namespace SharpFloat.ExtF80 {
                 }
                 return new ExtF80(uiA64, uiA0);
             }
+
             var expZ = expA;
             if (expB == 0) {
                 --expDiff;
