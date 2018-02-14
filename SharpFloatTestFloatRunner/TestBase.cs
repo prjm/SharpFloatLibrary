@@ -58,7 +58,10 @@ namespace SharpFloatTestFloatRunner {
                     if (!File.Exists(path))
                         continue;
 
+                    Console.Write(testFileName);
+                    Settings.RoundingMode = roundingMode;
                     entry.Run(path);
+                    Console.WriteLine(" [OK]");
                 }
             }
         }
