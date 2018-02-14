@@ -52,13 +52,15 @@ namespace SharpFloatTestFloatRunner {
         /// <param name="dir">data files directory</param>
         public void Run(string dir) {
             foreach (var entry in GetTestEntries()) {
+                Console.WriteLine(entry.Name.ToUpperInvariant());
+
                 foreach (var roundingMode in Enum.GetValues(typeof(RoundingMode)).Cast<RoundingMode>()) {
                     var testFileName = entry.Name + "_" + GetRoundingModeAsString(roundingMode) + ".zip";
                     var path = Path.Combine(dir, testFileName);
                     if (!File.Exists(path))
                         continue;
 
-                    Console.Write(testFileName);
+                    Console.Write($"\t{testFileName}");
                     Settings.RoundingMode = roundingMode;
                     entry.Run(path);
                     Console.WriteLine(" [OK]");
