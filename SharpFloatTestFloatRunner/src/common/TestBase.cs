@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using SharpFloat.Globals;
 
-namespace SharpFloatTestFloatRunner {
+namespace SharpFloatTestFloatRunner.Common {
 
     /// <summary>
     ///     base class for a test suite

@@ -1,4 +1,6 @@
-﻿namespace SharpFloatTestFloatRunner {
+﻿using SharpFloatTestFloatRunner.Common;
+
+namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
 
     /// <summary>
     ///     test ExtF80 addition

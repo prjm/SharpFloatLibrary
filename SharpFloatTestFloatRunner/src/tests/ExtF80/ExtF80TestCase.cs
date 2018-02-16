@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using SharpFloatTestFloatRunner.Common;
 
-namespace SharpFloatTestFloatRunner {
+namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
 
     /// <summary>
     ///     test ExtF80 operations
@@ -16,8 +17,9 @@ namespace SharpFloatTestFloatRunner {
         /// <summary>
         ///     test entries
         /// </summary>
-        private TestEntry[] entries = new[] {
-            new ExtF80AddTest()
+        private TestEntry[] entries = new TestEntry[] {
+            new ExtF80AddTest(),
+            new ExtF80SubTest(),
         };
 
         /// <summary>

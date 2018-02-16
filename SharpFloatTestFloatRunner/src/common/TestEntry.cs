@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Text;
 using SharpFloat.ExtF80;
 
-namespace SharpFloatTestFloatRunner {
+namespace SharpFloatTestFloatRunner.Common {
 
     /// <summary>
     ///     base class for test cases

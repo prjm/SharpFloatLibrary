@@ -35,25 +35,22 @@ using SharpFloat.Helpers;
 
 namespace SharpFloat.ExtF80 {
 
-    /// <summary>
-    ///     define add operator
-    /// </summary>
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     add operation for extF80 floats
+        ///     subtract operation for extF80 floats
         /// </summary>
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
         /// <returns>sum</returns>
-        public static ExtF80 operator +(ExtF80 a, ExtF80 b) {
+        public static ExtF80 operator -(ExtF80 a, ExtF80 b) {
             var signA = a.signExp.SignExtF80UI64();
             var signB = b.signExp.SignExtF80UI64();
 
             if (signA == signB)
-                return AddMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
-            else
                 return SubMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
+            else
+                return AddMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SharpFloatTestFloatRunner {
+namespace SharpFloatTestFloatRunner.Common {
 
     /// <summary>
     ///     exception thrown if two expected equal numbers aren't equal

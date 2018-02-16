@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using SharpFloatTestFloatRunner.Tests.ExtF80;
 
-namespace SharpFloatTestFloatRunner {
+namespace SharpFloatTestFloatRunner.Common {
+
     internal class TestFloatTestsuite {
 
         private readonly string dataDir;
