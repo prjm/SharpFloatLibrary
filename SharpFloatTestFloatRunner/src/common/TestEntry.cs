@@ -51,6 +51,7 @@ namespace SharpFloatTestFloatRunner.Common {
                         lineCount++;
                     }
                     catch (Exception e) {
+                        ProcessLine(line);
                         throw new InvalidComputationException(lineCount, line, e);
                     }
                 }
@@ -60,6 +61,17 @@ namespace SharpFloatTestFloatRunner.Common {
         private void ProcessLine(string line) {
             var data = line.Split(' ');
             ProcessLineInTest(data);
+        }
+
+        /// <summary>
+        ///     parse a boolean value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool ToBool(string value) {
+            if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
+                return parsedResult != 0;
+            return false;
         }
 
         /// <summary>
@@ -90,6 +102,17 @@ namespace SharpFloatTestFloatRunner.Common {
                 throw new NumbersNotEqualException(expected.signExp, actual.signExp);
             if (expected.signif != actual.signif)
                 throw new NumbersNotEqualException(expected.signif, actual.signif);
+        }
+
+
+        /// <summary>
+        ///     assert two equal ExtF80 values
+        /// </summary>
+        /// <param name="expected">expected value</param>
+        /// <param name="actual">actual value</param>
+        protected static void AssertEqual(bool expected, bool actual) {
+            if (expected != actual)
+                throw new NumbersNotEqualException();
         }
 
         /// <summary>
