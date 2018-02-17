@@ -15,6 +15,9 @@ namespace SharpFloatTests.Common {
         public static void EqualULong(ulong expected, ulong value)
             => XAssert.Equal(expected, value);
 
+        public static void IsTrue(bool value)
+            => XAssert.True(value);
+
         public static void EqualByte(byte expected, byte value)
             => XAssert.Equal(expected, value);
 

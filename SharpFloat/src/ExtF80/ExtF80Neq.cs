@@ -11,12 +11,12 @@ namespace SharpFloat.ExtF80 {
                     Settings.Raise(ExceptionFlags.Invalid);
                 }
 
-                return false;
+                return true;
             }
 
             return //
                 (l.signif != r.signif)
-                || ((l.signExp != r.signExp) && (l.signif != 0 && 0 == ((l.signExp | r.signExp) & 0x7FFF)));
+                || ((l.signExp != r.signExp) && (l.signif != 0 || 0 == ((l.signExp | r.signExp) & 0x7FFF)));
         }
 
 
