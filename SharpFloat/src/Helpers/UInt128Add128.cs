@@ -32,44 +32,14 @@
  */
 
 
-using System;
-using SharpFloat.Globals;
+namespace SharpFloat.Helpers {
 
-namespace SharpFloat.ExtF80 {
+    public partial struct UInt128 {
 
-    public partial struct ExtF80 : IEquatable<ExtF80> {
-
-        public static bool operator ==(ExtF80 l, ExtF80 r) {
-            if (IsNaNExtF80UI(l.signExp, l.signif) || IsNaNExtF80UI(r.signExp, r.signif)) {
-
-                if (IsSigNaNExtF80UI(l.signExp, l.signif) || IsSigNaNExtF80UI(r.signExp, r.signif)) {
-                    Settings.Raise(ExceptionFlags.Invalid);
-                }
-
-                return false;
-            }
-
-            return //
-                (l.signif == r.signif)
-                && ((l.signExp == r.signExp) || (l.signif == 0 && 0 == ((l.signExp | r.signExp) & 0x7FFF)));
+        public static UInt128 Add128(ulong a64, ulong a0, ulong b64, ulong b0) {
+            var v0 = a0 + b0;
+            var v64 = a64 + b64 + (v0 < a0 ? 1UL : 0UL);
+            return new UInt128(v64, v0);
         }
-
-        /// <summary>
-        ///     check for equality
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj) {
-            if (obj is ExtF80 e)
-                return e == this;
-            return false;
-        }
-
-        public bool Equals(ExtF80 other)
-            => this == other;
-
-        public override int GetHashCode()
-            => (signExp.GetHashCode() * 397) ^ signif.GetHashCode();
     }
-
 }

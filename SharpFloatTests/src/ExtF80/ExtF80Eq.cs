@@ -1,7 +1,7 @@
 ﻿using SharpFloatTests.Common;
 using E = SharpFloat.ExtF80.ExtF80;
 
-namespace SharpFloatTests.src.ExtF80 {
+namespace SharpFloatTests.ExtF80 {
     public class ExtF80Eq {
 
         [TestCase]
