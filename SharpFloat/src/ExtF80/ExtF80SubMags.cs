@@ -69,7 +69,7 @@ namespace SharpFloat.ExtF80 {
                     return new ExtF80((ushort)uiZ.v64, uiZ.v0);
                 }
                 Settings.Raise(ExceptionFlags.Invalid);
-                return new ExtF80(DefaultNaNExtF80UI64, DefaultNaNExtF80UI0);
+                return new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
             }
 
             var expZ = expA;

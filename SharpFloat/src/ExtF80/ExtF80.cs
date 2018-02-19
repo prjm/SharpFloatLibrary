@@ -31,6 +31,8 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using SharpFloat.Helpers;
+
 namespace SharpFloat.ExtF80 {
 
     /// <summary>
@@ -39,14 +41,22 @@ namespace SharpFloat.ExtF80 {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     default NaN value
+        /// </summary>
+        public static readonly ExtF80 DefaultNaN
+            = new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
+
+        /// <summary>
         ///     default NaN: exponent
         /// </summary>
-        public const ushort DefaultNaNExtF80UI64 = 0xFFFF;
+        public const ushort DefaultNaNExponent
+            = 0xFFFF;
 
         /// <summary>
         ///     default NaN: significant
         /// </summary>
-        public const ulong DefaultNaNExtF80UI0 = 0xC000000000000000UL;
+        public const ulong DefaultNaNSignificant
+            = 0xC000000000000000UL;
 
         /// <summary>
         ///     exponent and sign
@@ -67,5 +77,11 @@ namespace SharpFloat.ExtF80 {
             signExp = signedExponent;
             signif = significant;
         }
+
+        /// <summary>
+        ///     <c>true</c> if this number is negative
+        /// </summary>
+        public bool IsNegative
+            => signExp.SignExtF80UI64();
     }
 }

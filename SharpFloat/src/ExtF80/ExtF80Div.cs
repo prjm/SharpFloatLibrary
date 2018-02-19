@@ -75,8 +75,7 @@ namespace SharpFloat.ExtF80 {
             expB = uiB64.ExpExtF80UI64();
             sigB = uiB0;
             signZ = signA ^ signB;
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
+
             if (expA == 0x7FFF) {
                 if ((sigA & 0x7FFFFFFFFFFFFFFFUL) != 0)
                     goto propagateNaN;
@@ -178,8 +177,8 @@ namespace SharpFloat.ExtF80 {
         *------------------------------------------------------------------------*/
         invalid:
             Settings.Raise(ExceptionFlags.Invalid);
-            uiZ64 = DefaultNaNExtF80UI64;
-            uiZ0 = DefaultNaNExtF80UI0;
+            uiZ64 = DefaultNaNExponent;
+            uiZ0 = DefaultNaNSignificant;
             goto uiZ;
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
