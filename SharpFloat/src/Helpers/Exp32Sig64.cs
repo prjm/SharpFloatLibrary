@@ -33,12 +33,26 @@
 
 namespace SharpFloat.Helpers {
 
-    public struct Exp32Sig64 {
+    /// <summary>
+    ///     helper structure: 32-bit exponent and 64-bit significant
+    /// </summary>
+    public readonly struct Exp32Sig64 {
 
+        /// <summary>
+        ///     exponent
+        /// </summary>
         public readonly int exp;
 
+        /// <summary>
+        ///     significant
+        /// </summary>
         public readonly ulong sig;
 
+        /// <summary>
+        ///     create a new helper structure
+        /// </summary>
+        /// <param name="aExp">exponent</param>
+        /// <param name="aSig">significant</param>
         public Exp32Sig64(int aExp, ulong aSig) {
             exp = aExp;
             sig = aSig;

@@ -31,13 +31,55 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
+
 namespace SharpFloat.Helpers {
 
-    public partial struct UInt128 {
+    public readonly partial struct UInt128 : IComparable<UInt128> {
 
-        public static bool Le128(ulong a64, ulong a0, ulong b64, ulong b0) {
-            return (a64 < b64) || ((a64 == b64) && (a0 <= b0));
-        }
+        /// <summary>
+        ///     compare this value to another 128bit integer
+        /// </summary>
+        /// <param name="other">other value</param>
+        /// <returns><c>-1</c> if this one is smaller, <c>1</c> if the other value is smaller, <c>0</c> if the values are equal</returns>
+        public int CompareTo(UInt128 other)
+            => this <= other ? this >= other ? 0 : -1 : 1;
+
+        /// <summary>
+        ///     test if the first operand is less than the second operand
+        /// </summary>
+        /// <param name="a">first operand</param>
+        /// <param name="b">second operand</param>
+        /// <returns><c>true</c> if a is less than b</returns>
+        public static bool operator <(UInt128 a, UInt128 b)
+            => (a.v64 < b.v64) || ((a.v64 == b.v64) && (a.v0 < b.v0));
+
+        /// <summary>
+        ///     test if the first operand is less than or equal the second operand
+        /// </summary>
+        /// <param name="a">first operand</param>
+        /// <param name="b">second operand</param>
+        /// <returns><c>true</c> if a is less than or equals b</returns>
+        public static bool operator <=(UInt128 a, UInt128 b)
+            => (a.v64 < b.v64) || ((a.v64 == b.v64) && (a.v0 <= b.v0));
+
+        /// <summary>
+        ///     test if the first operand is greater than or equal the second operand
+        /// </summary>
+        /// <param name="a">first operand</param>
+        /// <param name="b">second operand</param>
+        /// <returns><c>true</c> if a is greater than or equals b</returns>
+        public static bool operator >=(UInt128 a, UInt128 b)
+            => (a.v64 > b.v64) || ((a.v64 == b.v64) && (a.v0 >= b.v0));
+
+        /// <summary>
+        ///     test if the first operand is greater than the second operand
+        /// </summary>
+        /// <param name="a">first operand</param>
+        /// <param name="b">second operand</param>
+        /// <returns><c>true</c> if a is greater than b</returns>
+        public static bool operator >(UInt128 a, UInt128 b)
+            => (a.v64 > b.v64) || ((a.v64 == b.v64) && (a.v0 > b.v0));
 
     }
 }

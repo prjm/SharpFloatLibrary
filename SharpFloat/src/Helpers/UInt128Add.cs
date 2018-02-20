@@ -34,12 +34,19 @@
 
 namespace SharpFloat.Helpers {
 
-    public partial struct UInt128 {
+    public readonly partial struct UInt128 {
 
-        public static UInt128 Add128(ulong a64, ulong a0, ulong b64, ulong b0) {
-            var v0 = a0 + b0;
-            var v64 = a64 + b64 + (v0 < a0 ? 1UL : 0UL);
+        /// <summary>
+        ///     add two 128-bit integers
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static UInt128 operator +(UInt128 a, UInt128 b) {
+            var v0 = a.v0 + b.v0;
+            var v64 = a.v64 + b.v64 + (v0 < a.v0 ? 1UL : 0UL);
             return new UInt128(v64, v0);
         }
+
     }
 }

@@ -33,10 +33,18 @@
 
 namespace SharpFloat.Helpers {
 
+    /// <summary>
+    ///     helper function for byte values
+    /// </summary>
     public static partial class ByteHelpers {
 
-        public static byte CountLeadingZeroes(this byte v)
-            => lookup[v];
+        /// <summary>
+        ///     count number of leading zeros in a byte using a lookup table
+        /// </summary>
+        /// <param name="value">byte to look at</param>
+        /// <returns>number of leading zeros</returns>
+        public static byte CountLeadingZeroes(this byte value)
+            => lookup[value];
 
         private static byte[] lookup = new byte[256] {
             /* 000 = */ 8,

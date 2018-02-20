@@ -139,7 +139,7 @@ namespace SharpFloat.ExtF80 {
                 rem = UInt128.Sub128(rem.v64, rem.v0, term.v64, term.v0);
                 if (0 != (rem.v64 & 0x8000000000000000UL)) {
                     --q;
-                    rem = UInt128.Add128(rem.v64, rem.v0, sigB >> 32, sigB << 32);
+                    rem = rem + new UInt128(sigB >> 32, sigB << 32);
                 }
                 sigZ = (sigZ << 29) + q;
             }
@@ -152,9 +152,9 @@ namespace SharpFloat.ExtF80 {
                 term = UInt128.ShortShiftLeft128(0, sigB, 32);
                 if (0 != (rem.v64 & 0x8000000000000000UL)) {
                     --q;
-                    rem = UInt128.Add128(rem.v64, rem.v0, term.v64, term.v0);
+                    rem = rem + term;
                 }
-                else if (UInt128.Le128(term.v64, term.v0, rem.v64, rem.v0)) {
+                else if (term <= rem) {
                     ++q;
                     rem = UInt128.Sub128(rem.v64, rem.v0, term.v64, term.v0);
                 }

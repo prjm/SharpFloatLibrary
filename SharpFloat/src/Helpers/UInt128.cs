@@ -36,7 +36,7 @@ namespace SharpFloat.Helpers {
     /// <summary>
     ///     128-bit unsigned integer helper structure
     /// </summary>
-    public partial struct UInt128 {
+    public readonly partial struct UInt128 {
 
         /// <summary>
         ///     lower half (bits 0 to 63)
@@ -57,7 +57,6 @@ namespace SharpFloat.Helpers {
             v64 = a64;
             v0 = a0;
         }
-
 
     }
 }
