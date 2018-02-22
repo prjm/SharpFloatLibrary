@@ -15,12 +15,12 @@ namespace SharpFloatTests.ExtF80 {
 
         [TestCase]
         public void TestIsSignalingNaNValue() {
-            Assert.EqualBool(false, IsSigNaNExtF80UI(0, 0));
-            Assert.EqualBool(false, IsSigNaNExtF80UI(0, 0));
-            Assert.EqualBool(false, IsSigNaNExtF80UI(0x7FFF, 0x4000000000000000));
-            Assert.EqualBool(false, IsSigNaNExtF80UI(0x7FF0, 0x3FFFFFFFFFFFFFFF));
-            Assert.EqualBool(true, IsSigNaNExtF80UI(0x7FFF, 0x3FFFFFFFFFFFFFFF));
-            Assert.EqualBool(true, IsSigNaNExtF80UI(0x7FFF, 0x3FFFFFFFFFFFFFF0));
+            Assert.EqualBool(false, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0, 0)));
+            Assert.EqualBool(false, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0, 0)));
+            Assert.EqualBool(false, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0x7FFF, 0x4000000000000000)));
+            Assert.EqualBool(false, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0x7FF0, 0x3FFFFFFFFFFFFFFF)));
+            Assert.EqualBool(true, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0x7FFF, 0x3FFFFFFFFFFFFFFF)));
+            Assert.EqualBool(true, IsSigNaNExtF80UI(new SharpFloat.ExtF80.ExtF80(0x7FFF, 0x3FFFFFFFFFFFFFF0)));
         }
     }
 }

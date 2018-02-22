@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -51,7 +52,10 @@ namespace SharpFloatTestFloatRunner.Common {
                         lineCount++;
                     }
                     catch (Exception e) {
-                        ProcessLine(line);
+                        if (Debugger.IsAttached) {
+                            Debugger.Break();
+                            ProcessLine(line);
+                        }
                         throw new InvalidComputationException(lineCount, line, e);
                     }
                 }
@@ -97,7 +101,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
-        protected static void AssertEqual(ExtF80 expected, ExtF80 actual) {
+        protected static void AssertEqual(in ExtF80 expected, in ExtF80 actual) {
             if (expected.signExp != actual.signExp)
                 throw new NumbersNotEqualException(expected.signExp, actual.signExp);
             if (expected.signif != actual.signif)

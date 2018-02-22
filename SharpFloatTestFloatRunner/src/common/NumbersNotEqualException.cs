@@ -26,7 +26,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
         public NumbersNotEqualException(ulong expected, ulong actual)
-            : base($"Expected value: {expected:X}. Actual value {actual:X}.") { }
+            : base($"Expected value: {expected:X16}. Actual value {actual:X16}.") { }
 
 
         /// <summary>

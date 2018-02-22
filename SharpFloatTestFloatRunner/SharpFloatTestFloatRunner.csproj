@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="data\ExtF80\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SharpFloat\SharpFloat.csproj" />
   </ItemGroup>
 
