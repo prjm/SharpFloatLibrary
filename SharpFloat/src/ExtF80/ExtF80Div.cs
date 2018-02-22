@@ -60,7 +60,6 @@ namespace SharpFloat.ExtF80 {
             uint q;
             UInt128 term;
             ulong sigZExtra;
-            UInt128 uiZ;
             ushort uiZ64;
             ulong uiZ0;
 
@@ -169,10 +168,7 @@ namespace SharpFloat.ExtF80 {
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         propagateNaN:
-            uiZ = UInt128.PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
-            uiZ64 = (ushort)uiZ.v64;
-            uiZ0 = uiZ.v0;
-            goto uiZ;
+            return UInt128.PropagateNaNExtF80UI(a, b);
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         invalid:

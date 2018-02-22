@@ -47,10 +47,12 @@ namespace SharpFloat.ExtF80 {
         /// <param name="b">second operand</param>
         /// <returns>sum</returns>
         public static ExtF80 operator +(ExtF80 a, ExtF80 b) {
-            if (a.IsNegative == b.IsNegative)
-                return AddMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, a.IsNegative);
+            var (signA, signB) = (a.IsNegative, b.IsNegative);
+
+            if (signA == signB)
+                return AddMagsExtF80(a, b, signA);
             else
-                return SubMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, a.IsNegative);
+                return SubMagsExtF80(a, b, signA);
         }
 
     }

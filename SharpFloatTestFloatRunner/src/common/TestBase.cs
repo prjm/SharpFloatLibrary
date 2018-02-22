@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SharpFloat.Globals;
@@ -53,6 +54,7 @@ namespace SharpFloatTestFloatRunner.Common {
         public void Run(string dir) {
             foreach (var entry in GetTestEntries()) {
                 Console.WriteLine(entry.Name.ToUpperInvariant());
+                var w = new Stopwatch();
 
                 foreach (var roundingMode in Enum.GetValues(typeof(RoundingMode)).Cast<RoundingMode>()) {
                     var testFileName = entry.Name + "_" + GetRoundingModeAsString(roundingMode) + ".zip";
@@ -62,8 +64,10 @@ namespace SharpFloatTestFloatRunner.Common {
 
                     Console.Write($"\t{testFileName}");
                     Settings.RoundingMode = roundingMode;
+                    w.Start();
                     entry.Run(path);
-                    Console.WriteLine(" [OK]");
+                    w.Stop();
+                    Console.WriteLine($" [OK] {w.ElapsedTicks}");
                 }
             }
         }

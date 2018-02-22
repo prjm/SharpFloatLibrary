@@ -34,12 +34,16 @@
 
 namespace SharpFloat.Helpers {
 
+    public readonly partial struct UInt128 {
 
-    public partial struct UInt128 {
-
+        /// <summary>
+        ///     multiply and scale an integral value
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static UInt128 Mul64ByShifted32To128(ulong a, uint b) {
-            ulong mid;
-            mid = (uint)a * b;
+            ulong mid = (uint)a * b;
             var v0 = mid << 32;
             var v64 = ((uint)(a >> 32)) * b + (mid >> 32);
             return new UInt128(v64, v0);

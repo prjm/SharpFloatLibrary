@@ -32,47 +32,50 @@
  */
 
 using SharpFloat.Globals;
+using E = SharpFloat.ExtF80.ExtF80;
 
 namespace SharpFloat.Helpers {
 
     public partial struct UInt128 {
 
-        public static UInt128 PropagateNaNExtF80UI(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0) {
-            var isSigNaNA = ExtF80.ExtF80.IsSigNaNExtF80UI(uiA64, uiA0);
-            var isSigNaNB = ExtF80.ExtF80.IsSigNaNExtF80UI(uiB64, uiB0);
-            var uiNonsigA0 = uiA0 | 0xC000000000000000UL;
-            var uiNonsigB0 = uiB0 | 0xC000000000000000UL;
+        public static E PropagateNaNExtF80UI(in E a, in E b) {
+            var isSigNaNA = ExtF80.ExtF80.IsSigNaNExtF80UI(a);
+            var isSigNaNB = ExtF80.ExtF80.IsSigNaNExtF80UI(b);
+
+            var uiNonsigA0 = a.signif | 0xC000000000000000UL;
+            var uiNonsigB0 = b.signif | 0xC000000000000000UL;
 
             if (isSigNaNA | isSigNaNB) {
                 Settings.Raise(ExceptionFlags.Invalid);
                 if (isSigNaNA) {
                     if (!isSigNaNB) {
-                        if (ExtF80.ExtF80.IsNaNExtF80UI(uiB64, uiB0))
-                            return new UInt128(uiB64, uiNonsigB0);
-                        return new UInt128(uiA64, uiNonsigA0);
+                        if (ExtF80.ExtF80.IsNaNExtF80UI(b.signExp, b.signif))
+                            return new E(b.signExp, uiNonsigB0);
+                        return new E(a.signExp, uiNonsigA0);
                     }
                 }
                 else {
-                    if (ExtF80.ExtF80.IsNaNExtF80UI(uiA64, uiA0))
-                        return new UInt128(uiA64, uiNonsigA0);
-                    return new UInt128(uiB64, uiNonsigB0);
+                    if (ExtF80.ExtF80.IsNaNExtF80UI(a.signExp, a.signif))
+                        return new E(a.signExp, uiNonsigA0);
+                    return new E(b.signExp, uiNonsigB0);
                 }
             }
 
-            var uiMagA64 = (ushort)(uiA64 & 0x7FFF);
-            var uiMagB64 = (ushort)(uiB64 & 0x7FFF);
+            var uiMagA64 = (ushort)(a.signExp & 0x7FFF);
+            var uiMagB64 = (ushort)(b.signExp & 0x7FFF);
 
             if (uiMagA64 < uiMagB64)
-                return new UInt128(uiB64, uiNonsigB0);
+                return new E(b.signExp, uiNonsigB0);
             if (uiMagB64 < uiMagA64)
-                return new UInt128(uiA64, uiNonsigA0);
-            if (uiA0 < uiB0)
-                return new UInt128(uiB64, uiNonsigB0);
-            if (uiB0 < uiA0)
-                return new UInt128(uiA64, uiNonsigA0);
-            if (uiA64 < uiB64)
-                return new UInt128(uiA64, uiNonsigA0);
-            return new UInt128(uiB64, uiNonsigB0);
+                return new E(a.signExp, uiNonsigA0);
+            if (a.signif < b.signif)
+                return new E(b.signExp, uiNonsigB0);
+            if (b.signif < a.signif)
+                return new E(a.signExp, uiNonsigA0);
+            if (a.signExp < b.signExp)
+                return new E(a.signExp, uiNonsigA0);
+
+            return new E(b.signExp, uiNonsigB0);
         }
     }
 }

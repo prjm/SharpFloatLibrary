@@ -49,13 +49,12 @@ namespace SharpFloat.ExtF80 {
         /// <summary>
         ///     test if ExtF80 number is a signaling NaN
         /// </summary>
-        /// <param name="uiA64">exponent</param>
-        /// <param name="uiA0">significant</param>
+        /// <param name=""></param>
         /// <returns></returns>
-        public static bool IsSigNaNExtF80UI(ushort uiA64, ulong uiA0)
-            => ((((uiA64) & 0x7FFF) == 0x7FFF) &&
-                (0 == (uiA0 & 0x4000000000000000UL)) &&
-                (0 != (uiA0 & 0x3FFFFFFFFFFFFFFFUL)));
+        public static bool IsSigNaNExtF80UI(in ExtF80 a)
+            => ((((a.signExp) & 0x7FFF) == 0x7FFF) &&
+                (0 == (a.signif & 0x4000000000000000UL)) &&
+                (0 != (a.signif & 0x3FFFFFFFFFFFFFFFUL)));
     }
 
 }

@@ -39,34 +39,33 @@ namespace SharpFloat.ExtF80 {
 
     public partial struct ExtF80 {
 
-        private static ExtF80 SubMagsExtF80(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0, bool signZ) {
-            var expA = uiA64.ExpExtF80UI64();
-            var sigA = uiA0;
-            var expB = uiB64.ExpExtF80UI64();
-            var sigB = uiB0;
+        private static ExtF80 SubMagsExtF80(ExtF80 a, ExtF80 b, bool signZ) {
+            var expA = a.signExp.ExpExtF80UI64();
+            var sigA = a.signif;
+            var expB = b.signExp.ExpExtF80UI64();
+            var sigB = b.signif;
             var expDiff = expA - expB;
 
             if (0 < expDiff) {
-                return SubLargerAndSmallerExponent(uiA64, uiA0, uiB64, uiB0, expA, expB, signZ, expDiff);
+                return SubLargerAndSmallerExponent(a, b, expA, expB, signZ, expDiff);
             }
             else if (expDiff < 0) {
-                return SubSmallAndLargerExponent(uiA64, uiA0, uiB64, uiB0, expA, expB, signZ, expDiff);
+                return SubSmallAndLargerExponent(a, b, expA, expB, signZ, expDiff);
             }
             else {
-                return SumSameExponents(uiA64, uiA0, uiB64, uiB0, expA, expB, signZ, expDiff);
+                return SumSameExponents(a, b, expA, expB, signZ, expDiff);
             }
         }
 
-        private static ExtF80 SumSameExponents(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0, ushort expA, ushort expB, bool signZ, int expDiff) {
-            var sigA = uiA0;
-            var sigB = uiB0;
+        private static ExtF80 SumSameExponents(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+            var sigA = a.signif;
+            var sigB = b.signif;
             var sigExtra = 0UL;
             UInt128 sig128;
 
             if (expA == 0x7FFF) {
                 if (0 != ((sigA | sigB) & 0x7FFFFFFFFFFFFFFFUL)) {
-                    var uiZ = UInt128.PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
-                    return new ExtF80((ushort)uiZ.v64, uiZ.v0);
+                    return UInt128.PropagateNaNExtF80UI(a, b);
                 }
                 Settings.Raise(ExceptionFlags.Invalid);
                 return new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
@@ -91,16 +90,15 @@ namespace SharpFloat.ExtF80 {
             return new ExtF80(0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum), 0);
         }
 
-        private static ExtF80 SubSmallAndLargerExponent(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0, ushort expA, ushort expB, bool signZ, int expDiff) {
-            var sigA = uiA0;
-            var sigB = uiB0;
+        private static ExtF80 SubSmallAndLargerExponent(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+            var sigA = a.signif;
+            var sigB = b.signif;
             var sigExtra = 0UL;
             UInt128 sig128;
 
             if (expB == 0x7FFF) {
                 if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0) {
-                    var uiZ = UInt128.PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
-                    return new ExtF80((ushort)uiZ.v64, uiZ.v0);
+                    return UInt128.PropagateNaNExtF80UI(a, b);
                 }
                 return new ExtF80(0x7FFF.PackToExtF80UI64(((signZ ? 1 : 0) ^ 1) != 0), 0x8000000000000000UL);
             }
@@ -122,18 +120,17 @@ namespace SharpFloat.ExtF80 {
             return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
 
-        private static ExtF80 SubLargerAndSmallerExponent(ushort uiA64, ulong uiA0, ushort uiB64, ulong uiB0, ushort expA, ushort expB, bool signZ, int expDiff) {
-            var sigA = uiA0;
-            var sigB = uiB0;
+        private static ExtF80 SubLargerAndSmallerExponent(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+            var sigA = a.signif;
+            var sigB = b.signif;
             var sigExtra = 0UL;
             UInt128 sig128;
 
             if (expA == 0x7FFF) {
                 if ((sigA & 0x7FFFFFFFFFFFFFFFUL) != 0) {
-                    var uiZ = UInt128.PropagateNaNExtF80UI(uiA64, uiA0, uiB64, uiB0);
-                    return new ExtF80((ushort)uiZ.v64, uiZ.v0);
+                    return UInt128.PropagateNaNExtF80UI(a, b);
                 }
-                return new ExtF80(uiA64, uiA0);
+                return a;
             }
 
             if (expB == 0) {

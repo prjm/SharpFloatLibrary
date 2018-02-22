@@ -48,9 +48,9 @@ namespace SharpFloat.ExtF80 {
             var signB = b.signExp.SignExtF80UI64();
 
             if (signA == signB)
-                return SubMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
+                return SubMagsExtF80(a, b, signA);
             else
-                return AddMagsExtF80(a.signExp, a.signif, b.signExp, b.signif, signA);
+                return AddMagsExtF80(a, b, signA);
         }
 
     }
