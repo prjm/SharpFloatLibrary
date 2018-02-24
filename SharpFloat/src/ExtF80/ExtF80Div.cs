@@ -128,7 +128,7 @@ namespace SharpFloat.ExtF80 {
             sigZ = 0;
             ix = 2;
             for (; ; ) {
-                q64 = (uint)(rem.v64 >> 2) * recip32;
+                q64 = ((ulong)(uint)(rem.v64 >> 2)) * recip32;
                 q = (uint)((q64 + 0x80000000) >> 32);
                 --ix;
                 if (ix < 0)
