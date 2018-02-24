@@ -77,9 +77,8 @@ namespace SharpFloat.ExtF80 {
                     doIncrement = (0x8000000000000000UL <= sigExtra);
                     if (roundingMode != RoundingMode.NearEven && roundingMode != RoundingMode.NearMaximumMagnitude) {
                         doIncrement =
-                            (((roundingMode
-                                 == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) ? 1UL : 0UL)
-                                & sigExtra) != 0;
+                            (((roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) ? true : false)
+                                && sigExtra != 0);
                     }
 
                     if (doIncrement) {
