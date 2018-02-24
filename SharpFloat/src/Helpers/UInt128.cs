@@ -31,11 +31,14 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System.Diagnostics;
+
 namespace SharpFloat.Helpers {
 
     /// <summary>
     ///     128-bit unsigned integer helper structure
     /// </summary>
+    [DebuggerDisplay("v64 = {v64}, v0 = {v0}")]
     public readonly partial struct UInt128 {
 
         /// <summary>

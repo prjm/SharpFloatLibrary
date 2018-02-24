@@ -38,14 +38,12 @@ namespace SharpFloat.Helpers {
         /// <summary>
         ///     subtract two 128-bit numbers
         /// </summary>
-        /// <param name="a64"></param>
-        /// <param name="a0"></param>
-        /// <param name="b64"></param>
-        /// <param name="b0"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
-        public static UInt128 Sub128(ulong a64, ulong a0, ulong b64, ulong b0)
+        public static UInt128 operator -(UInt128 a, UInt128 b)
             => new UInt128(//
-                    a64 - b64 - ((a0 < b0) ? 1UL : 0UL),    //
-                    a0 - b0);
+                    a.v64 - b.v64 - ((a.v0 < b.v0) ? 1UL : 0UL),    //
+                    a.v0 - b.v0);
     }
 }

@@ -28,9 +28,12 @@ namespace SharpFloatTests.Helpers {
 
         [TestCase]
         public void Test128Sub() {
-            Assert.EqualULong(220, UInt128.Sub128(0, 320, 0, 100).v0);
-            Assert.EqualULong(18446744073709551516, UInt128.Sub128(0, 0, 0, 100).v0);
-            Assert.EqualULong(98, UInt128.Sub128(99, 320, 1, 100).v64);
+            UInt128 s(ulong a64, ulong a0, ulong b64, ulong b0)
+                => new UInt128(a64, a0) - new UInt128(b64, b0);
+
+            Assert.EqualULong(220, s(0, 320, 0, 100).v0);
+            Assert.EqualULong(18446744073709551516, s(0, 0, 0, 100).v0);
+            Assert.EqualULong(98, s(99, 320, 1, 100).v64);
         }
 
         [TestCase]

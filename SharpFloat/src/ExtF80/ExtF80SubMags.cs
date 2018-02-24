@@ -77,13 +77,13 @@ namespace SharpFloat.ExtF80 {
             sigExtra = 0UL;
 
             if (sigB < sigA) {
-                sig128 = UInt128.Sub128(sigA, 0, sigB, sigExtra);
+                sig128 = new UInt128(sigA, 0) - new UInt128(sigB, sigExtra);
                 return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
             if (sigA < sigB) {
                 signZ = !signZ;
-                sig128 = UInt128.Sub128(sigB, 0, sigA, sigExtra);
+                sig128 = new UInt128(sigB, 0) - new UInt128(sigA, sigExtra);
                 return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
@@ -109,14 +109,14 @@ namespace SharpFloat.ExtF80 {
             }
 
             if (expA != 0 || expDiff != 0) {
-                sig128 = UInt128.ShiftRightJam128(sigA, 0, -expDiff);
+                sig128 = new UInt128(sigA, 0).ShiftRightJam128(-expDiff);
                 sigA = sig128.v64;
                 sigExtra = sig128.v0;
             }
 
             var expZ = expB;
             signZ = !signZ;
-            sig128 = UInt128.Sub128(sigB, 0, sigA, sigExtra);
+            sig128 = new UInt128(sigB, 0) - new UInt128(sigA, sigExtra);
             return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
 
@@ -139,13 +139,13 @@ namespace SharpFloat.ExtF80 {
             }
 
             if (expB != 0 || expDiff != 0) {
-                sig128 = UInt128.ShiftRightJam128(sigB, 0, expDiff);
+                sig128 = new UInt128(sigB, 0).ShiftRightJam128(expDiff);
                 sigB = sig128.v64;
                 sigExtra = sig128.v0;
             }
 
             var expZ = expA;
-            sig128 = UInt128.Sub128(sigA, 0, sigB, sigExtra);
+            sig128 = new UInt128(sigA, 0) - new UInt128(sigB, sigExtra);
             return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
     }
