@@ -34,7 +34,7 @@
 using System.Diagnostics;
 using SharpFloat.Helpers;
 
-namespace SharpFloat.ExtF80 {
+namespace SharpFloat.FloatingPoint {
 
     /// <summary>
     ///     type definition for 80-bit floating point arithmetics

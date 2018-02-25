@@ -17,8 +17,8 @@ namespace SharpFloatTests.Helpers {
             ushort ns64 = 0x7FFF; // non signaling nan
             ulong ns0 = 0x4000000000000000;
 
-            SharpFloat.ExtF80.ExtF80 f(ushort v64, ulong v0) {
-                return new SharpFloat.ExtF80.ExtF80(v64, v0);
+            SharpFloat.FloatingPoint.ExtF80 f(ushort v64, ulong v0) {
+                return new SharpFloat.FloatingPoint.ExtF80(v64, v0);
             };
 
             Settings.ClearFlags();

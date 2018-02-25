@@ -7,15 +7,15 @@ namespace SharpFloatTests.src.ExtF80 {
 
         [TestCase]
         public void TestDivisions() {
-            var v1 = new SharpFloat.ExtF80.ExtF80(0xB687, 0x801003FFFFFFFFFE);
-            var v2 = new SharpFloat.ExtF80.ExtF80(0xC04C, 0xFFFFFFFFFFFFBFF7);
+            var v1 = new SharpFloat.FloatingPoint.ExtF80(0xB687, 0x801003FFFFFFFFFE);
+            var v2 = new SharpFloat.FloatingPoint.ExtF80(0xC04C, 0xFFFFFFFFFFFFBFF7);
             var v3 = v1 / v2;
             Assert.EqualUShort(0x3639, v3.signExp);
             Assert.EqualULong(0x8010040000002007, v3.signif);
 
             Settings.RoundingMode = RoundingMode.Minimum;
-            v1 = new SharpFloat.ExtF80.ExtF80(0x0000, 0x0000000000000001UL);
-            v2 = new SharpFloat.ExtF80.ExtF80(0xC000, 0x8000000000000000UL);
+            v1 = new SharpFloat.FloatingPoint.ExtF80(0x0000, 0x0000000000000001UL);
+            v2 = new SharpFloat.FloatingPoint.ExtF80(0xC000, 0x8000000000000000UL);
             v3 = v1 / v2;
             Assert.EqualUShort(0x8000, v3.signExp);
             Assert.EqualULong(0x0000000000000001UL, v3.signif);

@@ -6,8 +6,8 @@ namespace SharpFloatTests.ExtF80 {
 
     public class TestExtF80RoundPack {
 
-        private SharpFloat.ExtF80.ExtF80 Rp80(bool sign, int exp, ulong sig, ulong sigExtra)
-            => SharpFloat.ExtF80.ExtF80.RoundPackToExtF80(sign, exp, sig, sigExtra, 80);
+        private SharpFloat.FloatingPoint.ExtF80 Rp80(bool sign, int exp, ulong sig, ulong sigExtra)
+            => SharpFloat.FloatingPoint.ExtF80.RoundPackToExtF80(sign, exp, sig, sigExtra, 80);
 
 
         [TestCase]

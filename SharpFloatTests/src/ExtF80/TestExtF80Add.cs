@@ -1,7 +1,7 @@
 ﻿using SharpFloat.Globals;
 using SharpFloatTests.Common;
 
-using E = SharpFloat.ExtF80.ExtF80;
+using E = SharpFloat.FloatingPoint.ExtF80;
 
 namespace SharpFloatTests.ExtF80 {
 

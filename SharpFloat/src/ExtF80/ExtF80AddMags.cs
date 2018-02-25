@@ -34,7 +34,7 @@
 using SharpFloat.Globals;
 using SharpFloat.Helpers;
 
-namespace SharpFloat.ExtF80 {
+namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 

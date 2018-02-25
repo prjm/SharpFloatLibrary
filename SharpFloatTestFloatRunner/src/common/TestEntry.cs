@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using SharpFloat.ExtF80;
+using SharpFloat.FloatingPoint;
 
 namespace SharpFloatTestFloatRunner.Common {
 
