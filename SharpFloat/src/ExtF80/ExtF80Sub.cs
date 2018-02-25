@@ -44,8 +44,8 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="b">second operand</param>
         /// <returns>sum</returns>
         public static ExtF80 operator -(ExtF80 a, ExtF80 b) {
-            var signA = a.signExp.SignExtF80UI64();
-            var signB = b.signExp.SignExtF80UI64();
+            var signA = a.IsNegative;
+            var signB = b.IsNegative;
 
             if (signA == signB)
                 return SubMagsExtF80(a, b, signA);

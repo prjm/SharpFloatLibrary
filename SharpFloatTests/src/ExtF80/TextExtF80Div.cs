@@ -7,6 +7,7 @@ namespace SharpFloatTests.src.ExtF80 {
 
         [TestCase]
         public void TestDivisions() {
+            Settings.RoundingMode = RoundingMode.NearEven;
             var v1 = new SharpFloat.FloatingPoint.ExtF80(0xB687, 0x801003FFFFFFFFFE);
             var v2 = new SharpFloat.FloatingPoint.ExtF80(0xC04C, 0xFFFFFFFFFFFFBFF7);
             var v3 = v1 / v2;

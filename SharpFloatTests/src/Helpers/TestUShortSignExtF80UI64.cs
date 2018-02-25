@@ -1,5 +1,4 @@
-﻿using SharpFloat.Helpers;
-using SharpFloatTests.Common;
+﻿using SharpFloatTests.Common;
 
 namespace SharpFloatTests.Helpers {
 
@@ -7,11 +6,12 @@ namespace SharpFloatTests.Helpers {
 
         [TestCaseAttribute]
         public void TestSignExtF80UI64() {
-            Assert.EqualBool(false, ((ushort)0).SignExtF80UI64());
-            Assert.EqualBool(false, ((ushort)0xFF).SignExtF80UI64());
-            Assert.EqualBool(false, ((ushort)0x7FFF).SignExtF80UI64());
-            Assert.EqualBool(true, ((ushort)0x8000).SignExtF80UI64());
-            Assert.EqualBool(true, ((ushort)0xFFFF).SignExtF80UI64());
+            bool s(ushort v) => new SharpFloat.FloatingPoint.ExtF80(v, 0).IsNegative;
+            Assert.EqualBool(false, s(0));
+            Assert.EqualBool(false, s(0xFF));
+            Assert.EqualBool(false, s(0x7FFF));
+            Assert.EqualBool(true, s(0x8000));
+            Assert.EqualBool(true, s(0xFFFF));
         }
 
     }

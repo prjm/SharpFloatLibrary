@@ -37,7 +37,7 @@ using SharpFloat.Helpers;
 namespace SharpFloat.FloatingPoint {
 
     /// <summary>
-    ///     type definition for 80-bit floating point arithmetics
+    ///     type definition for an 80-bit floating point number
     /// </summary>
     [DebuggerDisplay("signExp = {signExp}, signif = {signif}")]
     public partial struct ExtF80 {
@@ -84,6 +84,6 @@ namespace SharpFloat.FloatingPoint {
         ///     <c>true</c> if this number is negative
         /// </summary>
         public bool IsNegative
-            => signExp.SignExtF80UI64();
+            => (signExp >> 15) != 0;
     }
 }
