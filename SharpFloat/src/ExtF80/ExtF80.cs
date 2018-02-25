@@ -43,7 +43,7 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     default NaN value
+        ///     default NaN (not a number) value
         /// </summary>
         public static readonly ExtF80 DefaultNaN
             = new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
@@ -59,6 +59,24 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         public const ulong DefaultNaNSignificant
             = 0xC000000000000000UL;
+
+        /// <summary>
+        ///     largest exponent value
+        /// </summary>
+        public const ushort MaxExponent
+            = 0x7FFF;
+
+        /// <summary;
+        ///     bitmask: 64 bits
+        /// </summary>
+        public const ulong MaskAll63Bits
+            = 0x7FFFFFFFFFFFFFFFUL;
+
+        /// <summary>
+        ///     bitmask: bit 64
+        /// </summary>
+        public const ulong MaskBit64
+            = 0x8000000000000000UL;
 
         /// <summary>
         ///     exponent and sign
@@ -85,5 +103,12 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         public bool IsNegative
             => (signExp >> 15) != 0;
+
+        /// <summary>
+        ///     unsigned exponent value
+        /// </summary>
+        public ushort UnsignedExponent
+            => (ushort)(signExp & MaxExponent);
+
     }
 }

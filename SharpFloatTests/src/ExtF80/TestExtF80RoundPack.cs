@@ -2,7 +2,7 @@
 using SharpFloat.Globals;
 using SharpFloatTests.Common;
 
-namespace SharpFloatTests.ExtF80 {
+namespace SharpFloatTests.FloatingPoint {
 
     public class TestExtF80RoundPack {
 

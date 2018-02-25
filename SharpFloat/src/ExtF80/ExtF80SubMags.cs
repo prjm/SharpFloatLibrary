@@ -40,9 +40,9 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         private static ExtF80 SubMagsExtF80(ExtF80 a, ExtF80 b, bool signZ) {
-            var expA = a.signExp.ExpExtF80UI64();
+            var expA = a.UnsignedExponent;
             var sigA = a.signif;
-            var expB = b.signExp.ExpExtF80UI64();
+            var expB = b.UnsignedExponent;
             var sigB = b.signif;
             var expDiff = expA - expB;
 

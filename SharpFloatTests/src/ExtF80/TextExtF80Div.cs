@@ -1,7 +1,7 @@
 ﻿using SharpFloat.Globals;
 using SharpFloatTests.Common;
 
-namespace SharpFloatTests.ExtF80 {
+namespace SharpFloatTests.FloatingPoint {
 
     public class TextExtF80Div {
 

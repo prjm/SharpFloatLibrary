@@ -66,12 +66,12 @@ namespace SharpFloat.FloatingPoint {
             uiA64 = a.signExp;
             uiA0 = a.signif;
             signA = a.IsNegative;
-            expA = uiA64.ExpExtF80UI64();
+            expA = a.UnsignedExponent;
             sigA = uiA0;
             uiB64 = b.signExp;
             uiB0 = b.signif;
             signB = b.IsNegative;
-            expB = uiB64.ExpExtF80UI64();
+            expB = b.UnsignedExponent;
             sigB = uiB0;
             signZ = signA ^ signB;
 
