@@ -32,6 +32,7 @@
  */
 
 using System;
+using SharpFloat.FloatingPoint;
 
 namespace SharpFloat.Helpers {
 

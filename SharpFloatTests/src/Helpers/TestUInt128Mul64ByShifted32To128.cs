@@ -1,7 +1,7 @@
 ﻿using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
-namespace SharpFloatTests.src.Helpers {
+namespace SharpFloatTests.Helpers {
     public class TestUInt128Mul64ByShifted32To128 {
 
         [TestCase]

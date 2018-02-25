@@ -31,42 +31,33 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System.Diagnostics;
-using SharpFloat.FloatingPoint;
+using SharpFloat.Globals;
+using SharpFloat.Helpers;
 
-namespace SharpFloat.Helpers {
+namespace SharpFloat.FloatingPoint {
 
-    /// <summary>
-    ///     128-bit unsigned integer helper structure
-    /// </summary>
-    [DebuggerDisplay("v64 = {v64}, v0 = {v0}")]
-    public readonly partial struct UInt128 {
+    public partial struct ExtF80 {
 
-        /// <summary>
-        ///     lower half (bits 0 to 63)
-        /// </summary>
-        public readonly ulong v0;
 
-        /// <summary>
-        ///     upper half (bits 64 to 127)
-        /// </summary>
-        public readonly ulong v64;
+        public static bool operator <(ExtF80 a, ExtF80 b) {
 
-        /// <summary>
-        ///     create a new 128-bit value
-        /// </summary>
-        /// <param name="a64">upper half</param>
-        /// <param name="a0">lower half</param>
-        public UInt128(ulong a64, ulong a0) {
-            v64 = a64;
-            v0 = a0;
+            if (IsNaNExtF80UI(a.signExp, a.signif) || IsNaNExtF80UI(b.signExp, b.signif)) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return false;
+            }
+
+            var signA = a.IsNegative;
+            var signB = b.IsNegative;
+
+            if (signA != signB)
+                return signA && (0 != ((a.signExp | (ulong)b.signExp) & 0x7FFFUL | a.signif | b.signif));
+            else
+                return ((a.signExp != b.signExp) || (a.signif != b.signif)) && (signA ^ (new UInt128(a) < new UInt128(b)));
         }
 
-        /// <summary>
-        ///     create a new 128-bit value
-        /// </summary>
-        /// <param name="a"></param>
-        public UInt128(ExtF80 a) : this(a.signExp, a.signif) { }
+        public static bool operator >(ExtF80 a, ExtF80 b)
+            => b < a;
+
 
     }
 }
