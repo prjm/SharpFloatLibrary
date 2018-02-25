@@ -35,12 +35,8 @@ namespace SharpFloat.Helpers {
 
     public partial struct UInt64Extra {
 
-        public static UInt64Extra ShortShiftRightJam64Extra(ulong a, ulong extra, byte dist) {
-            UInt64Extra z;
-            z.v = a >> dist;
-            z.extra = (a << (-dist & 63)) | (extra != 0 ? 1UL : 0UL);
-            return z;
-        }
+        public static UInt64Extra ShortShiftRightJam64Extra(ulong a, ulong extra, byte dist)
+            => new UInt64Extra(a >> dist, (a << (-dist & 63)) | (extra != 0 ? 1UL : 0UL));
 
 
     }

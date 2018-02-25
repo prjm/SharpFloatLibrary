@@ -38,18 +38,18 @@ namespace SharpFloat.Helpers {
 
 
         public static UInt64Extra ShiftRightJam64Extra(ulong a, ulong extra, int dist) {
-
-            UInt64Extra z;
+            ulong v;
+            ulong e;
             if (dist < 64) {
-                z.v = a >> dist;
-                z.extra = a << (-dist & 63);
+                v = a >> dist;
+                e = a << (-dist & 63);
             }
             else {
-                z.v = 0;
-                z.extra = (dist == 64) ? a : ((a != 0) ? 1UL : 0UL);
+                v = 0;
+                e = (dist == 64) ? a : ((a != 0) ? 1UL : 0UL);
             }
-            z.extra |= (extra != 0) ? 1UL : 0UL;
-            return z;
+            e |= (extra != 0) ? 1UL : 0UL;
+            return new UInt64Extra(v, e);
         }
 
 

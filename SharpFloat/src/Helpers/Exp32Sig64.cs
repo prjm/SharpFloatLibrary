@@ -31,11 +31,14 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System.Diagnostics;
+
 namespace SharpFloat.Helpers {
 
     /// <summary>
     ///     helper structure: 32-bit exponent and 64-bit significant
     /// </summary>
+    [DebuggerDisplay("exp = {exp}, sig = {sig}")]
     public readonly struct Exp32Sig64 {
 
         /// <summary>

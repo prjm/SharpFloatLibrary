@@ -34,17 +34,27 @@
 
 namespace SharpFloat.Helpers {
 
-    public partial struct UInt64Extra {
+    public readonly partial struct UInt64Extra {
 
         /// <summary>
         ///     value
         /// </summary>
-        public ulong v;
+        public readonly ulong v;
 
         /// <summary>
         ///     extra value
         /// </summary>
-        public ulong extra;
+        public readonly ulong extra;
+
+        /// <summary>
+        ///     create a new value with extra value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="extraValue"></param>
+        public UInt64Extra(ulong value, ulong extraValue) {
+            v = value;
+            extra = extraValue;
+        }
 
     }
 }

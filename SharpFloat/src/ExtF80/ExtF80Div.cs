@@ -77,18 +77,20 @@ namespace SharpFloat.ExtF80 {
 
             if (expA == 0x7FFF) {
                 if ((sigA & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    goto propagateNaN;
+                    return UInt128.PropagateNaNExtF80UI(a, b);
+
                 if (expB == 0x7FFF) {
                     if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                        goto propagateNaN;
+                        return UInt128.PropagateNaNExtF80UI(a, b);
+
                     goto invalid;
                 }
                 goto infinity;
             }
             if (expB == 0x7FFF) {
                 if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    goto propagateNaN;
-                goto zero;
+                    return UInt128.PropagateNaNExtF80UI(a, b);
+                return new ExtF80(0.PackToExtF80UI64(signZ), 0);
             }
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
@@ -109,7 +111,7 @@ namespace SharpFloat.ExtF80 {
                 expA = 1;
             if (0 == (sigA & 0x8000000000000000UL)) {
                 if (sigA == 0)
-                    goto zero;
+                    return new ExtF80(0.PackToExtF80UI64(signZ), 0);
                 normExpSig = NormSubnormalSig(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
@@ -167,8 +169,6 @@ namespace SharpFloat.ExtF80 {
             return RoundPackToExtF80(signZ, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
-        propagateNaN:
-            return UInt128.PropagateNaNExtF80UI(a, b);
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
         invalid:
@@ -184,9 +184,6 @@ namespace SharpFloat.ExtF80 {
             goto uiZ;
         /*------------------------------------------------------------------------
         *------------------------------------------------------------------------*/
-        zero:
-            uiZ64 = 0.PackToExtF80UI64(signZ);
-            uiZ0 = 0;
         uiZ:
             return new ExtF80(uiZ64, uiZ0);
         }

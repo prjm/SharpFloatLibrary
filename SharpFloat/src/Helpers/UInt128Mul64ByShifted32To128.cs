@@ -43,7 +43,7 @@ namespace SharpFloat.Helpers {
         /// <param name="b"></param>
         /// <returns></returns>
         public static UInt128 Mul64ByShifted32To128(ulong a, uint b) {
-            ulong mid = (ulong)(uint)a * b;
+            var mid = (ulong)(uint)a * b;
             var v0 = mid << 32;
             var v64 = ((ulong)(uint)(a >> 32)) * b + (mid >> 32);
             return new UInt128(v64, v0);
