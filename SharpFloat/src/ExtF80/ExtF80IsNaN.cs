@@ -38,23 +38,21 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     test if an ExtF80 number is NaN
+        ///     test if this floating pointing number has the special <c>NaN</c> (not a number) value
         /// </summary>
-        /// <param name="a64">exponent</param>
-        /// <param name="a0">significant</param>
-        /// <returns></returns>
-        public static bool IsNaNExtF80UI(ushort a64, ulong a0)
-            => (((a64 & 0x7FFF) == 0x7FFF) && ((a0 & 0x7FFFFFFFFFFFFFFFUL) != 0));
+        /// <returns><c>true</c> if this number is a <c>NaN</c> value</returns>
+        public bool IsNaN
+            => (((signExp & MaxExponent) == MaxExponent) && ((signif & MaskAll63Bits) != 0));
 
         /// <summary>
         ///     test if ExtF80 number is a signaling NaN
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public static bool IsSigNaNExtF80UI(in ExtF80 a)
-            => ((((a.signExp) & 0x7FFF) == 0x7FFF) &&
-                (0 == (a.signif & 0x4000000000000000UL)) &&
-                (0 != (a.signif & 0x3FFFFFFFFFFFFFFFUL)));
+        public bool IsSignalingNaN
+            => ((((signExp) & MaxExponent) == MaxExponent) &&
+                (0 == (signif & MaskBit63)) &&
+                (0 != (signif & MaskAll62Bits)));
     }
 
 }

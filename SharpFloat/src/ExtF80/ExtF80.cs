@@ -63,20 +63,32 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     largest exponent value
         /// </summary>
-        public const ushort MaxExponent
+        private const ushort MaxExponent
             = 0x7FFF;
 
-        /// <summary;
-        ///     bitmask: 64 bits
+        /// <summary>
+        ///     bit mask - 64 bits
         /// </summary>
-        public const ulong MaskAll63Bits
+        private const ulong MaskAll63Bits
             = 0x7FFFFFFFFFFFFFFFUL;
 
         /// <summary>
-        ///     bitmask: bit 64
+        ///     bit mask - 62 bits
         /// </summary>
-        public const ulong MaskBit64
+        private const ulong MaskAll62Bits
+            = 0x3FFFFFFFFFFFFFFFUL;
+
+        /// <summary>
+        ///     bit mask - bit 64
+        /// </summary>
+        private const ulong MaskBit64
             = 0x8000000000000000UL;
+
+        /// <summary>
+        ///     bis mask - bit 63
+        /// </summary>
+        private const ulong MaskBit63
+            = 0x4000000000000000UL;
 
         /// <summary>
         ///     exponent and sign

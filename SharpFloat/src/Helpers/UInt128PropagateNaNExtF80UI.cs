@@ -39,8 +39,8 @@ namespace SharpFloat.Helpers {
     public partial struct UInt128 {
 
         public static E PropagateNaNExtF80UI(in E a, in E b) {
-            var isSigNaNA = FloatingPoint.ExtF80.IsSigNaNExtF80UI(a);
-            var isSigNaNB = FloatingPoint.ExtF80.IsSigNaNExtF80UI(b);
+            var isSigNaNA = a.IsSignalingNaN;
+            var isSigNaNB = b.IsSignalingNaN;
 
             var uiNonsigA0 = a.signif | 0xC000000000000000UL;
             var uiNonsigB0 = b.signif | 0xC000000000000000UL;
@@ -49,13 +49,13 @@ namespace SharpFloat.Helpers {
                 Settings.Raise(ExceptionFlags.Invalid);
                 if (isSigNaNA) {
                     if (!isSigNaNB) {
-                        if (FloatingPoint.ExtF80.IsNaNExtF80UI(b.signExp, b.signif))
+                        if (b.IsNaN)
                             return new E(b.signExp, uiNonsigB0);
                         return new E(a.signExp, uiNonsigA0);
                     }
                 }
                 else {
-                    if (FloatingPoint.ExtF80.IsNaNExtF80UI(a.signExp, a.signif))
+                    if (a.IsNaN)
                         return new E(a.signExp, uiNonsigA0);
                     return new E(b.signExp, uiNonsigB0);
                 }

@@ -39,11 +39,10 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         public static bool operator !=(ExtF80 l, ExtF80 r) {
-            if (IsNaNExtF80UI(l.signExp, l.signif) || IsNaNExtF80UI(r.signExp, r.signif)) {
 
-                if (IsSigNaNExtF80UI(l) || IsSigNaNExtF80UI(r)) {
+            if (l.IsNaN || r.IsNaN) {
+                if (l.IsSignalingNaN || r.IsSignalingNaN)
                     Settings.Raise(ExceptionFlags.Invalid);
-                }
 
                 return true;
             }

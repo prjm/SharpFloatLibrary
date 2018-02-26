@@ -38,11 +38,17 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-
+        /// <summary>
+        ///     check if one number is smaller than the other number
+        /// </summary>
+        /// <param name="a">first number</param>
+        /// <param name="b">second number</param>
+        /// <returns><c>true</c> if the first number is smaller than the second number</returns>
         public static bool operator <(ExtF80 a, ExtF80 b) {
 
-            if (IsNaNExtF80UI(a.signExp, a.signif) || IsNaNExtF80UI(b.signExp, b.signif)) {
-                Settings.Raise(ExceptionFlags.Invalid);
+            if (a.IsNaN || b.IsNaN) {
+                if (a.IsSignalingNaN || b.IsSignalingNaN)
+                    Settings.Raise(ExceptionFlags.Invalid);
                 return false;
             }
 
@@ -55,6 +61,12 @@ namespace SharpFloat.FloatingPoint {
                 return ((a.signExp != b.signExp) || (a.signif != b.signif)) && (signA ^ (new UInt128(a) < new UInt128(b)));
         }
 
+        /// <summary>
+        ///     check if one number is larger than the other number
+        /// </summary>
+        /// <param name="a">first number</param>
+        /// <param name="b">second number</param>
+        /// <returns><c>true</c> if the first number is larger than the second number</returns>
         public static bool operator >(ExtF80 a, ExtF80 b)
             => b < a;
 

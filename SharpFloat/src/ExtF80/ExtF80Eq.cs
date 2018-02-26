@@ -39,13 +39,18 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 : IEquatable<ExtF80> {
 
+        /// <summary>
+        ///     compare two floating point numbers
+        /// </summary>
+        /// <param name="l">left side</param>
+        /// <param name="r">ride side</param>
+        /// <returns><c>true</c> if the numbers are equal</returns>
+        /// <remarks>comparisons with <c>NaN</c> return false</remarks>
         public static bool operator ==(ExtF80 l, ExtF80 r) {
-            if (IsNaNExtF80UI(l.signExp, l.signif) || IsNaNExtF80UI(r.signExp, r.signif)) {
 
-                if (IsSigNaNExtF80UI(l) || IsSigNaNExtF80UI(r)) {
+            if (l.IsNaN || r.IsNaN) {
+                if (l.IsSignalingNaN || r.IsSignalingNaN)
                     Settings.Raise(ExceptionFlags.Invalid);
-                }
-
                 return false;
             }
 
@@ -55,7 +60,7 @@ namespace SharpFloat.FloatingPoint {
         }
 
         /// <summary>
-        ///     check for equality
+        ///     compare this value to another object
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -65,9 +70,18 @@ namespace SharpFloat.FloatingPoint {
             return false;
         }
 
+        /// <summary>
+        ///     compare this value to another floating point value
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(ExtF80 other)
             => this == other;
 
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns>computed hash code</returns>
         public override int GetHashCode()
             => (signExp.GetHashCode() * 397) ^ signif.GetHashCode();
     }
