@@ -31,17 +31,12 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using SharpFloat.Helpers;
-
 namespace SharpFloat.FloatingPoint {
 
-    /// <summary>
-    ///     define add operator
-    /// </summary>
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     add operation for extF80 floats
+        ///     add operator: add two floating point numbers
         /// </summary>
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>

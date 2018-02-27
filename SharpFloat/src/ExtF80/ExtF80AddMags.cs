@@ -39,6 +39,7 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         private static ExtF80 AddMagsExtF80(in ExtF80 a, in ExtF80 b, bool signZ) {
+
             var exponentDifference = a.UnsignedExponent - b.UnsignedExponent;
 
             if (exponentDifference == 0)
