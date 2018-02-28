@@ -20,6 +20,7 @@ namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
         private TestEntry[] entries = new TestEntry[] {
             new ExtF80AddTest(),
             new ExtF80SubTest(),
+            new ExtF80MulTest(),
             new ExtF80DivTest(),
             new ExtF80EqTest(),
             new ExtF80LtTest(),
