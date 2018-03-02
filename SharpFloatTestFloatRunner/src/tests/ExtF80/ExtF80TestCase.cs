@@ -22,6 +22,7 @@ namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
             new ExtF80SubTest(),
             new ExtF80MulTest(),
             new ExtF80DivTest(),
+            new ExtF80RemTest(),
             new ExtF80EqTest(),
             new ExtF80LtTest(),
             new ExtF80LeTest(),
