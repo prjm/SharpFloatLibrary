@@ -51,7 +51,7 @@ namespace SharpFloat.FloatingPoint {
             ExtF80 uZ;
 
             uiA64 = signExp;
-            signUI64 = (ushort)(uiA64 & 1.PackToExtF80UI64(false));
+            signUI64 = (ushort)(uiA64 & 0.PackToExtF80UI64(true));
             exp = UnsignedExponent;
             sigA = signif;
 
