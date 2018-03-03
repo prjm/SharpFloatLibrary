@@ -48,6 +48,12 @@ namespace SharpFloat.FloatingPoint {
             = new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
 
         /// <summary>
+        ///     positive Zero value
+        /// </summary>
+        public static readonly ExtF80 Zero
+            = new ExtF80(0, 0);
+
+        /// <summary>
         ///     default NaN: exponent
         /// </summary>
         public const ushort DefaultNaNExponent
