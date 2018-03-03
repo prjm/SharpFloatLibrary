@@ -109,7 +109,7 @@ namespace SharpFloat.FloatingPoint {
             return NormRoundPackToExtF80(signZ, expZ, sig128Z.v64, sig128Z.v0, Settings.ExtF80RoundingPrecision);
 
         propagateNaN:
-            return UInt128.PropagateNaNExtF80UI(a, b);
+            return PropagateNaN(a, b);
 
         infArg:
             if (0 == magBits) {

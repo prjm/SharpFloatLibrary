@@ -77,11 +77,11 @@ namespace SharpFloat.FloatingPoint {
 
             if (expA == 0x7FFF) {
                 if ((sigA & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    return UInt128.PropagateNaNExtF80UI(a, b);
+                    return PropagateNaN(a, b);
 
                 if (expB == 0x7FFF) {
                     if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                        return UInt128.PropagateNaNExtF80UI(a, b);
+                        return PropagateNaN(a, b);
 
                     goto invalid;
                 }
@@ -89,7 +89,7 @@ namespace SharpFloat.FloatingPoint {
             }
             if (expB == 0x7FFF) {
                 if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    return UInt128.PropagateNaNExtF80UI(a, b);
+                    return PropagateNaN(a, b);
                 return new ExtF80(0.PackToExtF80UI64(signZ), 0);
             }
             /*------------------------------------------------------------------------

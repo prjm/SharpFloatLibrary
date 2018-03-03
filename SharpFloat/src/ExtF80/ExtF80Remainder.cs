@@ -185,7 +185,7 @@ namespace SharpFloat.FloatingPoint {
                     signRem, (rem.v64 | rem.v0) != 0 ? expB + 32 : 0, rem.v64, rem.v0, 80);
 
         propagateNaN:
-            uiZ = UInt128.PropagateNaNExtF80UI(a, b);
+            uiZ = PropagateNaN(a, b);
             uiZ64 = uiZ.signExp;
             uiZ0 = uiZ.signif;
             goto uiZ;

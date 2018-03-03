@@ -39,7 +39,7 @@ namespace SharpFloat.FloatingPoint {
     ///     type definition for a <see langword="struct"/> representing an 80-bit floating point number
     /// </summary>
     [DebuggerDisplay("signExp = {signExp}, signif = {signif}")]
-    public partial struct ExtF80 {
+    public readonly partial struct ExtF80 {
 
         /// <summary>
         ///     default NaN (not a number) value

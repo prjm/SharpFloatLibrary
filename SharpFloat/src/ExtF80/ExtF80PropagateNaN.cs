@@ -32,13 +32,12 @@
  */
 
 using SharpFloat.Globals;
-using E = SharpFloat.FloatingPoint.ExtF80;
 
-namespace SharpFloat.Helpers {
+namespace SharpFloat.FloatingPoint {
 
-    public partial struct UInt128 {
+    public partial struct ExtF80 {
 
-        public static E PropagateNaNExtF80UI(in E a, in E b) {
+        public static ExtF80 PropagateNaN(in ExtF80 a, in ExtF80 b) {
             var isSigNaNA = a.IsSignalingNaN;
             var isSigNaNB = b.IsSignalingNaN;
 
@@ -50,14 +49,14 @@ namespace SharpFloat.Helpers {
                 if (isSigNaNA) {
                     if (!isSigNaNB) {
                         if (b.IsNaN)
-                            return new E(b.signExp, uiNonsigB0);
-                        return new E(a.signExp, uiNonsigA0);
+                            return new ExtF80(b.signExp, uiNonsigB0);
+                        return new ExtF80(a.signExp, uiNonsigA0);
                     }
                 }
                 else {
                     if (a.IsNaN)
-                        return new E(a.signExp, uiNonsigA0);
-                    return new E(b.signExp, uiNonsigB0);
+                        return new ExtF80(a.signExp, uiNonsigA0);
+                    return new ExtF80(b.signExp, uiNonsigB0);
                 }
             }
 
@@ -65,17 +64,18 @@ namespace SharpFloat.Helpers {
             var uiMagB64 = (ushort)(b.signExp & 0x7FFF);
 
             if (uiMagA64 < uiMagB64)
-                return new E(b.signExp, uiNonsigB0);
+                return new ExtF80(b.signExp, uiNonsigB0);
             if (uiMagB64 < uiMagA64)
-                return new E(a.signExp, uiNonsigA0);
+                return new ExtF80(a.signExp, uiNonsigA0);
             if (a.signif < b.signif)
-                return new E(b.signExp, uiNonsigB0);
+                return new ExtF80(b.signExp, uiNonsigB0);
             if (b.signif < a.signif)
-                return new E(a.signExp, uiNonsigA0);
+                return new ExtF80(a.signExp, uiNonsigA0);
             if (a.signExp < b.signExp)
-                return new E(a.signExp, uiNonsigA0);
+                return new ExtF80(a.signExp, uiNonsigA0);
 
-            return new E(b.signExp, uiNonsigB0);
+            return new ExtF80(b.signExp, uiNonsigB0);
         }
+
     }
 }

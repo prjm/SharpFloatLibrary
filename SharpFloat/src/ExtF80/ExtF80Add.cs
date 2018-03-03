@@ -36,7 +36,7 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     add operator: add two floating point numbers
+        ///     add operator: add two 80-bit floating point numbers
         /// </summary>
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
