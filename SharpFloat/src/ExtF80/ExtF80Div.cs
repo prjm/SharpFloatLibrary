@@ -38,87 +38,63 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     division: compute a quotient of two 80-bit floating point numbers
+        /// </summary>
+        /// <param name="a">dividend (first operand)</param>
+        /// <param name="b">divisor (second operand)</param>
+        /// <returns>quotient</returns>
         public static ExtF80 operator /(ExtF80 a, ExtF80 b) {
-            ushort uiA64;
-            ulong uiA0;
-            bool signA;
-            int expA;
-            ulong sigA;
-            ushort uiB64;
-            ulong uiB0;
-            bool signB;
-            int expB;
-            ulong sigB;
-            bool signZ;
+            var isNegative = a.IsNegative ^ b.IsNegative;
+
+            if (a.UnsignedExponent == MaxExponent || b.UnsignedExponent == MaxExponent) {
+                return ZeroOrNaNInDivision(a, b, isNegative);
+            }
+
+            var sigA = a.signif;
+            var sigB = b.signif;
+            int expA = a.UnsignedExponent;
+            int expB = b.UnsignedExponent;
             Exp32Sig64 normExpSig;
-            int expZ;
-            UInt128 rem;
-            uint recip32;
-            ulong sigZ;
-            int ix;
-            ulong q64;
-            uint q;
-            UInt128 term;
-            ulong sigZExtra;
-            ushort uiZ64;
-            ulong uiZ0;
 
-            uiA64 = a.signExp;
-            uiA0 = a.signif;
-            signA = a.IsNegative;
-            expA = a.UnsignedExponent;
-            sigA = uiA0;
-            uiB64 = b.signExp;
-            uiB0 = b.signif;
-            signB = b.IsNegative;
-            expB = b.UnsignedExponent;
-            sigB = uiB0;
-            signZ = signA ^ signB;
-
-            if (expA == 0x7FFF) {
-                if ((sigA & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    return PropagateNaN(a, b);
-
-                if (expB == 0x7FFF) {
-                    if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                        return PropagateNaN(a, b);
-
-                    goto invalid;
-                }
-                goto infinity;
-            }
-            if (expB == 0x7FFF) {
-                if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0)
-                    return PropagateNaN(a, b);
-                return new ExtF80(0.PackToExtF80UI64(signZ), 0);
-            }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
             if (expB == 0)
                 expB = 1;
-            if (0 == (sigB & 0x8000000000000000UL)) {
+
+            if (0 == (sigB & MaskBit64)) {
                 if (sigB == 0) {
-                    if (sigA == 0)
-                        goto invalid;
+                    if (sigA == 0) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return DefaultNaN;
+                    }
+
                     Settings.Raise(ExceptionFlags.Infinite);
-                    goto infinity;
+
+                    if (!isNegative)
+                        return Infinity;
+                    else
+                        return NegativeInfinity;
+
                 }
                 normExpSig = NormSubnormalSig(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
+
             if (expA == 0)
                 expA = 1;
-            if (0 == (sigA & 0x8000000000000000UL)) {
+
+            if (0 == (sigA & MaskBit64)) {
                 if (sigA == 0)
-                    return new ExtF80(0.PackToExtF80UI64(signZ), 0);
+                    return new ExtF80(0.PackToExtF80UI64(isNegative), 0);
                 normExpSig = NormSubnormalSig(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
-            expZ = expA - expB + 0x3FFF;
+
+            var expZ = expA - expB + 0x3FFF;
+            UInt128 rem;
+            UInt128 term;
+
             if (sigA < sigB) {
                 --expZ;
                 rem = UInt128.ShortShiftLeft128(0, sigA, 32);
@@ -126,11 +102,14 @@ namespace SharpFloat.FloatingPoint {
             else {
                 rem = UInt128.ShortShiftLeft128(0, sigA, 31);
             }
-            recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
-            sigZ = 0;
-            ix = 2;
+
+            var recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
+            var sigZ = 0UL;
+            var ix = 2;
+            var q = 0U;
+
             for (; ; ) {
-                q64 = ((ulong)(uint)(rem.v64 >> 2)) * recip32;
+                var q64 = ((ulong)(uint)(rem.v64 >> 2)) * recip32;
                 q = (uint)((q64 + 0x80000000) >> 32);
                 --ix;
                 if (ix < 0)
@@ -138,20 +117,19 @@ namespace SharpFloat.FloatingPoint {
                 rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
                 rem = rem - term;
-                if (0 != (rem.v64 & 0x8000000000000000UL)) {
+                if (0 != (rem.v64 & MaskBit64)) {
                     --q;
                     rem = rem + new UInt128(sigB >> 32, sigB << 32);
                 }
                 sigZ = (sigZ << 29) + q;
             }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
+
             if (((q + 1) & 0x3FFFFF) < 2) {
                 rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
                 rem = rem - term;
                 term = UInt128.ShortShiftLeft128(0, sigB, 32);
-                if (0 != (rem.v64 & 0x8000000000000000UL)) {
+                if (0 != (rem.v64 & MaskBit64)) {
                     --q;
                     rem = rem + term;
                 }
@@ -162,31 +140,45 @@ namespace SharpFloat.FloatingPoint {
                 if (0 != (rem.v64 | rem.v0))
                     q |= 1;
             }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
+
             sigZ = (sigZ << 6) + (q >> 23);
-            sigZExtra = ((ulong)q) << 41;
-            return RoundPackToExtF80(signZ, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
-        /*------------------------------------------------------------------------
-        *------------------------------------------------------------------------*/
-        /*------------------------------------------------------------------------
-        *------------------------------------------------------------------------*/
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            uiZ64 = DefaultNaNExponent;
-            uiZ0 = DefaultNaNSignificant;
-            goto uiZ;
-        /*------------------------------------------------------------------------
-        *------------------------------------------------------------------------*/
-        infinity:
-            uiZ64 = 0x7FFF.PackToExtF80UI64(signZ);
-            uiZ0 = 0x8000000000000000;
-            goto uiZ;
-        /*------------------------------------------------------------------------
-        *------------------------------------------------------------------------*/
-        uiZ:
-            return new ExtF80(uiZ64, uiZ0);
+            return RoundPackToExtF80(isNegative, expZ, sigZ, ((ulong)q) << 41, Settings.ExtF80RoundingPrecision);
         }
 
+        /// <summary>
+        ///     return constant on division
+        /// </summary>
+        /// <param name="a">dividend</param>
+        /// <param name="b">divisor</param>
+        /// <param name="isNegative"><c>true</c> if the result is negative</param>
+        /// <returns>constant result</returns>
+        private static ExtF80 ZeroOrNaNInDivision(in ExtF80 a, in ExtF80 b, bool isNegative) {
+            if (a.UnsignedExponent == MaxExponent) {
+                if ((a.signif & MaskAll63Bits) != 0)
+                    return PropagateNaN(a, b);
+
+                if (b.UnsignedExponent == MaxExponent) {
+                    if ((b.signif & MaskAll63Bits) != 0)
+                        return PropagateNaN(a, b);
+
+                    Settings.Raise(ExceptionFlags.Invalid);
+                    return DefaultNaN;
+                }
+
+                if (!isNegative)
+                    return Infinity;
+                else
+                    return NegativeInfinity;
+
+            }
+
+            if ((b.signif & MaskAll63Bits) != 0)
+                return PropagateNaN(a, b);
+
+            if (isNegative)
+                return NegativeZero;
+
+            return Zero;
+        }
     }
 }

@@ -48,10 +48,28 @@ namespace SharpFloat.FloatingPoint {
             = new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
 
         /// <summary>
-        ///     positive Zero value
+        ///     special value: positive zero value
         /// </summary>
         public static readonly ExtF80 Zero
             = new ExtF80(0, 0);
+
+        /// <summary>
+        ///     special value: negative zero value
+        /// </summary>
+        public static readonly ExtF80 NegativeZero
+            = new ExtF80(NegativeZeroExponent, 0);
+
+        /// <summary>
+        ///     special value: positive infinity
+        /// </summary>
+        public static readonly ExtF80 Infinity
+            = new ExtF80(MaxExponent, MaskBit64);
+
+        /// <summary>
+        ///     special value: negative infinity
+        /// </summary>
+        public static readonly ExtF80 NegativeInfinity
+            = new ExtF80(DefaultNaNExponent, MaskBit64);
 
         /// <summary>
         ///     default NaN: exponent
@@ -70,6 +88,12 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         private const ushort MaxExponent
             = 0x7FFF;
+
+        /// <summary>
+        ///     negative zero exponent value
+        /// </summary>
+        private const ushort NegativeZeroExponent
+            = 0x8000;
 
         /// <summary>
         ///     bit mask - 64 bits

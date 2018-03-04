@@ -36,11 +36,11 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
-        ///     add operator: add two 80-bit floating point numbers
+        ///     calculate a sum: add two 80-bit floating point numbers
         /// </summary>
-        /// <param name="a">first operand</param>
-        /// <param name="b">second operand</param>
-        /// <returns>sum</returns>
+        /// <param name="a">augend (first operand)</param>
+        /// <param name="b">addend (second operand)</param>
+        /// <returns>sum of both operands</returns>
         public static ExtF80 operator +(ExtF80 a, ExtF80 b) {
             var (signA, signB) = (a.IsNegative, b.IsNegative);
 
