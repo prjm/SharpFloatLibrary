@@ -1,7 +1,7 @@
 ﻿using SharpFloatTests.Common;
 using E = SharpFloat.FloatingPoint.ExtF80;
 
-namespace SharpFloatTests.src.ExtF80 {
+namespace SharpFloatTests.FloatingPoint {
     public class TestExtF80RelOp {
 
 

@@ -2,7 +2,7 @@
 using SharpFloat.Globals;
 using SharpFloatTests.Common;
 
-namespace SharpFloatTests.FloatintPoint {
+namespace SharpFloatTests.FloatingPoint {
     public class ExtF80RoundToInt {
 
         [TestCase]
