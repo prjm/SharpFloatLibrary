@@ -96,7 +96,7 @@ namespace SharpFloat.FloatingPoint {
             expA &= 1;
             sig32A = (uint)(sigA >> 32);
             recipSqrt32 = sig32A.ApproxRecipSqrt32_1((uint)expA);
-            sig32Z = (uint)((ulong)sig32A * recipSqrt32) >> 32;
+            sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
             if (0 != expA) {
                 sig32Z >>= 1;
                 rem = UInt128.ShortShiftLeft128(0, sigA, 61);
