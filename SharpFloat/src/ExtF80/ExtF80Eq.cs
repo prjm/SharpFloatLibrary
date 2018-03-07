@@ -46,7 +46,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="r">ride side</param>
         /// <returns><c>true</c> if the numbers are equal</returns>
         /// <remarks>comparisons with <c>NaN</c> return false</remarks>
-        public static bool operator ==(ExtF80 l, ExtF80 r) {
+        public static bool operator ==(in ExtF80 l, in ExtF80 r) {
 
             if (l.IsNaN || r.IsNaN) {
                 if (l.IsSignalingNaN || r.IsSignalingNaN)

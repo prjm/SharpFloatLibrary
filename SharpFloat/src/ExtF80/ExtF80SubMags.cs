@@ -39,7 +39,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        private static ExtF80 SubMagsExtF80(ExtF80 a, ExtF80 b, bool signZ) {
+        private static ExtF80 SubMagsExtF80(in ExtF80 a, in ExtF80 b, bool signZ) {
             var expA = a.UnsignedExponent;
             var sigA = a.signif;
             var expB = b.UnsignedExponent;
@@ -53,44 +53,38 @@ namespace SharpFloat.FloatingPoint {
                 return SubSmallAndLargerExponent(a, b, expA, expB, signZ, expDiff);
             }
             else {
-                return SumSameExponents(a, b, expA, expB, signZ, expDiff);
+                return SubSameExponents(a, b, signZ);
             }
         }
 
-        private static ExtF80 SumSameExponents(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
-            var sigA = a.signif;
-            var sigB = b.signif;
-            var sigExtra = 0UL;
-            UInt128 sig128;
-
-            if (expA == 0x7FFF) {
-                if (0 != ((sigA | sigB) & 0x7FFFFFFFFFFFFFFFUL)) {
+        private static ExtF80 SubSameExponents(in ExtF80 a, in ExtF80 b, bool signZ) {
+            if (a.UnsignedExponent == MaxExponent) {
+                if (0 != ((a.signif | b.signif) & MaskAll63Bits)) {
                     return PropagateNaN(a, b);
                 }
                 Settings.Raise(ExceptionFlags.Invalid);
-                return new ExtF80(DefaultNaNExponent, DefaultNaNSignificant);
+                return DefaultNaN;
             }
 
-            var expZ = expA;
+            var expZ = a.UnsignedExponent;
             if (expZ == 0)
                 expZ = 1;
-            sigExtra = 0UL;
 
-            if (sigB < sigA) {
-                sig128 = new UInt128(sigA, 0) - new UInt128(sigB, sigExtra);
+            if (b.signif < a.signif) {
+                var sig128 = new UInt128(a.signif, 0) - new UInt128(b.signif, 0);
                 return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
-            if (sigA < sigB) {
+            if (a.signif < b.signif) {
                 signZ = !signZ;
-                sig128 = new UInt128(sigB, 0) - new UInt128(sigA, sigExtra);
+                var sig128 = new UInt128(b.signif, 0) - new UInt128(a.signif, 0);
                 return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
             return new ExtF80(0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum), 0);
         }
 
-        private static ExtF80 SubSmallAndLargerExponent(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+        private static ExtF80 SubSmallAndLargerExponent(in ExtF80 a, in ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
             var sigA = a.signif;
             var sigB = b.signif;
             var sigExtra = 0UL;

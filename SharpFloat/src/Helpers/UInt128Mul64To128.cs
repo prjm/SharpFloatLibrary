@@ -36,19 +36,21 @@ namespace SharpFloat.Helpers {
 
     public readonly partial struct UInt128 {
 
+        /// <summary>
+        ///     multiply two ulong values
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static UInt128 Mul64To128(ulong a, ulong b) {
-            uint a32, a0, b32, b0;
-            ulong mid1, mid;
-            ulong v64, v0;
-
-            a32 = (uint)(a >> 32);
-            a0 = (uint)a;
-            b32 = (uint)(b >> 32);
-            b0 = (uint)b;
-            v0 = (ulong)a0 * b0;
-            mid1 = (ulong)a32 * b0;
-            mid = mid1 + (ulong)a0 * b32;
-            v64 = (ulong)a32 * b32;
+            var a32 = (uint)(a >> 32);
+            var a0 = (uint)a;
+            var b32 = (uint)(b >> 32);
+            var b0 = (uint)b;
+            var v0 = (ulong)a0 * b0;
+            var mid1 = (ulong)a32 * b0;
+            var mid = mid1 + (ulong)a0 * b32;
+            var v64 = (ulong)a32 * b32;
             v64 += (mid < mid1 ? 1UL : 0UL) << 32 | mid >> 32;
             mid <<= 32;
             v0 += mid;

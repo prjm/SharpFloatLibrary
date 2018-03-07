@@ -41,10 +41,10 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">augend (first operand)</param>
         /// <param name="b">addend (second operand)</param>
         /// <returns>sum of both operands</returns>
-        public static ExtF80 operator +(ExtF80 a, ExtF80 b) {
-            var (signA, signB) = (a.IsNegative, b.IsNegative);
+        public static ExtF80 operator +(in ExtF80 a, in ExtF80 b) {
+            var signA = a.IsNegative;
 
-            if (signA == signB)
+            if (signA == b.IsNegative)
                 return AddMagsExtF80(a, b, signA);
             else
                 return SubMagsExtF80(a, b, signA);

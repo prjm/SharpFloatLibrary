@@ -42,7 +42,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static UInt128 operator +(UInt128 a, UInt128 b) {
+        public static UInt128 operator +(in UInt128 a, in UInt128 b) {
             var v0 = a.v0 + b.v0;
             var v64 = a.v64 + b.v64 + (v0 < a.v0 ? 1UL : 0UL);
             return new UInt128(v64, v0);

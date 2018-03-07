@@ -34,6 +34,9 @@
 
 namespace SharpFloat.Helpers {
 
+    /// <summary>
+    ///     128-bit helper structure
+    /// </summary>
     public readonly partial struct UInt64Extra {
 
         /// <summary>

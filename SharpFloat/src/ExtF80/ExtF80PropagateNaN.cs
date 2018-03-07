@@ -37,6 +37,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+
         public static ExtF80 PropagateNaN(in ExtF80 a, in ExtF80 b) {
             var isSigNaNA = a.IsSignalingNaN;
             var isSigNaNB = b.IsSignalingNaN;
@@ -60,8 +61,8 @@ namespace SharpFloat.FloatingPoint {
                 }
             }
 
-            var uiMagA64 = (ushort)(a.signExp & 0x7FFF);
-            var uiMagB64 = (ushort)(b.signExp & 0x7FFF);
+            var uiMagA64 = (ushort)(a.signExp & MaxExponent);
+            var uiMagB64 = (ushort)(b.signExp & MaxExponent);
 
             if (uiMagA64 < uiMagB64)
                 return new ExtF80(b.signExp, uiNonsigB0);

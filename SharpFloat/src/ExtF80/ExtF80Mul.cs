@@ -38,7 +38,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        public static ExtF80 operator *(ExtF80 a, ExtF80 b) {
+        public static ExtF80 operator *(in ExtF80 a, in ExtF80 b) {
             bool signA;
             bool signB;
             int expA;

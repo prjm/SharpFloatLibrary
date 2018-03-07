@@ -31,14 +31,13 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 using SharpFloat.Globals;
 
 namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        public static bool operator !=(ExtF80 l, ExtF80 r) {
+        public static bool operator !=(in ExtF80 l, in ExtF80 r) {
 
             if (l.IsNaN || r.IsNaN) {
                 if (l.IsSignalingNaN || r.IsSignalingNaN)

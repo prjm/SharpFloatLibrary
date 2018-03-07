@@ -35,6 +35,11 @@ namespace SharpFloat.Helpers {
 
     public static partial class ULongHelpers {
 
+        /// <summary>
+        ///     count leading zero in an unsigned long
+        /// </summary>
+        /// <param name="a">number</param>
+        /// <returns>leading zeroes (in bits)</returns>
         public static byte CountLeadingZeroes(this ulong a) {
             byte count = 0;
             var a32 = (uint)(a >> 32);

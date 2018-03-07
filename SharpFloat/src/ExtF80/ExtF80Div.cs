@@ -44,7 +44,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">dividend (first operand)</param>
         /// <param name="b">divisor (second operand)</param>
         /// <returns>quotient</returns>
-        public static ExtF80 operator /(ExtF80 a, ExtF80 b) {
+        public static ExtF80 operator /(in ExtF80 a, in ExtF80 b) {
             var isNegative = a.IsNegative ^ b.IsNegative;
 
             if (a.UnsignedExponent == MaxExponent || b.UnsignedExponent == MaxExponent) {
@@ -85,7 +85,7 @@ namespace SharpFloat.FloatingPoint {
 
             if (0 == (sigA & MaskBit64)) {
                 if (sigA == 0)
-                    return new ExtF80(0.PackToExtF80UI64(isNegative), 0);
+                    return isNegative ? NegativeZero : Zero;
                 normExpSig = NormSubnormalSig(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;

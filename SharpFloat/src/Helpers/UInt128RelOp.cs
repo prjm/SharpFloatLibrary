@@ -52,7 +52,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
         /// <returns><c>true</c> if a is less than b</returns>
-        public static bool operator <(UInt128 a, UInt128 b)
+        public static bool operator <(in UInt128 a, in UInt128 b)
             => (a.v64 < b.v64) || ((a.v64 == b.v64) && (a.v0 < b.v0));
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
         /// <returns><c>true</c> if a is less than or equals b</returns>
-        public static bool operator <=(UInt128 a, UInt128 b)
+        public static bool operator <=(in UInt128 a, in UInt128 b)
             => (a.v64 < b.v64) || ((a.v64 == b.v64) && (a.v0 <= b.v0));
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
         /// <returns><c>true</c> if a is greater than or equals b</returns>
-        public static bool operator >=(UInt128 a, UInt128 b)
+        public static bool operator >=(in UInt128 a, in UInt128 b)
             => (a.v64 > b.v64) || ((a.v64 == b.v64) && (a.v0 >= b.v0));
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a">first operand</param>
         /// <param name="b">second operand</param>
         /// <returns><c>true</c> if a is greater than b</returns>
-        public static bool operator >(UInt128 a, UInt128 b)
+        public static bool operator >(in UInt128 a, in UInt128 b)
             => (a.v64 > b.v64) || ((a.v64 == b.v64) && (a.v0 > b.v0));
 
     }

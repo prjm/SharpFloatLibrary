@@ -49,7 +49,7 @@ namespace SharpFloat.FloatingPoint {
 
         private static ExtF80 RoundPackToExtF80WithStandardPrecision(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
             var roundingMode = Settings.RoundingMode;
-            var doIncrement = (0x8000000000000000UL <= sigExtra);
+            var doIncrement = MaskBit64 <= sigExtra;
 
             if (roundingMode != RoundingMode.NearEven && roundingMode != RoundingMode.NearMaximumMagnitude) {
                 doIncrement = (roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) && sigExtra != 0;
@@ -115,11 +115,11 @@ namespace SharpFloat.FloatingPoint {
                 ++sig;
                 if (sig == 0) {
                     ++exp;
-                    sig = 0x8000000000000000UL;
+                    sig = MaskBit64;
                 }
                 else {
                     sig &= ~(ulong)
-                             (((sigExtra & 0x7FFFFFFFFFFFFFFFUL) == 0 ? 1 : 0)
+                             (((sigExtra & MaskAll63Bits) == 0 ? 1 : 0)
                                   & (roundingMode == RoundingMode.NearEven ? 1 : 0));
                 }
             }
