@@ -97,6 +97,18 @@ namespace SharpFloatTestFloatRunner.Common {
         }
 
         /// <summary>
+        ///     read a signed integer number
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected int ToInt(string value) {
+            if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
+                return (int)parsedResult;
+            return 0;
+
+        }
+
+        /// <summary>
         ///     assert two equal ExtF80 values
         /// </summary>
         /// <param name="expected">expected value</param>
@@ -110,7 +122,7 @@ namespace SharpFloatTestFloatRunner.Common {
 
 
         /// <summary>
-        ///     assert two equal ExtF80 values
+        ///     assert two equal boolean values
         /// </summary>
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
@@ -118,6 +130,17 @@ namespace SharpFloatTestFloatRunner.Common {
             if (expected != actual)
                 throw new NumbersNotEqualException();
         }
+
+        /// <summary>
+        ///     assert two equal int values
+        /// </summary>
+        /// <param name="expected">expected value</param>
+        /// <param name="actual">actual value</param>
+        protected static void AssertEqual(int expected, int actual) {
+            if (expected != actual)
+                throw new NumbersNotEqualException((ulong)expected, (ulong)actual);
+        }
+
 
         /// <summary>
         ///     process one line of the test case

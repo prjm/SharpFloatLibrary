@@ -35,9 +35,9 @@ namespace SharpFloat.Helpers {
 
     public static partial class ULongHelpers {
 
-        public static ulong ShiftRightJam64(this ulong a, byte dist)
+        public static ulong ShiftRightJam64(this ulong a, uint dist)
             => (dist < 63) ?
-                (a >> dist) | ((a << (-dist & 63)) != 0 ? 1UL : 0UL) :
+                (a >> (int)dist) | ((a << (int)(-dist & 63)) != 0 ? 1UL : 0UL) :
                 (a != 0) ? 1UL : 0UL;
 
 

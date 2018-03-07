@@ -152,7 +152,7 @@ namespace SharpFloat.FloatingPoint {
                         || (exp < 0)
                         || (sig <= (ulong)(sig + roundIncrement));
 
-                    sig = sig.ShiftRightJam64((byte)(1 - exp));
+                    sig = sig.ShiftRightJam64((uint)(1 - exp));
                     roundBits = sig & roundMask;
                     if (roundBits != 0) {
                         if (isTiny)
