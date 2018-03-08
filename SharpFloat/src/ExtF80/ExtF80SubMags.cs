@@ -84,7 +84,7 @@ namespace SharpFloat.FloatingPoint {
             return new ExtF80(0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum), 0);
         }
 
-        private static ExtF80 SubSmallAndLargerExponent(in ExtF80 a, in ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+        private static ExtF80 SubSmallAndLargerExponent(in ExtF80 a, in ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
             var sigA = a.signif;
             var sigB = b.signif;
             var sigExtra = 0UL;
@@ -114,7 +114,7 @@ namespace SharpFloat.FloatingPoint {
             return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
 
-        private static ExtF80 SubLargerAndSmallerExponent(ExtF80 a, ExtF80 b, ushort expA, ushort expB, bool signZ, int expDiff) {
+        private static ExtF80 SubLargerAndSmallerExponent(ExtF80 a, ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
             var sigA = a.signif;
             var sigB = b.signif;
             var sigExtra = 0UL;

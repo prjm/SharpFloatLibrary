@@ -148,8 +148,8 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     unsigned exponent value
         /// </summary>
-        public ushort UnsignedExponent
-            => (ushort)(signExp & MaxExponent);
+        public int UnsignedExponent
+            => signExp & MaxExponent;
 
     }
 }

@@ -49,7 +49,6 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     test if ExtF80 number is a signaling NaN
         /// </summary>
-        /// <param name=""></param>
         /// <returns></returns>
         public bool IsSignalingNaN
             => ((((signExp) & MaxExponent) == MaxExponent) &&

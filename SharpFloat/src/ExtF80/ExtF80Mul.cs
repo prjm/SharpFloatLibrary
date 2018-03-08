@@ -38,43 +38,36 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     calculate a multiplication: return the product of two 80-bit floating point values
+        /// </summary>
+        /// <param name="a">multiplicand</param>
+        /// <param name="b">multiplier</param>
+        /// <returns>product of the two number</returns>
         public static ExtF80 operator *(in ExtF80 a, in ExtF80 b) {
-            bool signA;
-            bool signB;
-            int expA;
-            int expB;
-            bool signZ;
-            ulong magBits;
-            Exp32Sig64 normExpSig;
-            int expZ;
-            UInt128 sig128Z, uiZ;
-            ushort uiZ64;
-            ulong uiZ0;
-            ulong sigA;
-            ulong sigB;
+            var sigA = a.signif;
+            var sigB = b.signif;
+            var expA = a.UnsignedExponent;
+            var expB = b.UnsignedExponent;
+            var signZ = a.IsNegative ^ b.IsNegative;
 
-            sigA = a.signif;
-            sigB = b.signif;
-            signA = a.IsNegative;
-            signB = b.IsNegative;
-            expA = a.UnsignedExponent;
-            expB = b.UnsignedExponent;
-            signZ = signA ^ signB;
-
-            if (expA == MaxExponent) {
-                if (((sigA & MaskAll63Bits) != 0) || ((expB == MaxExponent) && (0 != (b.signif & MaskAll63Bits)))) {
-                    goto propagateNaN;
+            if (expA == MaxExponent || expB == MaxExponent) {
+                if (((sigA & MaskAll63Bits) != 0 && expA == MaxExponent) || (0 != (b.signif & MaskAll63Bits)) && expB == MaxExponent) {
+                    return PropagateNaN(a, b);
                 }
-                magBits = (ulong)expB | sigB;
-                goto infArg;
-            }
 
-            if (expB == 0x7FFF) {
-                if ((b.signif & MaskAll63Bits) != 0)
-                    goto propagateNaN;
+                var isInvalid = false;
+                if (expB != MaxExponent)
+                    isInvalid = 0 == ((uint)expB | sigB);
+                else
+                    isInvalid = 0 == ((uint)expA | sigA);
 
-                magBits = a.UnsignedExponent | a.signif;
-                goto infArg;
+                if (isInvalid) {
+                    Settings.Raise(ExceptionFlags.Invalid);
+                    return DefaultNaN;
+                }
+
+                return new ExtF80(MaxExponent.PackToExtF80UI64(signZ), MaskBit64);
             }
 
             if (expA == 0)
@@ -82,8 +75,8 @@ namespace SharpFloat.FloatingPoint {
 
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA)
-                    goto zero;
-                normExpSig = NormSubnormalSig(sigA);
+                    return signZ ? NegativeZero : Zero;
+                var normExpSig = NormSubnormalSig(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -93,41 +86,20 @@ namespace SharpFloat.FloatingPoint {
 
             if (0 == (sigB & MaskBit64)) {
                 if (0 == sigB)
-                    goto zero;
-                normExpSig = NormSubnormalSig(sigB);
+                    return signZ ? NegativeZero : Zero;
+                var normExpSig = NormSubnormalSig(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
 
-            expZ = expA + expB - 0x3FFE;
-            sig128Z = UInt128.Mul64To128(sigA, sigB);
+            var expZ = expA + expB - 0x3FFE;
+            var sig128Z = UInt128.Mul64To128(sigA, sigB);
 
             if (sig128Z.v64 < MaskBit64) {
                 --expZ;
                 sig128Z = sig128Z + sig128Z;
             }
             return NormRoundPackToExtF80(signZ, expZ, sig128Z.v64, sig128Z.v0, Settings.ExtF80RoundingPrecision);
-
-        propagateNaN:
-            return PropagateNaN(a, b);
-
-        infArg:
-            if (0 == magBits) {
-                Settings.Raise(ExceptionFlags.Invalid);
-                return DefaultNaN;
-            }
-            else {
-                uiZ64 = MaxExponent.PackToExtF80UI64(signZ);
-                uiZ0 = MaskBit64;
-            }
-            goto uiZ;
-
-        zero:
-            uiZ64 = 0.PackToExtF80UI64(signZ);
-            uiZ0 = 0;
-
-        uiZ:
-            return new ExtF80(uiZ64, uiZ0);
         }
     }
 }
