@@ -27,5 +27,13 @@ namespace SharpFloatTests.FloatingPoint {
             v = a.ToInt(RoundingMode.NearEven, true);
             Assert.EqualInt(-2147483648, v);
         }
+
+        [TestCase]
+        public void TestFloatToLong() {
+            Settings.RoundingMode = RoundingMode.NearEven;
+            var a = new ExtF80(0xB687, 0x801003FFFFFFFFFE);
+            var v = a.ToLong(RoundingMode.NearEven, true);
+            Assert.EqualLong(0L, v);
+        }
     }
 }

@@ -105,7 +105,17 @@ namespace SharpFloatTestFloatRunner.Common {
             if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return (int)parsedResult;
             return 0;
+        }
 
+        /// <summary>
+        ///     read a signed long number
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected long ToLong(string value) {
+            if (ulong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
+                return (long)parsedResult;
+            return 0;
         }
 
         /// <summary>
@@ -141,6 +151,15 @@ namespace SharpFloatTestFloatRunner.Common {
                 throw new NumbersNotEqualException((ulong)expected, (ulong)actual);
         }
 
+        /// <summary>
+        ///     assert two equal int values
+        /// </summary>
+        /// <param name="expected">expected value</param>
+        /// <param name="actual">actual value</param>
+        protected static void AssertEqual(long expected, long actual) {
+            if (expected != actual)
+                throw new NumbersNotEqualException((ulong)expected, (ulong)actual);
+        }
 
         /// <summary>
         ///     process one line of the test case

@@ -24,7 +24,11 @@ namespace SharpFloatTests.Common {
         public static void EqualInt(int expected, int value)
             => XAssert.Equal(expected, value);
 
+        public static void EqualLong(long expected, long value)
+            => XAssert.Equal(expected, value);
+
         public static void HasFlag(ExceptionFlags flag)
             => EqualByte((byte)flag, (byte)(Settings.Flags & flag));
+
     }
 }
