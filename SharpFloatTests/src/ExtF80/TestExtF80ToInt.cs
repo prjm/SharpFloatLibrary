@@ -26,6 +26,11 @@ namespace SharpFloatTests.FloatingPoint {
             a = new ExtF80(0xC01E, 0x8000000000008007);
             v = a.ToInt(RoundingMode.NearEven, true);
             Assert.EqualInt(-2147483648, v);
+
+            Settings.RoundingMode = RoundingMode.MinimumMagnitude;
+            a = new ExtF80(0xC04C, 0xFFFFFFFFFFFFBFF7);
+            var w = a.ToUInt(RoundingMode.MinimumMagnitude, true);
+            Assert.EqualUInt(0xFFFFFFFF, w);
         }
 
         [TestCase]

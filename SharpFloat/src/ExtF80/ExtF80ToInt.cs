@@ -46,9 +46,19 @@ namespace SharpFloat.FloatingPoint {
         public static explicit operator int(in ExtF80 a)
             => a.ToInt(RoundingMode.MinimumMagnitude, true);
 
+        /// <summary>
+        ///     truncate a 80-bit floating point number to an unsigned integer
+        /// </summary>
+        /// <param name="a">number</param>
+        public static explicit operator uint(in ExtF80 a)
+            => a.ToUInt(RoundingMode.MinimumMagnitude, true);
+
         private const int i32_fromNegOverflow = (-0x7FFFFFFF - 1);
         private const int i32_fromPosOverflow = (-0x7FFFFFFF - 1);
         private const int i32_fromNaN = (-0x7FFFFFFF - 1);
+        private const uint ui32_fromPosOverflow = 0xFFFFFFFF;
+        private const uint ui32_fromNegOverflow = 0xFFFFFFFF;
+        private const uint ui32_fromNaN = 0xFFFFFFFF;
 
         /// <summary>
         ///     round a 80-bit floating point number to an integer
@@ -59,6 +69,57 @@ namespace SharpFloat.FloatingPoint {
             var shiftDist = Math.Max(1, 0x4032 - UnsignedExponent);
             var sig = signif.ShiftRightJam64((uint)shiftDist);
             return RoundToI32(IsNegative, sig, roundingMode, exact);
+        }
+
+        /// <summary>
+        ///     round a 80-bit floating point number to an unsigned integer
+        /// </summary>
+        /// <param name="exact">if <c>true</c> the inexact flag is raised</param>
+        /// <param name="roundingMode">explicit rounding mode</param>
+        public uint ToUInt(RoundingMode roundingMode, bool exact = false) {
+            var shiftDist = Math.Max(1, 0x4032 - UnsignedExponent);
+            var sig = signif.ShiftRightJam64((uint)shiftDist);
+            return RoundToUI32(IsNegative, sig, roundingMode, exact);
+        }
+
+        private uint RoundToUI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {
+            var roundIncrement = 0x800UL;
+            if ((roundingMode != RoundingMode.NearMaximumMagnitude) && (roundingMode != RoundingMode.NearEven)) {
+                roundIncrement = 0;
+                if (sign) {
+                    if (sig == 0)
+                        return 0;
+                    if (roundingMode == RoundingMode.Minimum)
+                        goto invalid;
+                    if (roundingMode == RoundingMode.Odd)
+                        goto invalid;
+                }
+                else {
+                    if (roundingMode == RoundingMode.Maximum)
+                        roundIncrement = 0xFFF;
+                }
+            }
+            var roundBits = sig & 0xFFF;
+            sig = sig + roundIncrement;
+            if (0 != (sig & 0xFFFFF00000000000UL))
+                goto invalid;
+            var z = (uint)(sig >> 12);
+            if ((roundBits == 0x800) && (roundingMode == RoundingMode.NearEven)) {
+                z &= ~(uint)1;
+            }
+            if (sign && z != 0)
+                goto invalid;
+            if (roundBits != 0) {
+                if (roundingMode == RoundingMode.Odd)
+                    z |= 1;
+                if (exact)
+                    Settings.Raise(ExceptionFlags.Inexact);
+            }
+            return z;
+
+        invalid:
+            Settings.Raise(ExceptionFlags.Invalid);
+            return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;
         }
 
         private int RoundToI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {

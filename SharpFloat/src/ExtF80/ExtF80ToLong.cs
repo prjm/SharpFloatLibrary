@@ -42,6 +42,9 @@ namespace SharpFloat.FloatingPoint {
         private const long i64_fromPosOverflow = -0x7FFFFFFFFFFFFFFF - 1;
         private const long i64_fromNegOverflow = -0x7FFFFFFFFFFFFFFF - 1;
         private const long i64_fromNaN = -0x7FFFFFFFFFFFFFFF - 1;
+        private const ulong ui64_fromPosOverflow = 0xFFFFFFFFFFFFFFFF;
+        private const ulong ui64_fromNegOverflow = 0xFFFFFFFFFFFFFFFF;
+        private const ulong ui64_fromNaN = 0xFFFFFFFFFFFFFFFF;
 
         /// <summary>
         ///     truncate a 80-bit floating point number to long
@@ -49,6 +52,13 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">number</param>
         public static explicit operator long(in ExtF80 a)
             => a.ToLong(RoundingMode.MinimumMagnitude, true);
+
+        /// <summary>
+        ///     truncate a 80-bit floating point number to unsigned long
+        /// </summary>
+        /// <param name="a">number</param>
+        public static explicit operator ulong(in ExtF80 a)
+            => a.ToULong(RoundingMode.MinimumMagnitude, true);
 
         /// <summary>
         ///     round a 80-bit floating point number to long
@@ -89,6 +99,39 @@ namespace SharpFloat.FloatingPoint {
             }
             return RoundToI64(sign, sig, sigExtra, roundingMode, exact);
         }
+
+        /// <summary>
+        ///     round a 80-bit floating point number to long
+        /// </summary>
+        /// <param name="exact">if <c>true</c> the inexact flag is raised</param>
+        /// <param name="roundingMode">explicit rounding mode</param>
+        public ulong ToULong(RoundingMode roundingMode, bool exact = false) {
+
+            var uiA64 = signExp;
+            var sign = IsNegative;
+            var exp = UnsignedExponent;
+            var sig = signif;
+            var shiftDist = 0x403E - exp;
+
+            if (shiftDist < 0) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return
+                    (exp == 0x7FFF) && ((sig & MaskAll63Bits) != 0)
+                        ? ui64_fromNaN
+                        : sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+            }
+
+            var sigExtra = 0UL;
+            if (shiftDist != 0) {
+                var sig64Extra = UInt64Extra.ShiftRightJam64Extra(sig, 0, shiftDist);
+                sig = sig64Extra.v;
+                sigExtra = sig64Extra.extra;
+            }
+
+            return RoundToUI64(sign, sig, sigExtra, roundingMode, exact);
+
+        }
+
 
         private long RoundToI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
             long z;
@@ -132,6 +175,52 @@ namespace SharpFloat.FloatingPoint {
         }
 
 
+        private ulong RoundToUI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
 
+            if ((roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == RoundingMode.NearEven)) {
+                if (MaskBit64 <= sigExtra) {
+                    ++sig;
+                    if (sig == 0)
+                        goto invalid;
+                    if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
+                        sig &= ~(ulong)1;
+                    }
+                }
+            }
+            else {
+                if (sign) {
+                    if (0 == (sig | sigExtra))
+                        return 0;
+                    if (roundingMode == RoundingMode.Minimum)
+                        goto invalid;
+                    if (roundingMode == RoundingMode.Odd)
+                        goto invalid;
+                }
+                else {
+                    if ((roundingMode == RoundingMode.Maximum) && (0 != sigExtra)) {
+                        ++sig;
+                        if (sig == 0)
+                            goto invalid;
+                        if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
+                            sig &= ~(ulong)1;
+                        }
+                    }
+                }
+            }
+            if (sign && sig != 0)
+                goto invalid;
+            if (sigExtra != 0) {
+                if (roundingMode == RoundingMode.Odd)
+                    sig |= 1;
+                if (exact)
+                    Settings.Raise(ExceptionFlags.Inexact);
+            }
+            return sig;
+
+        invalid:
+            Settings.Raise(ExceptionFlags.Invalid);
+            return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+
+        }
     }
 }

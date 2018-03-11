@@ -24,6 +24,9 @@ namespace SharpFloatTests.Common {
         public static void EqualInt(int expected, int value)
             => XAssert.Equal(expected, value);
 
+        public static void EqualUInt(uint expected, uint value)
+            => XAssert.Equal(expected, value);
+
         public static void EqualLong(long expected, long value)
             => XAssert.Equal(expected, value);
 
