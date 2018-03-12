@@ -143,6 +143,17 @@ namespace SharpFloatTestFloatRunner.Common {
         }
 
         /// <summary>
+        ///     read a floating point number´with double precisiion
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected double ToDouble(string value) {
+            if (ulong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
+                return BitConverter.Int64BitsToDouble((long)parsedResult);
+            return 0;
+        }
+
+        /// <summary>
         ///     assert two equal ExtF80 values
         /// </summary>
         /// <param name="expected">expected value</param>
@@ -171,6 +182,16 @@ namespace SharpFloatTestFloatRunner.Common {
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
         protected static void AssertEqual(int expected, int actual) {
+            if (expected != actual)
+                throw new NumbersNotEqualException((ulong)expected, (ulong)actual);
+        }
+
+        /// <summary>
+        ///     assert two equal int values
+        /// </summary>
+        /// <param name="expected">expected value</param>
+        /// <param name="actual">actual value</param>
+        protected static void AssertEqual(double expected, double actual) {
             if (expected != actual)
                 throw new NumbersNotEqualException((ulong)expected, (ulong)actual);
         }

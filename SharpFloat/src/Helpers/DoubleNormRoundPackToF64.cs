@@ -31,18 +31,26 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using SharpFloat.Globals;
+
 namespace SharpFloat.Helpers {
 
-    public static partial class ULongHelpers {
+    /// <summary>
+    ///     helper function for byte values
+    /// </summary>
+    public static partial class DoubleHelpers {
 
-        public static ulong ShiftRightJam64(this ulong a, uint dist)
-            => (dist < 63) ?
-                (a >> (int)dist) | ((a << (int)(-dist & 63)) != 0 ? 1UL : 0UL) :
-                (a != 0) ? 1UL : 0UL;
+        public static double NormRoundPackToF64(bool sign, short exp, ulong sig, RoundingMode roundingMode) {
+            short shiftDist;
 
-        public static ulong ShortShiftRightJam64(this ulong a, short dist) {
-
-            return a >> dist | ((a & (((ulong)1 << dist) - 1)) != 0 ? 1UL : 0U);
+            shiftDist = (short)(sig.CountLeadingZeroes() - 1);
+            exp -= shiftDist;
+            if ((10 <= shiftDist) && ((uint)exp < 0x7FD)) {
+                return PackToF64(sign, sig != 0 ? exp : (short)0, sig << (shiftDist - 10));
+            }
+            else {
+                return RoundPackToF64(sign, exp, sig << shiftDist, roundingMode);
+            }
 
         }
 

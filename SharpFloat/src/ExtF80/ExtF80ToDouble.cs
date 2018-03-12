@@ -31,21 +31,41 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace SharpFloat.Helpers {
+using System;
+using SharpFloat.Globals;
+using SharpFloat.Helpers;
 
-    public static partial class ULongHelpers {
+namespace SharpFloat.FloatingPoint {
 
-        public static ulong ShiftRightJam64(this ulong a, uint dist)
-            => (dist < 63) ?
-                (a >> (int)dist) | ((a << (int)(-dist & 63)) != 0 ? 1UL : 0UL) :
-                (a != 0) ? 1UL : 0UL;
+    public partial struct ExtF80 {
 
-        public static ulong ShortShiftRightJam64(this ulong a, short dist) {
+        /// <summary>
+        ///     convert this number to a double value
+        /// </summary>
+        /// <returns></returns>
+        public double ToDouble(RoundingMode roundingMode) {
 
-            return a >> dist | ((a & (((ulong)1 << dist) - 1)) != 0 ? 1UL : 0U);
+            if (0 == ((uint)UnsignedExponent | signif)) {
+                var uiZ = DoubleHelpers.PackToF64(IsNegative, 0, 0);
+                return BitConverter.Int64BitsToDouble((long)uiZ);
+            }
 
+            if (UnsignedExponent == MaxExponent) {
+                if (0 != (signif & MaskAll63Bits)) {
+                    var sign = IsNegative;
+                    var v64 = signif << 1;
+
+                    var uiZ = ((IsNegative ? 1UL : 0UL) << 63) | 0x7FF8000000000000uL | (v64 >> 12);
+                    return BitConverter.Int64BitsToDouble((long)uiZ);
+                }
+                else {
+                    var uiZ = DoubleHelpers.PackToF64(IsNegative, 0x7FF, 0);
+                    return BitConverter.Int64BitsToDouble((long)uiZ);
+                }
+            }
+            var sig = signif.ShortShiftRightJam64(1);
+            var exp = (short)(UnsignedExponent - 0x3C01);
+            return DoubleHelpers.RoundPackToF64(IsNegative, exp, sig, roundingMode);
         }
-
-
     }
 }

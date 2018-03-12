@@ -31,21 +31,12 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using SharpFloat.Globals;
+
 namespace SharpFloat.Helpers {
 
-    public static partial class ULongHelpers {
-
-        public static ulong ShiftRightJam64(this ulong a, uint dist)
-            => (dist < 63) ?
-                (a >> (int)dist) | ((a << (int)(-dist & 63)) != 0 ? 1UL : 0UL) :
-                (a != 0) ? 1UL : 0UL;
-
-        public static ulong ShortShiftRightJam64(this ulong a, short dist) {
-
-            return a >> dist | ((a & (((ulong)1 << dist) - 1)) != 0 ? 1UL : 0U);
-
-        }
-
-
+    public static partial class DoubleHelpers {
+        public static ulong PackToF64(bool sign, short exp, ulong sig)
+            => (((sign ? 1UL : 0UL) << 63) + ((ulong)(exp) << 52) + (sig));
     }
 }
