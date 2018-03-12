@@ -28,7 +28,7 @@
  *    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  *    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *    THIS SOFTWARE, EVEN IF ADVISED OF  POSSIBILITY OF SUCH DAMAGE.
+ *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 using System;
@@ -39,40 +39,34 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        /// <summary>
-        ///     convert this number to a double value
-        /// </summary>
-        /// <returns></returns>
-        public static explicit operator double(in ExtF80 a)
-            => a.ToDouble(RoundingMode.MinimumMagnitude);
+        public float ToFloat(RoundingMode roundingMode) {
+            var uiZ = 0U;
+            var exp = (short)UnsignedExponent;
 
-        /// <summary>
-        ///     convert this number to a double value
-        /// </summary>
-        /// <returns></returns>
-        public double ToDouble(RoundingMode roundingMode) {
-
-            if (0 == ((uint)UnsignedExponent | signif)) {
-                var uiZ = DoubleHelpers.PackToF64(IsNegative, 0, 0);
-                return BitConverter.Int64BitsToDouble((long)uiZ);
-            }
-
-            if (UnsignedExponent == MaxExponent) {
-                if (0 != (signif & MaskAll63Bits)) {
-                    var sign = IsNegative;
+            if (exp == MaxExponent) {
+                if ((signif & MaskAll63Bits) != 0) {
+                    var sign = signExp >> 15;
                     var v64 = signif << 1;
-
-                    var uiZ = ((IsNegative ? 1UL : 0UL) << 63) | 0x7FF8000000000000uL | (v64 >> 12);
-                    return BitConverter.Int64BitsToDouble((long)uiZ);
+                    uiZ = (((uint)sign) << 31) | (0x7FC00000U) | ((uint)(v64 >> 41));
                 }
                 else {
-                    var uiZ = DoubleHelpers.PackToF64(IsNegative, 0x7FF, 0);
-                    return BitConverter.Int64BitsToDouble((long)uiZ);
+                    uiZ = FloatHelpers.PackToF32UI(IsNegative, 0xFF, 0);
                 }
+                goto uiZ;
             }
-            var sig = signif.ShortShiftRightJam64(1);
-            var exp = (short)(UnsignedExponent - 0x3C01);
-            return DoubleHelpers.RoundPackToF64(IsNegative, exp, sig, roundingMode);
+
+            var sig32 = signif.ShortShiftRightJam64(33);
+            if (0 == (((ushort)exp) | sig32)) {
+                uiZ = FloatHelpers.PackToF32UI(IsNegative, 0, 0);
+                goto uiZ;
+            }
+
+            exp -= 0x3F81;
+            return FloatHelpers.RoundPackToF32(IsNegative, exp, (uint)sig32, roundingMode);
+
+        uiZ:
+            return FloatHelpers.Int32BitsToSingle(uiZ);
         }
+
     }
 }

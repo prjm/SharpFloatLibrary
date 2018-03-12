@@ -132,7 +132,6 @@ namespace SharpFloat.FloatingPoint {
 
         }
 
-
         private long RoundToI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
             long z;
 

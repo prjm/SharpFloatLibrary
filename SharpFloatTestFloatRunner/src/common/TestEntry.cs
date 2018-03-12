@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using SharpFloat.FloatingPoint;
+using SharpFloat.Helpers;
 
 namespace SharpFloatTestFloatRunner.Common {
 
@@ -152,6 +153,18 @@ namespace SharpFloatTestFloatRunner.Common {
                 return BitConverter.Int64BitsToDouble((long)parsedResult);
             return 0;
         }
+
+        /// <summary>
+        ///     read a floating point number´with singöe precisiion
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected float ToFloat(string value) {
+            if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
+                return FloatHelpers.Int32BitsToSingle(parsedResult);
+            return 0;
+        }
+
 
         /// <summary>
         ///     assert two equal ExtF80 values
