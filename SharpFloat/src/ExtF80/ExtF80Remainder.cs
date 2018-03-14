@@ -94,7 +94,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigB & MaskBit64)) {
                 if (sigB == 0)
                     goto invalid;
-                normExpSig = NormSubnormalSig(sigB);
+                normExpSig = NormalizeSubnormalSignificand(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
@@ -107,7 +107,7 @@ namespace SharpFloat.FloatingPoint {
                     expA = 0;
                     goto copyA;
                 }
-                normExpSig = NormSubnormalSig(sigA);
+                normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -181,7 +181,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             return
-                NormRoundPackToExtF80(
+                NormalizeRoundPack(
                     signRem, (rem.v64 | rem.v0) != 0 ? expB + 32 : 0, rem.v64, rem.v0, 80);
 
         propagateNaN:

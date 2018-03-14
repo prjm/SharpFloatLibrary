@@ -47,8 +47,8 @@ namespace SharpFloat.FloatingPoint {
         public static ExtF80 operator *(in ExtF80 a, in ExtF80 b) {
             var sigA = a.signif;
             var sigB = b.signif;
-            var expA = a.UnsignedExponent;
-            var expB = b.UnsignedExponent;
+            var expA = (int)a.UnsignedExponent;
+            var expB = (int)b.UnsignedExponent;
             var signZ = a.IsNegative ^ b.IsNegative;
 
             if (expA == MaxExponent || expB == MaxExponent) {
@@ -76,7 +76,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA)
                     return signZ ? NegativeZero : Zero;
-                var normExpSig = NormSubnormalSig(sigA);
+                var normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -87,7 +87,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigB & MaskBit64)) {
                 if (0 == sigB)
                     return signZ ? NegativeZero : Zero;
-                var normExpSig = NormSubnormalSig(sigB);
+                var normExpSig = NormalizeSubnormalSignificand(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
@@ -99,7 +99,7 @@ namespace SharpFloat.FloatingPoint {
                 --expZ;
                 sig128Z = sig128Z + sig128Z;
             }
-            return NormRoundPackToExtF80(signZ, expZ, sig128Z.v64, sig128Z.v0, Settings.ExtF80RoundingPrecision);
+            return NormalizeRoundPack(signZ, expZ, sig128Z.v64, sig128Z.v0, Settings.ExtF80RoundingPrecision);
         }
     }
 }

@@ -72,13 +72,13 @@ namespace SharpFloat.FloatingPoint {
 
             if (b.signif < a.signif) {
                 var sig128 = new UInt128(a.signif, 0) - new UInt128(b.signif, 0);
-                return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
+                return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
             if (a.signif < b.signif) {
                 signZ = !signZ;
                 var sig128 = new UInt128(b.signif, 0) - new UInt128(a.signif, 0);
-                return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
+                return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
             return new ExtF80(0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum), 0);
@@ -111,7 +111,7 @@ namespace SharpFloat.FloatingPoint {
             var expZ = expB;
             signZ = !signZ;
             sig128 = new UInt128(sigB, 0) - new UInt128(sigA, sigExtra);
-            return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
+            return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
 
         private static ExtF80 SubLargerAndSmallerExponent(ExtF80 a, ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
@@ -140,7 +140,7 @@ namespace SharpFloat.FloatingPoint {
 
             var expZ = expA;
             sig128 = new UInt128(sigA, 0) - new UInt128(sigB, sigExtra);
-            return NormRoundPackToExtF80(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
+            return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
     }
 }

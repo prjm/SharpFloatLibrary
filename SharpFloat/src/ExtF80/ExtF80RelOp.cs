@@ -45,7 +45,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">first number</param>
         /// <param name="b">second number</param>
         /// <returns><c>true</c> if the first number is smaller than the second number</returns>
-        public static bool operator <(ExtF80 a, ExtF80 b) {
+        public static bool operator <(in ExtF80 a, in ExtF80 b) {
 
             if (a.IsNaN || b.IsNaN) {
                 if (a.IsSignalingNaN || b.IsSignalingNaN)
@@ -68,7 +68,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">first number</param>
         /// <param name="b">second number</param>
         /// <returns><c>true</c> if the first number is smaller or equal than the second number</returns>
-        public static bool operator <=(ExtF80 a, ExtF80 b) {
+        public static bool operator <=(in ExtF80 a, in ExtF80 b) {
 
             if (a.IsNaN || b.IsNaN) {
                 if (a.IsSignalingNaN || b.IsSignalingNaN)
@@ -91,7 +91,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">first number</param>
         /// <param name="b">second number</param>
         /// <returns><c>true</c> if the first number is larger than the second number</returns>
-        public static bool operator >(ExtF80 a, ExtF80 b)
+        public static bool operator >(in ExtF80 a, in ExtF80 b)
             => b < a;
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">first number</param>
         /// <param name="b">second number</param>
         /// <returns><c>true</c> if the first number is larger or equal than the second number</returns>
-        public static bool operator >=(ExtF80 a, ExtF80 b)
+        public static bool operator >=(in ExtF80 a, in ExtF80 b)
             => b <= a;
 
         /// <summary>

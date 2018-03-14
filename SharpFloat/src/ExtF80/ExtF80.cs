@@ -32,14 +32,28 @@
  */
 
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace SharpFloat.FloatingPoint {
 
     /// <summary>
     ///     type definition for a <see langword="struct"/> representing an 80-bit floating point number
     /// </summary>
-    [DebuggerDisplay("signExp = {signExp}, signif = {signif}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+    [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 10)]
     public readonly partial struct ExtF80 {
+
+        /// <summary>
+        ///     default NaN: exponent value
+        /// </summary>
+        public const ushort DefaultNaNExponent
+            = 0xFFFF;
+
+        /// <summary>
+        ///     default NaN: significant value
+        /// </summary>
+        public const ulong DefaultNaNSignificant
+            = 0xC000000000000000UL;
 
         /// <summary>
         ///     default NaN (not a number) value
@@ -70,18 +84,6 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         public static readonly ExtF80 NegativeInfinity
             = new ExtF80(DefaultNaNExponent, MaskBit64);
-
-        /// <summary>
-        ///     default NaN: exponent
-        /// </summary>
-        public const ushort DefaultNaNExponent
-            = 0xFFFF;
-
-        /// <summary>
-        ///     default NaN: significant
-        /// </summary>
-        public const ulong DefaultNaNSignificant
-            = 0xC000000000000000UL;
 
         /// <summary>
         ///     largest exponent value
@@ -120,14 +122,16 @@ namespace SharpFloat.FloatingPoint {
             = 0x4000000000000000UL;
 
         /// <summary>
-        ///     exponent and sign
-        /// </summary>
-        public readonly ushort signExp;
-
-        /// <summary>
         ///     value (significant)
         /// </summary>
+        [FieldOffset(0)]
         public readonly ulong signif;
+
+        /// <summary>
+        ///     exponent and sign
+        /// </summary>
+        [FieldOffset(8)]
+        public readonly ushort signExp;
 
         /// <summary>
         ///     create a new floating point value of extended precision
@@ -148,8 +152,24 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     unsigned exponent value
         /// </summary>
-        public int UnsignedExponent
-            => signExp & MaxExponent;
+        public ushort UnsignedExponent
+            => (ushort)(signExp & MaxExponent);
+
+        /// <summary>
+        ///     special operand values: infinity, indefinite
+        /// </summary>
+        public bool IsSpecialOperand
+            => UnsignedExponent == MaxExponent;
+
+        /// <summary>
+        ///     denomeralized values have a zero exponent value
+        /// </summary>
+        public bool IsDenormal
+            => UnsignedExponent == 0;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+            => string.Format("0x{0:X4}{1:X16}", signExp, signExp);
 
     }
 }

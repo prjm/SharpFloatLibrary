@@ -61,7 +61,7 @@ namespace SharpFloat.FloatingPoint {
                     sigZ = 0;
                     goto uiZ;
                 }
-                normExpSig = NormSubnormalSig(sigA);
+                normExpSig = NormalizeSubnormalSignificand(sigA);
                 exp += normExpSig.exp;
                 sigA = normExpSig.sig;
             }

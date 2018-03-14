@@ -87,7 +87,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA)
                     goto zero;
-                normExpSig = NormSubnormalSig(sigA);
+                normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -143,7 +143,7 @@ namespace SharpFloat.FloatingPoint {
                         sigZExtra |= 1;
                 }
             }
-            return RoundPackToExtF80(false, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
+            return RoundPack(false, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
 
         invalid:
             Settings.Raise(ExceptionFlags.Invalid);

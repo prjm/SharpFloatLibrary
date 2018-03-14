@@ -38,7 +38,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        public static ExtF80 RoundPackToExtF80(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
+        public static ExtF80 RoundPack(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
             if (roundingPrecision == 64 || roundingPrecision == 32) {
                 return RoundPackToExtF80WithReducedPrecision(sign, exp, sig, sigExtra, roundingPrecision);
             }

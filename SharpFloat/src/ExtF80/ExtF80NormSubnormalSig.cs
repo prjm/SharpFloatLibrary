@@ -37,7 +37,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        public static Exp32Sig64 NormSubnormalSig(ulong sig) {
+        public static Exp32Sig64 NormalizeSubnormalSignificand(ulong sig) {
             var shiftDist = sig.CountLeadingZeroes();
             return new Exp32Sig64(-shiftDist, sig << shiftDist);
         }

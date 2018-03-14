@@ -47,7 +47,7 @@ namespace SharpFloat.FloatingPoint {
         public static ExtF80 operator /(in ExtF80 a, in ExtF80 b) {
             var isNegative = a.IsNegative ^ b.IsNegative;
 
-            if (a.UnsignedExponent == MaxExponent || b.UnsignedExponent == MaxExponent) {
+            if (a.IsSpecialOperand || b.IsSpecialOperand) {
                 return ZeroOrNaNInDivision(a, b, isNegative);
             }
 
@@ -75,7 +75,7 @@ namespace SharpFloat.FloatingPoint {
                         return NegativeInfinity;
 
                 }
-                normExpSig = NormSubnormalSig(sigB);
+                normExpSig = NormalizeSubnormalSignificand(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
@@ -86,7 +86,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigA & MaskBit64)) {
                 if (sigA == 0)
                     return isNegative ? NegativeZero : Zero;
-                normExpSig = NormSubnormalSig(sigA);
+                normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -142,7 +142,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             sigZ = (sigZ << 6) + (q >> 23);
-            return RoundPackToExtF80(isNegative, expZ, sigZ, ((ulong)q) << 41, Settings.ExtF80RoundingPrecision);
+            return RoundPack(isNegative, expZ, sigZ, ((ulong)q) << 41, Settings.ExtF80RoundingPrecision);
         }
 
         /// <summary>
@@ -153,11 +153,11 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="isNegative"><c>true</c> if the result is negative</param>
         /// <returns>constant result</returns>
         private static ExtF80 ZeroOrNaNInDivision(in ExtF80 a, in ExtF80 b, bool isNegative) {
-            if (a.UnsignedExponent == MaxExponent) {
+            if (a.IsSpecialOperand) {
                 if ((a.signif & MaskAll63Bits) != 0)
                     return PropagateNaN(a, b);
 
-                if (b.UnsignedExponent == MaxExponent) {
+                if (b.IsSpecialOperand) {
                     if ((b.signif & MaskAll63Bits) != 0)
                         return PropagateNaN(a, b);
 

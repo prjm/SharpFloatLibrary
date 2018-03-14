@@ -54,7 +54,7 @@ namespace SharpFloat.FloatingPoint {
 
         private static ExtF80 AddExtF80WithSameExponents(in ExtF80 a, in ExtF80 b, bool signZ) {
 
-            if (a.UnsignedExponent == MaxExponent) {
+            if (a.IsSpecialOperand) {
                 if (((a.signif | b.signif) & MaskAll63Bits) != 0)
                     return PropagateNaN(a, b);
                 else
@@ -63,26 +63,24 @@ namespace SharpFloat.FloatingPoint {
 
             var sigZ = a.signif + b.signif;
 
-            if (a.UnsignedExponent == 0) {
-                var normExpSig = NormSubnormalSig(sigZ);
-                return RoundPackToExtF80(signZ, normExpSig.exp + 1, normExpSig.sig, 0, Settings.ExtF80RoundingPrecision);
+            if (a.IsDenormal) {
+                var normExpSig = NormalizeSubnormalSignificand(sigZ);
+                return RoundPack(signZ, normExpSig.exp + 1, normExpSig.sig, 0, Settings.ExtF80RoundingPrecision);
             }
 
             var sig64Extra = UInt64Extra.ShortShiftRightJam64Extra(sigZ, 0, 1);
-            sigZ = sig64Extra.v | MaskBit64;
-            var sigZExtra = sig64Extra.extra;
-            return RoundPackToExtF80(signZ, a.UnsignedExponent + 1, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
+            return RoundPack(signZ, a.UnsignedExponent + 1, sig64Extra.v | MaskBit64, sig64Extra.extra, Settings.ExtF80RoundingPrecision);
         }
 
         private static ExtF80 AddExtF80SmallerAndLargerExponents(in ExtF80 a, in ExtF80 b, bool signZ, int expDiff) {
-            if (b.UnsignedExponent == MaxExponent) {
+            if (b.IsSpecialOperand) {
                 if ((b.signif & MaskAll63Bits) != 0)
                     return PropagateNaN(a, b);
                 else
                     return new ExtF80(MaxExponent.PackToExtF80UI64(signZ), b.signif);
             }
 
-            if (a.UnsignedExponent == 0)
+            if (a.IsDenormal)
                 ++expDiff;
 
             UInt64Extra sig64Extra;
@@ -100,16 +98,16 @@ namespace SharpFloat.FloatingPoint {
             }
 
             if ((sigZ & MaskBit64) != 0)
-                return RoundPackToExtF80(signZ, b.UnsignedExponent, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
+                return RoundPack(signZ, b.UnsignedExponent, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
 
             sig64Extra = UInt64Extra.ShortShiftRightJam64Extra(sigZ, sigZExtra, 1);
             sigZ = sig64Extra.v | MaskBit64;
-            return RoundPackToExtF80(signZ, b.UnsignedExponent + 1, sigZ, sig64Extra.extra, Settings.ExtF80RoundingPrecision);
+            return RoundPack(signZ, b.UnsignedExponent + 1, sigZ, sig64Extra.extra, Settings.ExtF80RoundingPrecision);
         }
 
         private static ExtF80 AddExtF80LargerAndSmallerExponents(in ExtF80 a, in ExtF80 b, bool signZ, int expDiff) {
 
-            if (a.UnsignedExponent == MaxExponent) {
+            if (a.IsSpecialOperand) {
                 if ((a.signif & MaskAll63Bits) != 0UL)
                     return PropagateNaN(a, b);
                 else
@@ -135,11 +133,11 @@ namespace SharpFloat.FloatingPoint {
             }
 
             if ((sigZ & MaskBit64) != 0)
-                return RoundPackToExtF80(signZ, a.UnsignedExponent, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
+                return RoundPack(signZ, a.UnsignedExponent, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
 
             sig64Extra = UInt64Extra.ShortShiftRightJam64Extra(sigZ, sigZExtra, 1);
             sigZ = sig64Extra.v | MaskBit64;
-            return RoundPackToExtF80(signZ, a.UnsignedExponent + 1, sigZ, sig64Extra.extra, Settings.ExtF80RoundingPrecision);
+            return RoundPack(signZ, a.UnsignedExponent + 1, sigZ, sig64Extra.extra, Settings.ExtF80RoundingPrecision);
         }
     }
 }
