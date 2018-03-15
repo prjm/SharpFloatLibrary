@@ -39,52 +39,30 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     compute the floating-point remainder of two 80-bit numbers
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static ExtF80 Remainder(in ExtF80 a, in ExtF80 b) {
-            ushort uiA64;
-            ulong uiA0;
-            bool signA;
-            int expA;
-            ulong sigA;
-            ushort uiB64;
-            ulong uiB0;
-            int expB;
-            ulong sigB;
-            Exp32Sig64 normExpSig;
-            int expDiff;
-            UInt128 rem, shiftedSigB;
-            uint q, recip32;
-            ulong q64;
-            UInt128 term, altRem, meanRem;
-            bool signRem;
-            ExtF80 uiZ;
-            ushort uiZ64;
-            ulong uiZ0;
 
-            uiA64 = a.signExp;
-            uiA0 = a.signif;
-            signA = a.IsNegative;
-            expA = a.UnsignedExponent;
-            sigA = uiA0;
-            uiB64 = b.signExp;
-            uiB0 = b.signif;
-            expB = b.UnsignedExponent;
-            sigB = uiB0;
+            var expA = (int)a.UnsignedExponent;
+            var sigA = a.signif;
+            var expB = (int)b.UnsignedExponent;
+            var sigB = b.signif;
 
             if (expA == MaxExponent) {
                 if ((0 != (sigA & MaskAll63Bits)) || ((expB == MaxExponent) && (0 != (sigB & MaxExponent)))) {
-                    goto propagateNaN;
+                    return PropagateNaN(a, b);
                 }
-                goto invalid;
+                Settings.Raise(ExceptionFlags.Invalid);
+                return DefaultNaN;
             }
 
             if (expB == MaxExponent) {
                 if (0 != (sigB & MaskAll63Bits))
-                    goto propagateNaN;
-                /*--------------------------------------------------------------------
-                | Argument b is an infinity.  Doubling `expB' is an easy way to ensure
-                | that `expDiff' later is less than -1, which will result in returning
-                | a canonicalized version of argument a.
-                *--------------------------------------------------------------------*/
+                    return PropagateNaN(a, b);
                 expB += expB;
             }
 
@@ -92,9 +70,11 @@ namespace SharpFloat.FloatingPoint {
                 expB = 1;
 
             if (0 == (sigB & MaskBit64)) {
-                if (sigB == 0)
-                    goto invalid;
-                normExpSig = NormalizeSubnormalSignificand(sigB);
+                if (sigB == 0) {
+                    Settings.Raise(ExceptionFlags.Invalid);
+                    return DefaultNaN;
+                }
+                var normExpSig = NormalizeSubnormalSignificand(sigB);
                 expB += normExpSig.exp;
                 sigB = normExpSig.sig;
             }
@@ -105,19 +85,22 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA) {
                     expA = 0;
-                    goto copyA;
+                    return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80UI64(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
                 }
-                normExpSig = NormalizeSubnormalSignificand(sigA);
+                var normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
 
-            expDiff = expA - expB;
+            var expDiff = expA - expB;
             if (expDiff < -1)
-                goto copyA;
+                return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80UI64(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
 
-            rem = UInt128.ShortShiftLeft128(0, sigA, 32);
-            shiftedSigB = UInt128.ShortShiftLeft128(0, sigB, 32);
+            var rem = UInt128.ShortShiftLeft128(0, sigA, 32);
+            var shiftedSigB = UInt128.ShortShiftLeft128(0, sigB, 32);
+            var skipLoop = false;
+            var q = 0U;
+            var altRem = new UInt128();
 
             if (expDiff < 1) {
                 if (expDiff != 0) {
@@ -133,7 +116,9 @@ namespace SharpFloat.FloatingPoint {
                 }
             }
             else {
-                recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
+                var term = new UInt128();
+                var q64 = 0UL;
+                var recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
                 expDiff -= 30;
                 for (; ; ) {
                     q64 = (ulong)(uint)(rem.v64 >> 2) * recip32;
@@ -148,64 +133,38 @@ namespace SharpFloat.FloatingPoint {
                     }
                     expDiff -= 29;
                 }
-                /*--------------------------------------------------------------------
-                | (`expDiff' cannot be less than -29 here.)
-                *--------------------------------------------------------------------*/
                 q = (uint)(q64 >> 32) >> (~expDiff & 31);
                 rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, (byte)(expDiff + 30));
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
                 rem = rem - term;
                 if (0 != (rem.v64 & MaskBit64)) {
                     altRem = rem + shiftedSigB;
-                    goto selectRem;
+                    skipLoop = true;
                 }
             }
 
-            do {
-                altRem = rem;
-                ++q;
-                rem = rem - shiftedSigB;
-            } while (0 == (rem.v64 & MaskBit64));
+            if (!skipLoop) {
+                do {
+                    altRem = rem;
+                    ++q;
+                    rem = rem - shiftedSigB;
+                } while (0 == (rem.v64 & MaskBit64));
+            }
 
-        selectRem:
-            meanRem = rem + altRem;
+            var meanRem = rem + altRem;
             if (0 != (meanRem.v64 & MaskBit64)
                     || ((0 == (meanRem.v64 | meanRem.v0)) && (0 != (q & 1)))
             ) {
                 rem = altRem;
             }
-            signRem = signA;
+
+            var signRem = a.IsNegative;
             if (0 != (rem.v64 & MaskBit64)) {
                 signRem = !signRem;
                 rem = new UInt128(0, 0) - rem;
             }
 
-            return
-                NormalizeRoundPack(
-                    signRem, (rem.v64 | rem.v0) != 0 ? expB + 32 : 0, rem.v64, rem.v0, 80);
-
-        propagateNaN:
-            uiZ = PropagateNaN(a, b);
-            uiZ64 = uiZ.signExp;
-            uiZ0 = uiZ.signif;
-            goto uiZ;
-
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            uiZ64 = DefaultNaNExponent;
-            uiZ0 = DefaultNaNSignificant;
-            goto uiZ;
-
-        copyA:
-            if (expA < 1) {
-                sigA >>= 1 - expA;
-                expA = 0;
-            }
-            uiZ64 = expA.PackToExtF80UI64(signA);
-            uiZ0 = sigA;
-        uiZ:
-            return new ExtF80(uiZ64, uiZ0);
-
+            return NormalizeRoundPack(signRem, (rem.v64 | rem.v0) != 0 ? expB + 32 : 0, rem.v64, rem.v0, 80);
         }
 
     }

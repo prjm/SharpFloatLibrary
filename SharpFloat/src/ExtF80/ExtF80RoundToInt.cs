@@ -39,29 +39,24 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     round a floating point number to an integer
+        /// </summary>
+        /// <param name="roundingMode"></param>
+        /// <param name="exact"></param>
+        /// <returns></returns>
         public ExtF80 RoundToInt(RoundingMode roundingMode, bool exact) {
-            ushort uiA64, signUI64;
-            int exp;
-            ulong sigA;
-            ushort uiZ64;
-            ulong sigZ;
-            Exp32Sig64 normExpSig;
-            UInt128 uiZ;
             ulong lastBitMask, roundBitsMask;
-            ExtF80 uZ;
 
-            uiA64 = signExp;
-            signUI64 = (ushort)(uiA64 & 0.PackToExtF80UI64(true));
-            exp = UnsignedExponent;
-            sigA = signif;
+            var signUI64 = (ushort)(signExp & 0.PackToExtF80UI64(true));
+            var exp = (int)UnsignedExponent;
+            var sigA = signif;
 
             if (0 == (sigA & MaskBit64) && (exp != MaxExponent)) {
                 if (0 == sigA) {
-                    uiZ64 = signUI64;
-                    sigZ = 0;
-                    goto uiZ;
+                    return new ExtF80(signUI64, 0);
                 }
-                normExpSig = NormalizeSubnormalSignificand(sigA);
+                var normExpSig = NormalizeSubnormalSignificand(sigA);
                 exp += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
@@ -71,13 +66,11 @@ namespace SharpFloat.FloatingPoint {
                     if (0 != (sigA & MaskAll63Bits)) {
                         return PropagateNaN(this, Zero);
                     }
-                    sigZ = MaskBit64;
+                    return new ExtF80((ushort)(signUI64 | exp), MaskBit64);
                 }
                 else {
-                    sigZ = sigA;
+                    return new ExtF80((ushort)(signUI64 | exp), sigA);
                 }
-                uiZ64 = (ushort)(signUI64 | exp);
-                goto uiZ;
             }
             if (exp <= 0x3FFE) {
                 if (exact)
@@ -105,19 +98,15 @@ namespace SharpFloat.FloatingPoint {
                     case RoundingMode.Odd:
                         goto mag1;
                 }
-                uiZ64 = signUI64;
-                sigZ = 0;
-                goto uiZ;
+                return new ExtF80(signUI64, 0);
             mag1:
-                uiZ64 = (ushort)(signUI64 | 0x3FFF);
-                sigZ = MaskBit64;
-                goto uiZ;
+                return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
             }
 
-            uiZ64 = (ushort)(signUI64 | exp);
+            var uiZ64 = (ushort)(signUI64 | exp);
             lastBitMask = (ulong)1 << (0x403E - exp);
             roundBitsMask = lastBitMask - 1;
-            sigZ = sigA;
+            var sigZ = sigA;
             if (roundingMode == RoundingMode.NearMaximumMagnitude) {
                 sigZ += lastBitMask >> 1;
             }
@@ -142,7 +131,6 @@ namespace SharpFloat.FloatingPoint {
                 if (exact)
                     Settings.Raise(ExceptionFlags.Inexact);
             }
-        uiZ:
             return new ExtF80(uiZ64, sigZ);
         }
     }
