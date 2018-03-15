@@ -89,10 +89,11 @@ namespace SharpFloat.FloatingPoint {
                 if (sign) {
                     if (sig == 0)
                         return 0;
-                    if (roundingMode == RoundingMode.Minimum)
-                        goto invalid;
-                    if (roundingMode == RoundingMode.Odd)
-                        goto invalid;
+
+                    if (roundingMode == RoundingMode.Minimum || roundingMode == RoundingMode.Odd) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;
+                    }
                 }
                 else {
                     if (roundingMode == RoundingMode.Maximum)
@@ -101,14 +102,18 @@ namespace SharpFloat.FloatingPoint {
             }
             var roundBits = sig & 0xFFF;
             sig = sig + roundIncrement;
-            if (0 != (sig & 0xFFFFF00000000000UL))
-                goto invalid;
+            if (0 != (sig & 0xFFFFF00000000000UL)) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;
+            }
             var z = (uint)(sig >> 12);
             if ((roundBits == 0x800) && (roundingMode == RoundingMode.NearEven)) {
                 z &= ~(uint)1;
             }
-            if (sign && z != 0)
-                goto invalid;
+            if (sign && z != 0) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;
+            }
             if (roundBits != 0) {
                 if (roundingMode == RoundingMode.Odd)
                     z |= 1;
@@ -116,10 +121,6 @@ namespace SharpFloat.FloatingPoint {
                     Settings.Raise(ExceptionFlags.Inexact);
             }
             return z;
-
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;
         }
 
         private int RoundToI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {

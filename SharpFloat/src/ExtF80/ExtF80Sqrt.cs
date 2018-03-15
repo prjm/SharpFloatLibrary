@@ -44,59 +44,46 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="a">number to compute root from</param>
         /// <returns>square root</returns>
         public ExtF80 Sqrt() {
-            ushort uiA64;
-            ulong uiA0;
-            bool signA;
-            int expA;
-            ulong sigA;
-            UInt128 uiZ;
-            ushort uiZ64;
-            ulong uiZ0;
-            Exp32Sig64 normExpSig;
-            int expZ;
-            uint sig32A, recipSqrt32, sig32Z;
-            UInt128 rem;
-            ulong q, x64, sigZ;
-            UInt128 y, term;
-            ulong sigZExtra;
-
-            uiA64 = signExp;
-            uiA0 = signif;
-            signA = IsNegative;
-            expA = UnsignedExponent;
-            sigA = uiA0;
+            var expA = (int)UnsignedExponent;
+            var sigA = signif;
 
             if (expA == MaxExponent) {
                 if (0 != (sigA & MaskAll63Bits)) {
                     return PropagateNaN(this, Zero);
                 }
-                if (!signA)
+                if (!IsNegative)
                     return this;
-                goto invalid;
+                Settings.Raise(ExceptionFlags.Invalid);
+                return DefaultNaN;
             }
 
-            if (signA) {
+            if (IsNegative) {
                 if (0 == sigA)
-                    goto zero;
-                goto invalid;
+                    return IsNegative ? NegativeZero : Zero;
+                Settings.Raise(ExceptionFlags.Invalid);
+                return DefaultNaN;
+
             }
-            /*------------------------------------------------------------------------
-            *------------------------------------------------------------------------*/
+
             if (0 == expA)
                 expA = 1;
+
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA)
-                    goto zero;
-                normExpSig = NormalizeSubnormalSignificand(sigA);
+                    return IsNegative ? NegativeZero : Zero;
+                var normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
                 sigA = normExpSig.sig;
             }
 
-            expZ = ((expA - 0x3FFF) >> 1) + 0x3FFF;
+            var rem = default(UInt128);
+            var expZ = ((expA - 0x3FFF) >> 1) + 0x3FFF;
+            var sig32A = (uint)(sigA >> 32);
+
             expA &= 1;
-            sig32A = (uint)(sigA >> 32);
-            recipSqrt32 = sig32A.ApproxRecipSqrt32_1((uint)expA);
-            sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
+            var recipSqrt32 = sig32A.ApproxRecipSqrt32_1((uint)expA);
+
+            var sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
             if (0 != expA) {
                 sig32Z >>= 1;
                 rem = UInt128.ShortShiftLeft128(0, sigA, 61);
@@ -106,13 +93,13 @@ namespace SharpFloat.FloatingPoint {
             }
             rem = new UInt128(rem.v64 - (ulong)sig32Z * sig32Z, rem.v0);
 
-            q = ((uint)(rem.v64 >> 2) * (ulong)recipSqrt32) >> 32;
-            x64 = (ulong)sig32Z << 32;
-            sigZ = x64 + (q << 3);
-            y = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
+            var q = ((uint)(rem.v64 >> 2) * (ulong)recipSqrt32) >> 32;
+            var x64 = (ulong)sig32Z << 32;
+            var sigZ = x64 + (q << 3);
+            var y = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
 
             for (; ; ) {
-                term = UInt128.Mul64ByShifted32To128(x64 + sigZ, (uint)q);
+                var term = UInt128.Mul64ByShifted32To128(x64 + sigZ, (uint)q);
                 rem = y - term;
                 if (0 == (rem.v64 & MaskBit64))
                     break;
@@ -123,12 +110,12 @@ namespace SharpFloat.FloatingPoint {
             q = (((rem.v64 >> 2) * recipSqrt32) >> 32) + 2;
             x64 = sigZ;
             sigZ = (sigZ << 1) + (q >> 25);
-            sigZExtra = q << 39;
+            var sigZExtra = q << 39;
 
             if ((q & 0xFFFFFF) <= 2) {
                 q &= ~(ulong)0xFFFF;
                 sigZExtra = q << 39;
-                term = UInt128.Mul64ByShifted32To128(x64 + (q >> 27), (uint)q);
+                var term = UInt128.Mul64ByShifted32To128(x64 + (q >> 27), (uint)q);
                 x64 = (uint)(q << 5) * (ulong)(uint)q;
                 term = term + new UInt128(0, x64);
                 rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 28);
@@ -143,16 +130,8 @@ namespace SharpFloat.FloatingPoint {
                         sigZExtra |= 1;
                 }
             }
+
             return RoundPack(false, expZ, sigZ, sigZExtra, Settings.ExtF80RoundingPrecision);
-
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            return DefaultNaN;
-
-        zero:
-            return signA ? NegativeZero : Zero;
-
         }
-
     }
 }

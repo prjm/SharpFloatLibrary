@@ -39,6 +39,17 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     convert this number to a float value
+        /// </summary>
+        /// <returns></returns>
+        public static explicit operator float(in ExtF80 a)
+            => a.ToFloat(RoundingMode.MinimumMagnitude);
+
+        /// <summary>
+        ///     convert this number to a float value
+        /// </summary>
+        /// <returns></returns>
         public float ToFloat(RoundingMode roundingMode) {
             var uiZ = 0U;
             var exp = (short)UnsignedExponent;
@@ -52,20 +63,17 @@ namespace SharpFloat.FloatingPoint {
                 else {
                     uiZ = FloatHelpers.PackToF32UI(IsNegative, 0xFF, 0);
                 }
-                goto uiZ;
+                return FloatHelpers.Int32BitsToSingle(uiZ);
             }
 
             var sig32 = signif.ShortShiftRightJam64(33);
             if (0 == (((ushort)exp) | sig32)) {
                 uiZ = FloatHelpers.PackToF32UI(IsNegative, 0, 0);
-                goto uiZ;
+                return FloatHelpers.Int32BitsToSingle(uiZ);
             }
 
             exp -= 0x3F81;
             return FloatHelpers.RoundPackToF32(IsNegative, exp, (uint)sig32, roundingMode);
-
-        uiZ:
-            return FloatHelpers.Int32BitsToSingle(uiZ);
         }
 
     }

@@ -50,7 +50,7 @@ namespace SharpFloat.Helpers {
         /// <param name="exp">exponent</param>
         /// <param name="sign">sign</param>
         /// <returns></returns>
-        public static ushort PackToExtF80UI64(this int exp, bool sign)
+        public static ushort PackToExtF80(this int exp, bool sign)
             => sign ? (ushort)(0x8000U | exp) : (ushort)exp;
 
     }

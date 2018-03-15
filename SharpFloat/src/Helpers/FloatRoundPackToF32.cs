@@ -31,14 +31,21 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System.Runtime.InteropServices;
 using SharpFloat.Globals;
 
 namespace SharpFloat.Helpers {
 
     public static partial class FloatHelpers {
 
-        public static float RoundPackToF32(bool sign, short exp, uint sig, RoundingMode roundingMode) {
+        /// <summary>
+        ///     round a value and convert it to 32-bit precision
+        /// </summary>
+        /// <param name="sign">sign</param>
+        /// <param name="unsignedExponent">exponent</param>
+        /// <param name="significant">significant</param>
+        /// <param name="roundingMode">rounding mode to use</param>
+        /// <returns></returns>
+        public static float RoundPackToF32(bool sign, short unsignedExponent, uint significant, RoundingMode roundingMode) {
             uint uiZ;
             var roundNearEven = (roundingMode == RoundingMode.NearEven);
             short roundIncrement = 0x40;
@@ -49,45 +56,44 @@ namespace SharpFloat.Helpers {
                         ? (short)0x7F
                         : (short)0;
             }
-            var roundBits = (short)(sig & 0x7F);
+            var roundBits = (short)(significant & 0x7F);
 
-            if (0xFD <= (uint)exp) {
-                if (exp < 0) {
+            if (0xFD <= (uint)unsignedExponent) {
+                if (unsignedExponent < 0) {
 
                     var isTiny =
                         (Settings.DetectTininess == DetectTininess.BeforeRounding)
-                            || (exp < -1) || (sig + roundIncrement < 0x80000000);
-                    sig = sig.ShiftRightJam32((ushort)-exp);
-                    exp = 0;
-                    roundBits = (short)(sig & 0x7F);
+                            || (unsignedExponent < -1) || (significant + roundIncrement < 0x80000000);
+                    significant = significant.ShiftRightJam32((ushort)-unsignedExponent);
+                    unsignedExponent = 0;
+                    roundBits = (short)(significant & 0x7F);
                     if (isTiny && roundBits != 0) {
                         Settings.Raise(ExceptionFlags.Underflow);
                     }
                 }
-                else if ((0xFD < exp) || (0x80000000 <= sig + roundIncrement)) {
+                else if ((0xFD < unsignedExponent) || (0x80000000 <= significant + roundIncrement)) {
                     Settings.Raise(ExceptionFlags.Overflow);
                     Settings.Raise(ExceptionFlags.Inexact);
                     uiZ = (uint)(PackToF32UI(sign, (short)0xFF, 0U) - (roundIncrement == 0 ? (short)1 : (short)0));
-                    goto uiZ;
+                    return FloatHelpers.Int32BitsToSingle(uiZ);
                 }
             }
             /*------------------------------------------------------------------------
             *------------------------------------------------------------------------*/
-            sig = (uint)(sig + roundIncrement) >> 7;
+            significant = (uint)(significant + roundIncrement) >> 7;
             if (roundBits != 0) {
                 Settings.Raise(ExceptionFlags.Inexact);
                 if (roundingMode == RoundingMode.Odd) {
-                    sig |= 1;
-                    goto packReturn;
+                    significant |= 1;
+                    uiZ = FloatHelpers.PackToF32UI(sign, unsignedExponent, significant);
+                    return FloatHelpers.Int32BitsToSingle(uiZ);
                 }
             }
-            sig &= ~(uint)(((roundBits ^ 0x40) == 0 ? 1 : 0) & (roundNearEven ? 1 : 0));
-            if (sig == 0)
-                exp = 0;
+            significant &= ~(uint)(((roundBits ^ 0x40) == 0 ? 1 : 0) & (roundNearEven ? 1 : 0));
+            if (significant == 0)
+                unsignedExponent = 0;
 
-            packReturn:
-            uiZ = FloatHelpers.PackToF32UI(sign, exp, sig);
-        uiZ:
+            uiZ = FloatHelpers.PackToF32UI(sign, unsignedExponent, significant);
             return FloatHelpers.Int32BitsToSingle(uiZ);
         }
 

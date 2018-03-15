@@ -38,8 +38,15 @@ namespace SharpFloat.Helpers {
 
     public static partial class DoubleHelpers {
 
-
-        public static double RoundPackToF64(bool sign, short exp, ulong sig, RoundingMode roundingMode) {
+        /// <summary>
+        ///     round a value and convert it to 64-bit precision
+        /// </summary>
+        /// <param name="sign">sing</param>
+        /// <param name="unsignedExponent">exponent</param>
+        /// <param name="significant">significant</param>
+        /// <param name="roundingMode">rounding mode to use</param>
+        /// <returns></returns>
+        public static double RoundPackToF64(bool sign, short unsignedExponent, ulong significant, RoundingMode roundingMode) {
             bool roundNearEven;
             ushort roundIncrement, roundBits;
             bool isTiny;
@@ -52,43 +59,42 @@ namespace SharpFloat.Helpers {
                         ? 0x3FF
                         : 0);
             }
-            roundBits = (ushort)(sig & 0x3FF);
+            roundBits = (ushort)(significant & 0x3FF);
 
-            if (0x7FD <= (ushort)exp) {
-                if (exp < 0) {
+            if (0x7FD <= (ushort)unsignedExponent) {
+                if (unsignedExponent < 0) {
                     isTiny = (Settings.DetectTininess == DetectTininess.BeforeRounding)
-                            || (exp < -1)
-                            || (sig + roundIncrement < 0x8000000000000000);
-                    sig = sig.ShiftRightJam64((uint)-exp);
-                    exp = 0;
-                    roundBits = (ushort)(sig & 0x3FF);
+                            || (unsignedExponent < -1)
+                            || (significant + roundIncrement < 0x8000000000000000);
+                    significant = significant.ShiftRightJam64((uint)-unsignedExponent);
+                    unsignedExponent = 0;
+                    roundBits = (ushort)(significant & 0x3FF);
                     if (isTiny && roundBits != 0) {
                         Settings.Raise(ExceptionFlags.Underflow);
                     }
                 }
-                else if ((0x7FD < exp) || (0x8000000000000000 <= sig + roundIncrement)) {
+                else if ((0x7FD < unsignedExponent) || (0x8000000000000000 <= significant + roundIncrement)) {
                     Settings.Raise(ExceptionFlags.Overflow);
                     Settings.Raise(ExceptionFlags.Inexact);
                     uiZ = PackToF64(sign, 0x7FF, 0) - (roundIncrement == 0 ? 1UL : 0UL);
-                    goto uiZ;
+                    return BitConverter.Int64BitsToDouble((long)uiZ);
                 }
             }
 
-            sig = (sig + roundIncrement) >> 10;
+            significant = (significant + roundIncrement) >> 10;
             if (roundBits != 0) {
                 Settings.Raise(ExceptionFlags.Inexact);
                 if (roundingMode == RoundingMode.Odd) {
-                    sig |= 1;
-                    goto packReturn;
+                    significant |= 1;
+                    uiZ = PackToF64(sign, unsignedExponent, significant);
+                    return BitConverter.Int64BitsToDouble((long)uiZ);
                 }
             }
-            sig &= ~(ulong)(((roundBits ^ 0x200) == 0 ? 1 : 0) & (roundNearEven ? 1 : 0));
-            if (sig == 0)
-                exp = 0;
+            significant &= ~(ulong)(((roundBits ^ 0x200) == 0 ? 1 : 0) & (roundNearEven ? 1 : 0));
+            if (significant == 0)
+                unsignedExponent = 0;
 
-            packReturn:
-            uiZ = PackToF64(sign, exp, sig);
-        uiZ:
+            uiZ = PackToF64(sign, unsignedExponent, significant);
             return BitConverter.Int64BitsToDouble((long)uiZ);
         }
     }

@@ -38,12 +38,21 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        public static ExtF80 RoundPack(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
+        /// <summary>
+        ///     round a value to 80-bit precision
+        /// </summary>
+        /// <param name="sign">sign</param>
+        /// <param name="unsignedExponent">exponent</param>
+        /// <param name="significant">significant value</param>
+        /// <param name="sigExtra"></param>
+        /// <param name="roundingPrecision">rounding precision</param>
+        /// <returns>rounded value</returns>
+        public static ExtF80 RoundPack(bool sign, int unsignedExponent, ulong significant, ulong sigExtra, byte roundingPrecision) {
             if (roundingPrecision == 64 || roundingPrecision == 32) {
-                return RoundPackToExtF80WithReducedPrecision(sign, exp, sig, sigExtra, roundingPrecision);
+                return RoundPackToExtF80WithReducedPrecision(sign, unsignedExponent, significant, sigExtra, roundingPrecision);
             }
             else {
-                return RoundPackToExtF80WithStandardPrecision(sign, exp, sig, sigExtra, roundingPrecision);
+                return RoundPackToExtF80WithStandardPrecision(sign, unsignedExponent, significant, sigExtra, roundingPrecision);
             }
         }
 
@@ -71,10 +80,10 @@ namespace SharpFloat.FloatingPoint {
                             Settings.Raise(ExceptionFlags.Underflow);
                         Settings.Raise(ExceptionFlags.Inexact);
                         if (roundingMode == RoundingMode.Odd) {
-                            return new ExtF80(exp.PackToExtF80UI64(sign), sig | 1);
+                            return new ExtF80(exp.PackToExtF80(sign), sig | 1);
                         }
                     }
-                    doIncrement = (0x8000000000000000UL <= sigExtra);
+                    doIncrement = (MaskBit64 <= sigExtra);
                     if (roundingMode != RoundingMode.NearEven && roundingMode != RoundingMode.NearMaximumMagnitude) {
                         doIncrement =
                             (((roundingMode == (sign ? RoundingMode.Minimum : RoundingMode.Maximum)) ? true : false)
@@ -83,11 +92,10 @@ namespace SharpFloat.FloatingPoint {
 
                     if (doIncrement) {
                         ++sig;
-                        sig &=
-                            ~(ulong)(((sigExtra & 0x7FFFFFFFFFFFFFFFUL) == 0 ? 1 : 0UL) & (roundingMode == RoundingMode.NearEven ? 1 : 0UL));
-                        exp = (ushort)(((sig & 0x8000000000000000UL) != 0) ? 1 : 0);
+                        sig &= ~(((sigExtra & MaskAll63Bits) == 0 ? 1 : 0UL) & (roundingMode == RoundingMode.NearEven ? 1 : 0UL));
+                        exp = (ushort)(((sig & MaskBit64) != 0) ? 1 : 0);
                     }
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+                    return new ExtF80(exp.PackToExtF80(sign), sig);
                 }
 
                 if ((0x7FFE < exp) || ((exp == 0x7FFE) && (sig == 0xFFFFFFFFFFFFFFFFUL) && doIncrement)) {
@@ -100,14 +108,14 @@ namespace SharpFloat.FloatingPoint {
                         exp = 0x7FFE;
                         sig = ~0UL;
                     }
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+                    return new ExtF80(exp.PackToExtF80(sign), sig);
                 }
             }
 
             if (sigExtra != 0) {
                 Settings.Raise(ExceptionFlags.Inexact);
                 if (roundingMode == RoundingMode.Odd) {
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig | 1);
+                    return new ExtF80(exp.PackToExtF80(sign), sig | 1);
                 }
             }
 
@@ -123,7 +131,7 @@ namespace SharpFloat.FloatingPoint {
                                   & (roundingMode == RoundingMode.NearEven ? 1 : 0));
                 }
             }
-            return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+            return new ExtF80(exp.PackToExtF80(sign), sig);
         }
 
         private static ExtF80 RoundPackToExtF80WithReducedPrecision(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
@@ -169,7 +177,7 @@ namespace SharpFloat.FloatingPoint {
                         roundMask |= roundIncrement;
                     }
                     sig &= ~roundMask;
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+                    return new ExtF80(exp.PackToExtF80(sign), sig);
                 }
 
                 if ((0x7FFE < exp) || ((exp == 0x7FFE) && sig + roundIncrement < sig)) {
@@ -187,7 +195,7 @@ namespace SharpFloat.FloatingPoint {
                         exp = 0x7FFE;
                         sig = ~roundMask;
                     }
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+                    return new ExtF80(exp.PackToExtF80(sign), sig);
                 }
             }
 
@@ -195,7 +203,7 @@ namespace SharpFloat.FloatingPoint {
                 Settings.Raise(ExceptionFlags.Inexact);
                 if (roundingMode == RoundingMode.Odd) {
                     sig = (sig & ~roundMask) | (roundMask + 1);
-                    return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+                    return new ExtF80(exp.PackToExtF80(sign), sig);
                 }
             }
 
@@ -211,7 +219,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             sig &= ~roundMask;
-            return new ExtF80(exp.PackToExtF80UI64(sign), sig);
+            return new ExtF80(exp.PackToExtF80(sign), sig);
         }
 
     }

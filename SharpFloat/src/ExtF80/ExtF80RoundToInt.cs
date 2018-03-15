@@ -36,7 +36,6 @@ using SharpFloat.Helpers;
 
 namespace SharpFloat.FloatingPoint {
 
-
     public partial struct ExtF80 {
 
         /// <summary>
@@ -48,7 +47,7 @@ namespace SharpFloat.FloatingPoint {
         public ExtF80 RoundToInt(RoundingMode roundingMode, bool exact) {
             ulong lastBitMask, roundBitsMask;
 
-            var signUI64 = (ushort)(signExp & 0.PackToExtF80UI64(true));
+            var signUI64 = (ushort)(signExp & 0.PackToExtF80(true));
             var exp = (int)UnsignedExponent;
             var sigA = signif;
 
@@ -81,26 +80,24 @@ namespace SharpFloat.FloatingPoint {
                         if (0 == (sigA & MaskAll63Bits))
                             break;
                         if (exp == 0x3FFE)
-                            goto mag1;
+                            return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
                         break;
                     case RoundingMode.NearMaximumMagnitude:
                         if (exp == 0x3FFE)
-                            goto mag1;
+                            return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
                         break;
                     case RoundingMode.Minimum:
                         if (0 != signUI64)
-                            goto mag1;
+                            return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
                         break;
                     case RoundingMode.Maximum:
                         if (0 == signUI64)
-                            goto mag1;
+                            return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
                         break;
                     case RoundingMode.Odd:
-                        goto mag1;
+                        return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
                 }
                 return new ExtF80(signUI64, 0);
-            mag1:
-                return new ExtF80((ushort)(signUI64 | 0x3FFF), MaskBit64);
             }
 
             var uiZ64 = (ushort)(signUI64 | exp);

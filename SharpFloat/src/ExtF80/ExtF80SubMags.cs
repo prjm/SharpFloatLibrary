@@ -31,7 +31,6 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using SharpFloat.Globals;
 using SharpFloat.Helpers;
 
@@ -81,7 +80,7 @@ namespace SharpFloat.FloatingPoint {
                 return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
             }
 
-            return new ExtF80(0.PackToExtF80UI64(Settings.RoundingMode == RoundingMode.Minimum), 0);
+            return new ExtF80(0.PackToExtF80(Settings.RoundingMode == RoundingMode.Minimum), 0);
         }
 
         private static ExtF80 SubSmallAndLargerExponent(in ExtF80 a, in ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
@@ -94,7 +93,7 @@ namespace SharpFloat.FloatingPoint {
                 if ((sigB & 0x7FFFFFFFFFFFFFFFUL) != 0) {
                     return PropagateNaN(a, b);
                 }
-                return new ExtF80(0x7FFF.PackToExtF80UI64(((signZ ? 1 : 0) ^ 1) != 0), 0x8000000000000000UL);
+                return new ExtF80(0x7FFF.PackToExtF80(((signZ ? 1 : 0) ^ 1) != 0), 0x8000000000000000UL);
             }
 
             if (expA == 0) {

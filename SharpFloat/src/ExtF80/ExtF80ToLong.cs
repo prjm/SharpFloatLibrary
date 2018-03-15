@@ -129,7 +129,6 @@ namespace SharpFloat.FloatingPoint {
             }
 
             return RoundToUI64(sign, sig, sigExtra, roundingMode, exact);
-
         }
 
         private long RoundToI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
@@ -138,8 +137,10 @@ namespace SharpFloat.FloatingPoint {
             if ((roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == RoundingMode.NearEven)) {
                 if (MaskBit64 <= sigExtra) {
                     ++sig;
-                    if (0 == sig)
-                        goto invalid;
+                    if (0 == sig) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return sign ? i64_fromNegOverflow : i64_fromPosOverflow;
+                    }
                     if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
                         sig &= ~(ulong)1;
                     }
@@ -148,8 +149,10 @@ namespace SharpFloat.FloatingPoint {
             else {
                 if (sigExtra != 0 && (sign ? (roundingMode == RoundingMode.Minimum) || (roundingMode == RoundingMode.Odd) : (roundingMode == RoundingMode.Maximum))) {
                     ++sig;
-                    if (0 == sig)
-                        goto invalid;
+                    if (0 == sig) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return sign ? i64_fromNegOverflow : i64_fromPosOverflow;
+                    }
                     if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
                         sig &= ~(ulong)1;
                     }
@@ -157,8 +160,10 @@ namespace SharpFloat.FloatingPoint {
             }
             var ui = sign ? (~sig + 1) : sig;
             z = (long)ui;
-            if (z != 0 && ((z < 0) ^ sign))
-                goto invalid;
+            if (z != 0 && ((z < 0) ^ sign)) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return sign ? i64_fromNegOverflow : i64_fromPosOverflow;
+            }
             if (sigExtra != 0) {
                 if (roundingMode == RoundingMode.Odd)
                     z |= 1;
@@ -166,11 +171,6 @@ namespace SharpFloat.FloatingPoint {
                     Settings.Raise(ExceptionFlags.Inexact);
             }
             return z;
-
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            return sign ? i64_fromNegOverflow : i64_fromPosOverflow;
-
         }
 
 
@@ -179,8 +179,10 @@ namespace SharpFloat.FloatingPoint {
             if ((roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == RoundingMode.NearEven)) {
                 if (MaskBit64 <= sigExtra) {
                     ++sig;
-                    if (sig == 0)
-                        goto invalid;
+                    if (sig == 0) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+                    }
                     if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
                         sig &= ~(ulong)1;
                     }
@@ -190,24 +192,28 @@ namespace SharpFloat.FloatingPoint {
                 if (sign) {
                     if (0 == (sig | sigExtra))
                         return 0;
-                    if (roundingMode == RoundingMode.Minimum)
-                        goto invalid;
-                    if (roundingMode == RoundingMode.Odd)
-                        goto invalid;
+                    if (roundingMode == RoundingMode.Minimum || roundingMode == RoundingMode.Odd) {
+                        Settings.Raise(ExceptionFlags.Invalid);
+                        return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+                    }
                 }
                 else {
                     if ((roundingMode == RoundingMode.Maximum) && (0 != sigExtra)) {
                         ++sig;
-                        if (sig == 0)
-                            goto invalid;
+                        if (sig == 0) {
+                            Settings.Raise(ExceptionFlags.Invalid);
+                            return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+                        }
                         if ((sigExtra == MaskBit64) && (roundingMode == RoundingMode.NearEven)) {
                             sig &= ~(ulong)1;
                         }
                     }
                 }
             }
-            if (sign && sig != 0)
-                goto invalid;
+            if (sign && sig != 0) {
+                Settings.Raise(ExceptionFlags.Invalid);
+                return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
+            }
             if (sigExtra != 0) {
                 if (roundingMode == RoundingMode.Odd)
                     sig |= 1;
@@ -215,11 +221,6 @@ namespace SharpFloat.FloatingPoint {
                     Settings.Raise(ExceptionFlags.Inexact);
             }
             return sig;
-
-        invalid:
-            Settings.Raise(ExceptionFlags.Invalid);
-            return sign ? ui64_fromNegOverflow : ui64_fromPosOverflow;
-
         }
     }
 }

@@ -85,7 +85,7 @@ namespace SharpFloat.FloatingPoint {
             if (0 == (sigA & MaskBit64)) {
                 if (0 == sigA) {
                     expA = 0;
-                    return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80UI64(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
+                    return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
                 }
                 var normExpSig = NormalizeSubnormalSignificand(sigA);
                 expA += normExpSig.exp;
@@ -94,7 +94,7 @@ namespace SharpFloat.FloatingPoint {
 
             var expDiff = expA - expB;
             if (expDiff < -1)
-                return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80UI64(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
+                return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
 
             var rem = UInt128.ShortShiftLeft128(0, sigA, 32);
             var shiftedSigB = UInt128.ShortShiftLeft128(0, sigB, 32);
