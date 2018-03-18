@@ -35,6 +35,11 @@ namespace SharpFloat.Helpers {
 
     public static partial class UIntHelper {
 
+        /// <summary>
+        ///     count number of leading zeros
+        /// </summary>
+        /// <param name="value">value to evaluate</param>
+        /// <returns>number of leading zeros</returns>
         public static byte CountLeadingZeroes(this uint value) {
             byte count = 0;
 
