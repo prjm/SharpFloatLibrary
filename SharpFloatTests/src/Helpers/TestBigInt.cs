@@ -1,7 +1,8 @@
 ﻿using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
-namespace SharpFloatTests.src.Helpers {
+namespace SharpFloatTests.Helpers {
+
     public class TestBigInt {
 
         [TestCase]
@@ -91,6 +92,34 @@ namespace SharpFloatTests.src.Helpers {
             a = new BigInt(0xFFFF_FFFF);
             BigInt.Multiply10(a);
             Assert.EqualULong(0xFFFF_FFFFUL * 10UL, a.AsULong);
+        }
+
+        [TestCase]
+        public void TestPower() {
+            var a = new BigInt(5);
+            BigInt.Pow10(a, 3);
+            Assert.EqualUInt(1000, a.AsUInt);
+
+            a = new BigInt(5);
+            var b = new BigInt();
+            BigInt.MultiplyPow10(b, a, 3);
+            Assert.EqualUInt(5000, b.AsUInt);
+
+            a = new BigInt();
+            BigInt.Pow2(a, 32);
+            Assert.EqualULong(4294967296UL, a.AsULong);
+
+        }
+
+        [TestCase]
+        public void TestShift() {
+            var a = new BigInt(0xFFFF_FFFF);
+            BigInt.ShiftLeft(a, 32);
+            Assert.EqualULong(0xFFFF_FFFF_0000_0000, a.AsULong);
+
+            a = new BigInt(0x0000_FFFF);
+            BigInt.ShiftLeft(a, 4);
+            Assert.EqualULong(0x0000_0000_000F_FFF0, a.AsULong);
         }
     }
 }

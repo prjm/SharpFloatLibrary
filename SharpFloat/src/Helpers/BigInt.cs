@@ -73,7 +73,17 @@ namespace SharpFloat.Helpers {
         public BigInt(BigInt value) {
             SetLength(value.length);
             if (length > 0)
-                System.Array.Copy(value.blocks, blocks, value.blocks.Length);
+                Array.Copy(value.blocks, blocks, value.blocks.Length);
+        }
+
+        /// <summary>
+        ///     create a new big integer
+        /// </summary>
+        /// <param name="value">value</param>
+        public BigInt(uint[] value) {
+            SetLength((uint)value.Length);
+            if (length > 0)
+                Array.Copy(value, blocks, value.Length);
         }
 
         /// <summary>
@@ -135,7 +145,16 @@ namespace SharpFloat.Helpers {
         ///     Zero value
         /// </summary>
         public bool Zero {
-            get => length == 0;
+
+            get {
+                if (length == 0)
+                    return true;
+                for (var i = 0; i < length; i++)
+                    if (blocks[i] != 0)
+                        return false;
+                return true;
+            }
+
             set => SetLength(0);
         }
 
@@ -182,6 +201,16 @@ namespace SharpFloat.Helpers {
                     blocks[0] = value & 0xFFFFFFFF;
                 }
             }
+        }
+
+        /// <summary>
+        ///     assign the value of another big integer to this big integer
+        /// </summary>
+        /// <param name="another">another big integer</param>
+        public void Assign(BigInt another) {
+            SetLength(another.Length);
+            for (var i = 0U; i < another.Length; i++)
+                blocks[i] = another[i];
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
