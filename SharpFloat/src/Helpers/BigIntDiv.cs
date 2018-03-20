@@ -53,7 +53,7 @@ namespace SharpFloat.Helpers {
 
             // Compute an estimated quotient based on the high block value. This will either match the actual quotient or
             // undershoot by one.
-            var quotient = dividend[pFinalDividendBlock] / divisor[pFinalDivisorBlock + 1];
+            var quotient = dividend[pFinalDividendBlock] / divisor[pFinalDivisorBlock] + 1;
             if (quotient > 9)
                 throw new System.InvalidOperationException();
 

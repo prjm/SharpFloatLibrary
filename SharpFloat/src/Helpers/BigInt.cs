@@ -176,10 +176,13 @@ namespace SharpFloat.Helpers {
                 else if (value <= 0xFFFFFFFF) {
                     SetLength(1);
                     blocks[0] = (uint)(value & 0xFFFFFFFF);
+
                 }
-                SetLength(2);
-                blocks[0] = (uint)(value & 0xFFFFFFFF);
-                blocks[1] = (uint)((value >> 32) & 0xFFFFFFFF);
+                else {
+                    SetLength(2);
+                    blocks[0] = (uint)(value & 0xFFFFFFFF);
+                    blocks[1] = (uint)((value >> 32) & 0xFFFFFFFF);
+                }
             }
         }
 
