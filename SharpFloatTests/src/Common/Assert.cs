@@ -36,5 +36,9 @@ namespace SharpFloatTests.Common {
         public static void HasFlag(ExceptionFlags flag)
             => EqualByte((byte)flag, (byte)(Settings.Flags & flag));
 
+        public static void EqualString(string expected, string value)
+            => XAssert.Equal(expected, value);
+
+
     }
 }
