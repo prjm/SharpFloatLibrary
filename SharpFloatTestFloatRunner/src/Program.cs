@@ -16,14 +16,6 @@ namespace SharpFloatTestFloatRunner {
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args) {
-
-            var buffer = new StringBuilder();
-            var m = 1UL;
-            var e = 2;
-            SharpFloat.FloatingPoint.ExtF80.Dragon4(m, e, m.CountLeadingZeroes(), false, SharpFloat.FloatingPoint.FormatCutoffMode.Unique, 99, buffer, 99, out var exp);
-            Console.WriteLine(buffer.ToString());
-            return;
-
             var dataDir = SearchDataDir(Environment.CurrentDirectory);
 
             if (dataDir == null)

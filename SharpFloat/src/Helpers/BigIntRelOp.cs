@@ -47,7 +47,7 @@ namespace SharpFloat.Helpers {
             if (lengthDiff != 0)
                 return lengthDiff;
 
-            for (var i = left.length - 1; i >= 0; --i) {
+            for (var i = (int)left.length - 1; i >= 0; --i) {
                 if (left.blocks[i] == right.blocks[i])
                     continue;
                 else if (left.blocks[i] > right.blocks[i])
