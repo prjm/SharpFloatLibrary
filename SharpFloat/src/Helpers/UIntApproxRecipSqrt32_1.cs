@@ -45,6 +45,12 @@ namespace SharpFloat.Helpers {
             0x5CC7, 0x8335, 0x52A6, 0x74E2, 0x4A3E, 0x68FE, 0x432B, 0x5EFD
         };
 
+        /// <summary>
+        ///     approximation to the reciprocal of the square root of the number represented by `a'
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="oddExpA"></param>
+        /// <returns></returns>
         public static uint ApproxRecipSqrt32_1(this uint a, uint oddExpA) {
             int index;
             ushort eps, r0;

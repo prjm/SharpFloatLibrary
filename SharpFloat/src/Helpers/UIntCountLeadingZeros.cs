@@ -40,7 +40,7 @@ namespace SharpFloat.Helpers {
         /// </summary>
         /// <param name="value">value to evaluate</param>
         /// <returns>number of leading zeros</returns>
-        public static byte CountLeadingZeroes(this uint value) {
+        public static byte CountLeadingZeros(this uint value) {
             byte count = 0;
 
             if (value < 0x10000) {
@@ -53,7 +53,7 @@ namespace SharpFloat.Helpers {
                 value <<= 8;
             }
 
-            count += ((byte)(value >> 24)).CountLeadingZeroes();
+            count += ((byte)(value >> 24)).CountLeadingZeros();
             return count;
         }
 

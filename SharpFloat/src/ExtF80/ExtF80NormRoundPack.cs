@@ -44,10 +44,10 @@ namespace SharpFloat.FloatingPoint {
                 sigExtra = 0;
             }
 
-            var shiftDist = sig.CountLeadingZeroes();
+            var shiftDist = sig.CountLeadingZeros();
             exp -= shiftDist;
             if (shiftDist != 0) {
-                var sig128 = UInt128.ShortShiftLeft128(sig, sigExtra, shiftDist);
+                var sig128 = UInt128.ShortShiftLeft(sig, sigExtra, shiftDist);
                 sig = sig128.v64;
                 sigExtra = sig128.v0;
             }

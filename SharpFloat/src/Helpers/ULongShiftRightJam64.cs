@@ -33,13 +33,28 @@
 
 namespace SharpFloat.Helpers {
 
+    /// <summary>
+    ///     helper class for <c>ulong</c> values
+    /// </summary>
     public static partial class ULongHelpers {
 
+        /// <summary>
+        ///     shift right
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="dist"></param>
+        /// <returns></returns>
         public static ulong ShiftRightJam64(this ulong a, uint dist)
             => (dist < 63) ?
                 (a >> (int)dist) | ((a << (int)(-dist & 63)) != 0 ? 1UL : 0UL) :
                 (a != 0) ? 1UL : 0UL;
 
+        /// <summary>
+        ///     shift rigt
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="dist"></param>
+        /// <returns></returns>
         public static ulong ShortShiftRightJam64(this ulong a, short dist) {
 
             return a >> dist | ((a & (((ulong)1 << dist) - 1)) != 0 ? 1UL : 0U);

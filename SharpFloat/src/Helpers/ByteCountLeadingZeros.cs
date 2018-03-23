@@ -43,7 +43,7 @@ namespace SharpFloat.Helpers {
         /// </summary>
         /// <param name="value">byte to look at</param>
         /// <returns>number of leading zeros</returns>
-        public static byte CountLeadingZeroes(this byte value)
+        public static byte CountLeadingZeros(this byte value)
             => lookup[value];
 
         private static byte[] lookup = new byte[256] {

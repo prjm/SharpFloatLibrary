@@ -37,7 +37,12 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-
+        /// <summary>
+        ///     propagate <c>NaN</c> values
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static ExtF80 PropagateNaN(in ExtF80 a, in ExtF80 b) {
             var isSigNaNA = a.IsSignalingNaN;
             var isSigNaNB = b.IsSignalingNaN;

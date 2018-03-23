@@ -41,7 +41,6 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     compute the square root from this 80-bit number
         /// </summary>
-        /// <param name="a">number to compute root from</param>
         /// <returns>square root</returns>
         public ExtF80 Sqrt() {
             var expA = (int)UnsignedExponent;
@@ -86,17 +85,17 @@ namespace SharpFloat.FloatingPoint {
             var sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
             if (0 != expA) {
                 sig32Z >>= 1;
-                rem = UInt128.ShortShiftLeft128(0, sigA, 61);
+                rem = UInt128.ShortShiftLeft(0, sigA, 61);
             }
             else {
-                rem = UInt128.ShortShiftLeft128(0, sigA, 62);
+                rem = UInt128.ShortShiftLeft(0, sigA, 62);
             }
             rem = new UInt128(rem.v64 - (ulong)sig32Z * sig32Z, rem.v0);
 
             var q = ((uint)(rem.v64 >> 2) * (ulong)recipSqrt32) >> 32;
             var x64 = (ulong)sig32Z << 32;
             var sigZ = x64 + (q << 3);
-            var y = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
+            var y = UInt128.ShortShiftLeft(rem.v64, rem.v0, 29);
 
             for (; ; ) {
                 var term = UInt128.Mul64ByShifted32To128(x64 + sigZ, (uint)q);
@@ -118,7 +117,7 @@ namespace SharpFloat.FloatingPoint {
                 var term = UInt128.Mul64ByShifted32To128(x64 + (q >> 27), (uint)q);
                 x64 = (uint)(q << 5) * (ulong)(uint)q;
                 term = term + new UInt128(0, x64);
-                rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 28);
+                rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 28);
                 rem = rem - term;
                 if (0 != (rem.v64 & MaskBit64)) {
                     if (0 == sigZExtra)

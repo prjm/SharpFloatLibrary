@@ -32,7 +32,6 @@
  */
 
 using System.Runtime.InteropServices;
-using SharpFloat.Globals;
 
 namespace SharpFloat.Helpers {
 
@@ -43,13 +42,20 @@ namespace SharpFloat.Helpers {
 
         [StructLayout(LayoutKind.Explicit)]
         private struct FloatAndUIntUnion {
+
             [FieldOffset(0)]
             public uint UInt32Bits;
+
             [FieldOffset(0)]
             public float FloatValue;
         }
 
 
+        /// <summary>
+        ///     get bit value of a 32-bit floating point number
+        /// </summary>
+        /// <param name="value">floating point number</param>
+        /// <returns>raw bit value</returns>
         public static uint SingleToInt32Bits(float value) {
             var u = new FloatAndUIntUnion {
                 FloatValue = value
@@ -57,6 +63,11 @@ namespace SharpFloat.Helpers {
             return u.UInt32Bits;
         }
 
+        /// <summary>
+        ///     get the floating-point value of a raw-32 bit value
+        /// </summary>
+        /// <param name="value">raw bit value</param>
+        /// <returns>equivalent floating point number</returns>
         public static float Int32BitsToSingle(uint value) {
             var u = new FloatAndUIntUnion {
                 UInt32Bits = value
@@ -64,6 +75,13 @@ namespace SharpFloat.Helpers {
             return u.FloatValue;
         }
 
+        /// <summary>
+        ///     pack a 32-bit floating point number by the given parts
+        /// </summary>
+        /// <param name="sign">sign value</param>
+        /// <param name="exp">binary exponent</param>
+        /// <param name="sig">binary significand</param>
+        /// <returns></returns>
         public static uint PackToF32UI(bool sign, short exp, uint sig)
             => (((sign ? 1U : 0U) << 31) + ((uint)(exp) << 23) + (sig));
 

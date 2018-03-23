@@ -96,8 +96,8 @@ namespace SharpFloat.FloatingPoint {
             if (expDiff < -1)
                 return new ExtF80((expA < 1 ? 0 : expA).PackToExtF80(a.IsNegative), expA < 1 ? sigA >>= 1 - expA : sigA);
 
-            var rem = UInt128.ShortShiftLeft128(0, sigA, 32);
-            var shiftedSigB = UInt128.ShortShiftLeft128(0, sigB, 32);
+            var rem = UInt128.ShortShiftLeft(0, sigA, 32);
+            var shiftedSigB = UInt128.ShortShiftLeft(0, sigB, 32);
             var skipLoop = false;
             var q = 0U;
             var altRem = new UInt128();
@@ -105,7 +105,7 @@ namespace SharpFloat.FloatingPoint {
             if (expDiff < 1) {
                 if (expDiff != 0) {
                     --expB;
-                    shiftedSigB = UInt128.ShortShiftLeft128(0, sigB, 33);
+                    shiftedSigB = UInt128.ShortShiftLeft(0, sigB, 33);
                     q = 0;
                 }
                 else {
@@ -125,7 +125,7 @@ namespace SharpFloat.FloatingPoint {
                     if (expDiff < 0)
                         break;
                     q = (uint)((q64 + 0x80000000) >> 32);
-                    rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, 29);
+                    rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 29);
                     term = UInt128.Mul64ByShifted32To128(sigB, q);
                     rem = rem - term;
                     if (0 != (rem.v64 & MaskBit64)) {
@@ -134,7 +134,7 @@ namespace SharpFloat.FloatingPoint {
                     expDiff -= 29;
                 }
                 q = (uint)(q64 >> 32) >> (~expDiff & 31);
-                rem = UInt128.ShortShiftLeft128(rem.v64, rem.v0, (byte)(expDiff + 30));
+                rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, (byte)(expDiff + 30));
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
                 rem = rem - term;
                 if (0 != (rem.v64 & MaskBit64)) {

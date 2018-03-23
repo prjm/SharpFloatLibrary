@@ -33,6 +33,9 @@
 
 namespace SharpFloat.Helpers {
 
+    /// <summary>
+    ///     helper functions for unsigned integers
+    /// </summary>
     public static partial class UIntHelper {
 
         private static readonly ushort[] approxRecip_1k0s = new ushort[16] {
@@ -45,6 +48,20 @@ namespace SharpFloat.Helpers {
             0x6D3B, 0x64D4, 0x5D5C, 0x56B1, 0x50B6, 0x4B55, 0x4679, 0x4211
         };
 
+
+        /// <summary>
+        /// Returns an approximation to the reciprocal of the number represented by `a',
+        /// where `a' is interpreted as an unsigned fixed-point number with one integer
+        /// bit and 31 fraction bits.  The `a' input must be "normalized", meaning that
+        /// its most-significant bit (bit 31) must be 1.  Thus, if A is the value of
+        /// the fixed-point interpretation of `a', then 1 &lt;= A &lt; 2.  The returned value
+        /// is interpreted as a pure unsigned fraction, having no integer bits and 32
+        /// fraction bits.  The approximation returned is never greater than the true
+        /// reciprocal 1/A, and it differs from the true reciprocal by at most 2.006 ulp
+        /// (units in the last place).
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static uint ApproxRecip32_1(this uint a) {
             uint index;
             ushort eps, r0;

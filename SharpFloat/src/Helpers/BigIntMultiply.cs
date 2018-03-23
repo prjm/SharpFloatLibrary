@@ -84,75 +84,94 @@ namespace SharpFloat.Helpers {
                 result.Length = maxResultLen;
         }
 
-        public static void Multiply(BigInt pResult, BigInt lhs, uint rhs) {
+        /// <summary>
+        ///     multiply a big integer value with an unsigned inter
+        /// </summary>
+        /// <param name="result">result value</param>
+        /// <param name="lhs">left hand side of the product</param>
+        /// <param name="rhs">right hand side of the product</param>
+        public static void Multiply(BigInt result, BigInt lhs, uint rhs) {
             var carry = 0U;
             var pResultCur = 0U;
             var pLhsCur = 0U;
             var pLhsEnd = lhs.Length;
-            pResult.Length = lhs.length;
+            result.Length = lhs.length;
 
             for (; pLhsCur != pLhsEnd; ++pLhsCur, ++pResultCur) {
                 var product = (ulong)(lhs[pLhsCur]) * rhs + carry;
-                pResult[pResultCur] = (uint)(product & 0xFFFFFFFF);
+                result[pResultCur] = (uint)(product & 0xFFFFFFFF);
                 carry = (uint)(product >> 32);
             }
 
             if (carry != 0) {
-                pResult.Length = pResult.Length + 1;
-                pResult[pResultCur] = (uint)carry;
+                result.Length = result.Length + 1;
+                result[pResultCur] = (uint)carry;
             }
         }
 
-        public static void Multiply2(BigInt pResult, BigInt lhs) {
+        /// <summary>
+        ///     multiply a big number by 2
+        /// </summary>
+        /// <param name="result">result value</param>
+        /// <param name="number">number to multiply</param>
+        public static void Multiply2(BigInt result, BigInt number) {
             var carry = 0U;
             var pResultCur = 0U;
             var pLhsCur = 0U;
-            var pLhsEnd = lhs.Length;
-            pResult.Length = lhs.length;
+            var pLhsEnd = number.Length;
+            result.Length = number.length;
 
             for (; pLhsCur != pLhsEnd; ++pLhsCur, ++pResultCur) {
-                var cur = lhs[pLhsCur];
-                pResult[pResultCur] = (cur << 1) | carry;
+                var cur = number[pLhsCur];
+                result[pResultCur] = (cur << 1) | carry;
                 carry = cur >> 31;
             }
 
             if (carry != 0) {
-                pResult.Length = pResult.Length + 1;
-                pResult[pResultCur] = carry;
+                result.Length = result.Length + 1;
+                result[pResultCur] = carry;
             }
         }
 
-        public static void Multiply2(BigInt pResult) {
+        /// <summary>
+        ///     multiply a big number by two
+        /// </summary>
+        /// <param name="number">number to be multiplied</param>
+        public static void Multiply2(BigInt number) {
             var carry = 0U;
             var cur = 0U;
-            var end = pResult.Length;
+            var end = number.Length;
 
             for (; cur != end; ++cur) {
-                var v = pResult[cur];
-                pResult[cur] = (v << 1) | carry;
+                var v = number[cur];
+                number[cur] = (v << 1) | carry;
                 carry = v >> 31;
             }
 
             if (carry != 0) {
-                pResult.Length = pResult.Length + 1;
-                pResult[cur] = carry;
+                number.Length = number.Length + 1;
+                number[cur] = carry;
             }
         }
 
-        public static void Multiply10(BigInt pResult) {
+        /// <summary>
+        ///     multiply a big number by 10
+        /// </summary>
+        /// <param name="number">number to multiply</param>
+        public static void Multiply10(BigInt number) {
             var carry = 0UL;
             var cur = 0U;
-            var end = pResult.Length;
+            var end = number.Length;
 
             for (; cur != end; ++cur) {
-                var v = pResult[cur] * 10UL + carry;
-                pResult[cur] = (uint)(v & 0xFFFF_FFFF);
+                var v = number[cur] * 10UL + carry;
+                number[cur] = (uint)(v & 0xFFFF_FFFF);
                 carry = v >> 32;
             }
 
             if (carry != 0) {
-                pResult.Length = pResult.Length + 1;
-                pResult[cur] = (uint)carry;
+                number.Length = number.Length + 1;
+                number[cur] = (uint)carry;
             }
         }
 

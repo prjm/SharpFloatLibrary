@@ -36,6 +36,15 @@ using SharpFloat.Globals;
 namespace SharpFloat.Helpers {
 
     public static partial class DoubleHelpers {
+
+        /// <summary>
+        ///     use the parts of a 64-bit floating point numbers
+        ///     and pack it into a single value
+        /// </summary>
+        /// <param name="sign"></param>
+        /// <param name="exp"></param>
+        /// <param name="sig"></param>
+        /// <returns></returns>
         public static ulong PackToF64(bool sign, short exp, ulong sig)
             => (((sign ? 1UL : 0UL) << 63) + ((ulong)(exp) << 52) + (sig));
     }

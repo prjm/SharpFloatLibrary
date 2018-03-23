@@ -36,7 +36,13 @@ namespace SharpFloat.Helpers {
 
     public partial struct UInt64Extra {
 
-
+        /// <summary>
+        ///     shift right
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="extra"></param>
+        /// <param name="dist"></param>
+        /// <returns></returns>
         public static UInt64Extra ShiftRightJam64Extra(ulong a, ulong extra, int dist) {
             ulong v;
             ulong e;

@@ -33,6 +33,9 @@
 
 namespace SharpFloat.Helpers {
 
+    /// <summary>
+    ///     helper class for <c>ushort</c> values
+    /// </summary>
     public static partial class UShortHelpers {
 
         /// <summary>

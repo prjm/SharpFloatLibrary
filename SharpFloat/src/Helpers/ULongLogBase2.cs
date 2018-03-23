@@ -34,6 +34,11 @@ namespace SharpFloat.Helpers {
 
     public static partial class ULongHelpers {
 
+        /// <summary>
+        ///     compute log2 of a given ulong value
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         public static uint LogBase2(this ulong val) {
             var temp = val >> 32;
             if (temp != 0)

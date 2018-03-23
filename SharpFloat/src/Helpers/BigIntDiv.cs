@@ -33,13 +33,30 @@ namespace SharpFloat.Helpers {
 
     public partial class BigInt {
 
-
-
+        /// <summary>
+        ///    This function will divide two large numbers under the assumption that the
+        ///    result is within the range [0,10) and the input numbers have been shifted
+        ///    to satisfy:
+        ///    - The highest block of the divisor is greater than or equal to 8 such that
+        ///      there is enough precision to make an accurate first guess at the quotient.
+        ///    - The highest block of the divisor is less than the maximum value on an
+        ///      unsigned 32-bit integer such that we can safely increment without overflow.
+        ///    - The dividend does not contain more blocks than the divisor such that we
+        ///      can estimate the quotient by dividing the equivalently placed high blocks.
+        ///
+        ///    quotient  = floor(dividend / divisor)
+        ///    remainder = dividend - quotient*divisor
+        ///
+        ///    pDividend is updated to be the remainder and the quotient is returned.
+        /// </summary>
+        /// <param name="dividend"></param>
+        /// <param name="divisor"></param>
+        /// <returns></returns>
         public static uint DivideWithRemainder_MaxQuotient9(BigInt dividend, BigInt divisor) {
 
             // Check that the divisor has been correctly shifted into range and that it is not
             // smaller than the dividend in length.
-            if (divisor.Zero || divisor[divisor.Length - 1] < 8 || divisor[divisor.length] >= 0xFFFFFFFF || dividend.Length > divisor.Length)
+            if (divisor.Zero || divisor[divisor.Length - 1] < 8 || divisor[divisor.length - 1] >= 0xFFFFFFFF || dividend.Length > divisor.Length)
                 throw new System.ArgumentOutOfRangeException();
 
             // If the dividend is smaller than the divisor, the quotient is zero and the divisor is already

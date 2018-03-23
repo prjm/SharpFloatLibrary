@@ -37,6 +37,12 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
+        /// <summary>
+        ///     compare two 80-bit extended values and return <c>true</c> for inequal values
+        /// </summary>
+        /// <param name="l">left side to compare</param>
+        /// <param name="r">right side to compare</param>
+        /// <returns><c>true</c> if the values are not equal or one operaned is <c>NaN</c></returns>
         public static bool operator !=(in ExtF80 l, in ExtF80 r) {
 
             if (l.IsNaN || r.IsNaN) {

@@ -35,6 +35,12 @@ namespace SharpFloat.Helpers {
 
     public static partial class UIntHelper {
 
+        /// <summary>
+        ///     shift rigt
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="dist"></param>
+        /// <returns></returns>
         public static uint ShiftRightJam32(this uint a, ushort dist) {
 
             return

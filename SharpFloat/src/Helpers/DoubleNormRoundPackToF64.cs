@@ -36,14 +36,22 @@ using SharpFloat.Globals;
 namespace SharpFloat.Helpers {
 
     /// <summary>
-    ///     helper function for byte values
+    ///     helper function for double floating point values
     /// </summary>
     public static partial class DoubleHelpers {
 
+        /// <summary>
+        ///     normalize an 64-bit floating point number and pack it to a single value
+        /// </summary>
+        /// <param name="sign"></param>
+        /// <param name="exp"></param>
+        /// <param name="sig"></param>
+        /// <param name="roundingMode"></param>
+        /// <returns></returns>
         public static double NormRoundPackToF64(bool sign, short exp, ulong sig, RoundingMode roundingMode) {
             short shiftDist;
 
-            shiftDist = (short)(sig.CountLeadingZeroes() - 1);
+            shiftDist = (short)(sig.CountLeadingZeros() - 1);
             exp -= shiftDist;
             if ((10 <= shiftDist) && ((uint)exp < 0x7FD)) {
                 return PackToF64(sign, sig != 0 ? exp : (short)0, sig << (shiftDist - 10));

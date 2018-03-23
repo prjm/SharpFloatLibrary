@@ -35,9 +35,25 @@ using SharpFloat.Helpers;
 
 namespace SharpFloat.FloatingPoint {
 
+    /// <summary>
+    ///     floating point format to use
+    /// </summary>
     public enum PrintFloatFormat : byte {
-        PrintFloatFormat_Positional = 1,    // [-]ddddd.dddd
-        PrintFloatFormat_Scientific = 2,    // [-]d.dddde[sign]ddd
+
+        /// <summary>
+        ///     undefined format
+        /// </summary>
+        Undefined = 0,
+
+        /// <summary>
+        ///     positional format, example <c>[-]ddddd.dddd</c>
+        /// </summary>
+        PrintFloatFormat_Positional = 1,
+
+        /// <summary>
+        ///     scientific format, example <c>[-]d.dddde[sign]ddd</c>
+        /// </summary>
+        PrintFloatFormat_Scientific = 2
     };
 
     public partial struct ExtF80 {
@@ -346,11 +362,15 @@ namespace SharpFloat.FloatingPoint {
         }
 
 
-        //******************************************************************************
-        // Print a 32-bit floating-point number as a decimal string.
-        // The output string is always NUL terminated and the string length (not
-        // including the NUL) is returned.
-        //******************************************************************************
+        /// <summary>
+        ///     Print a 32-bit floating-point number as a decimal string.
+        /// </summary>
+        /// <param name="pOutBuffer"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="precision"></param>
+        /// <returns></returns>
         public static uint PrintFloat32
         (
             StringBuilder pOutBuffer,     // buffer to output into
@@ -451,11 +471,15 @@ namespace SharpFloat.FloatingPoint {
             }
         }
 
-        //******************************************************************************
-        // Print a 64-bit floating-point number as a decimal string.
-        // The output string is always NUL terminated and the string length (not
-        // including the NUL) is returned.
-        //******************************************************************************
+        /// <summary>
+        ///     Print a 64-bit floating-point number as a decimal string.
+        /// </summary>
+        /// <param name="pOutBuffer"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="precision"></param>
+        /// <returns></returns>
         public static uint PrintFloat64
         (
             StringBuilder pOutBuffer,     // buffer to output into

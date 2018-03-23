@@ -35,6 +35,11 @@ namespace SharpFloat.Helpers {
 
     public partial struct UInt128 {
 
+        /// <summary>
+        ///     right shift a this value
+        /// </summary>
+        /// <param name="dist">shifting distance</param>
+        /// <returns></returns>
         public UInt128 ShiftRightJam128(int dist) {
 
             if (dist < 64) {

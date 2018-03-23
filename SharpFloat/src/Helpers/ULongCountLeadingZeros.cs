@@ -39,8 +39,8 @@ namespace SharpFloat.Helpers {
         ///     count leading zero in an unsigned long
         /// </summary>
         /// <param name="a">number</param>
-        /// <returns>leading zeroes (in bits)</returns>
-        public static byte CountLeadingZeroes(this ulong a) {
+        /// <returns>leading zeros (in bits)</returns>
+        public static byte CountLeadingZeros(this ulong a) {
             byte count = 0;
             var a32 = (uint)(a >> 32);
 
@@ -59,7 +59,7 @@ namespace SharpFloat.Helpers {
                 a32 <<= 8;
             }
 
-            count += ((byte)(a32 >> 24)).CountLeadingZeroes();
+            count += ((byte)(a32 >> 24)).CountLeadingZeros();
             return count;
         }
     }
