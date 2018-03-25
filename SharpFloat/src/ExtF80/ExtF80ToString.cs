@@ -48,200 +48,132 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     positional format, example <c>[-]ddddd.dddd</c>
         /// </summary>
-        PrintFloatFormat_Positional = 1,
+        PositionalFormat = 1,
 
         /// <summary>
         ///     scientific format, example <c>[-]d.dddde[sign]ddd</c>
         /// </summary>
-        PrintFloatFormat_Scientific = 2
+        ScientificFormat = 2
     };
 
     public partial struct ExtF80 {
 
-
-        //******************************************************************************
-        // Outputs the positive number with positional notation: ddddd.dddd
-        // The output is always NUL terminated and the output length (not including the
-        // NUL) is returned.
-        //******************************************************************************
-        private static uint FormatPositional
-        (
-            StringBuilder pOutBuffer,         // buffer to output into
-            uint bufferSize,         // maximum characters that can be printed to pOutBuffer
-            ulong mantissa,           // value significand
-            int exponent,           // value exponent in base 2
-            uint mantissaHighBitIdx, // index of the highest set mantissa bit
-            bool hasUnequalMargins,  // is the high margin twice as large as the low margin
-            int precision           // Negative prints as many digits as are needed for a unique
-                                    //  number. Positive specifies the maximum number of
-                                    //  significant digits to print past the decimal point.
-        ) {
-            int printExponent;
+        /// <summary>
+        ///     outputs the positive number with positional notation: ddddd.dddd
+        /// </summary>
+        /// <param name="outputBuffer">output buffer</param>
+        /// <param name="mantissa">value significand</param>
+        /// <param name="exponent">value exponent in base 2</param>
+        /// <param name="mantissaHighBitIdx">index of the highest set mantissa bit</param>
+        /// <param name="hasUnequalMargins">is the high margin twice as large as the low margin</param>
+        /// <param name="precision">
+        ///     Negative prints as many digits as are needed for a unique
+        ///     number. Positive specifies the maximum number of
+        ///     significant digits to print past the decimal point.</param>
+        /// <returns></returns>
+        private static uint FormatPositional(StringBuilder outputBuffer, ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, int precision) {
+            var bufferOffset = outputBuffer.Length;
             uint numPrintDigits;
-            var maxPrintLen = bufferSize - 1;
+            int printExponent;
 
             if (precision < 0) {
-                numPrintDigits = Dragon4(mantissa,
-                                            exponent,
-                                            mantissaHighBitIdx,
-                                            hasUnequalMargins,
-                                            FormatCutoffMode.Unique,
-                                            0,
-                                            pOutBuffer,
-                                            maxPrintLen,
-                                            out printExponent);
+                numPrintDigits = Dragon4(mantissa, exponent, mantissaHighBitIdx, hasUnequalMargins, FormatCutoffMode.Unique, 0, outputBuffer, out printExponent);
             }
             else {
-                numPrintDigits = Dragon4(mantissa,
-                                            exponent,
-                                            mantissaHighBitIdx,
-                                            hasUnequalMargins,
-                                            FormatCutoffMode.FractionLength,
-                                            (uint)precision,
-                                            pOutBuffer,
-                                            maxPrintLen,
-                                            out printExponent);
+                numPrintDigits = Dragon4(mantissa, exponent, mantissaHighBitIdx, hasUnequalMargins, FormatCutoffMode.FractionLength, (uint)precision, outputBuffer, out printExponent);
             }
 
             if (numPrintDigits <= 0)
                 throw new InvalidOperationException();
 
-            if (numPrintDigits > bufferSize)
-                throw new InvalidOperationException();
-
             // track the number of digits past the decimal point that have been printed
-            uint numFractionDigits = 0;
+            var numFractionDigits = 0U;
 
             // if output has a whole number
             if (printExponent >= 0) {
                 // leave the whole number at the start of the buffer
                 var numWholeDigits = (uint)(printExponent + 1);
                 if (numPrintDigits < numWholeDigits) {
-                    // don't overflow the buffer
-                    if (numWholeDigits > maxPrintLen)
-                        numWholeDigits = maxPrintLen;
 
                     // add trailing zeros up to the decimal point
                     for (; numPrintDigits < numWholeDigits; ++numPrintDigits)
-                        pOutBuffer.Append('0');
+                        outputBuffer.Append('0');
                 }
                 // insert the decimal point prior to the fraction
-                else if (numPrintDigits > (uint)numWholeDigits) {
+                else if (numPrintDigits > numWholeDigits) {
                     numFractionDigits = numPrintDigits - numWholeDigits;
-                    var maxFractionDigits = maxPrintLen - numWholeDigits - 1;
-                    if (numFractionDigits > maxFractionDigits)
-                        numFractionDigits = maxFractionDigits;
-                    pOutBuffer.Insert((int)numWholeDigits, '.');
+                    outputBuffer.Insert(bufferOffset + (int)numWholeDigits, '.');
                     numPrintDigits = numWholeDigits + 1 + numFractionDigits;
                 }
             }
             else {
                 // shift out the fraction to make room for the leading zeros
-                if (maxPrintLen > 2) {
-                    var numFractionZeros = (uint)-printExponent - 1;
-                    var maxFractionZeros = maxPrintLen - 2;
-                    if (numFractionZeros > maxFractionZeros)
-                        numFractionZeros = maxFractionZeros;
+                var numFractionZeros = (uint)-printExponent - 1;
+                var digitsStartIdx = 2 + numFractionZeros;
 
-                    var digitsStartIdx = 2 + numFractionZeros;
+                // shift the significant digits right such that there is room for leading zeros
+                numFractionDigits = numPrintDigits;
 
-                    // shift the significant digits right such that there is room for leading zeros
-                    numFractionDigits = numPrintDigits;
-                    var maxFractionDigits = maxPrintLen - digitsStartIdx;
-                    if (numFractionDigits > maxFractionDigits)
-                        numFractionDigits = maxFractionDigits;
+                // insert the leading zeros
+                for (uint i = 2; i < digitsStartIdx; ++i)
+                    outputBuffer.Insert(bufferOffset, '0');
 
-                    // insert the leading zeros
-                    for (uint i = 2; i < digitsStartIdx; ++i)
-                        pOutBuffer.Insert(0, '0');
-
-                    // update the counts
-                    numFractionDigits += numFractionZeros;
-                    numPrintDigits = numFractionDigits;
-                }
+                // update the counts
+                numFractionDigits += numFractionZeros;
+                numPrintDigits = numFractionDigits;
 
                 // add the decimal point
-                if (maxPrintLen > 1) {
-                    pOutBuffer[1] = '.';
-                    numPrintDigits += 1;
-                }
+                outputBuffer[1] = '.';
+                numPrintDigits += 1;
 
                 // add the initial zero
-                if (maxPrintLen > 0) {
-                    pOutBuffer[0] = '0';
-                    numPrintDigits += 1;
-                }
+                outputBuffer[0] = '0';
+                numPrintDigits += 1;
             }
 
             // add trailing zeros up to precision length
-            if (precision > (int)numFractionDigits && numPrintDigits < maxPrintLen) {
+            if (precision > (int)numFractionDigits) {
                 // add a decimal point if this is the first fractional digit we are printing
                 if (numFractionDigits == 0) {
-                    pOutBuffer.Append('.');
+                    outputBuffer.Append('.');
                 }
 
                 // compute the number of trailing zeros needed
                 var totalDigits = (uint)(numPrintDigits + (precision - numFractionDigits));
-                if (totalDigits > maxPrintLen)
-                    totalDigits = maxPrintLen;
-
                 for (; numPrintDigits < totalDigits; ++numPrintDigits)
-                    pOutBuffer.Append('0');
+                    outputBuffer.Append('0');
             }
-
-            // terminate the buffer
-            if (numPrintDigits > maxPrintLen)
-                throw new InvalidOperationException();
 
             return numPrintDigits;
         }
 
-        private static uint FormatScientific
-        (
-            StringBuilder pOutBuffer,         // buffer to output into
-            uint bufferSize,         // maximum characters that can be printed to pOutBuffer
-            ulong mantissa,           // value significand
-            int exponent,           // value exponent in base 2
-            uint mantissaHighBitIdx, // index of the highest set mantissa bit
-            bool hasUnequalMargins,  // is the high margin twice as large as the low margin
-            int precision           // Negative prints as many digits as are needed for a unique
-                                    //  number. Positive specifies the maximum number of
-                                    //  significant digits to print past the decimal point.
-        ) {
-            if (bufferSize < 0)
-                throw new ArgumentOutOfRangeException();
-
-
+        /// <summary>
+        ///     output a number using scientific notation
+        /// </summary>
+        /// <param name="outputBuffer">output buffer</param>
+        /// <param name="mantissa">value significand</param>
+        /// <param name="exponent">value exponent in base 2</param>
+        /// <param name="mantissaHighBitIdx">index of the highest set mantissa bit</param>
+        /// <param name="hasUnequalMargins">is the high margin twice as large as the low margin</param>
+        /// <param name="precision">
+        ///     Negative prints as many digits as are needed for a unique
+        ///     number. Positive specifies the maximum number of
+        ///     significant digits to print past the decimal point.
+        /// </param>
+        /// <returns></returns>
+        private static uint FormatScientific(StringBuilder outputBuffer, ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, int precision) {
+            var bufferOffset = outputBuffer.Length;
             int printExponent;
             uint numPrintDigits;
 
             if (precision < 0) {
-                numPrintDigits = Dragon4(mantissa,
-                                            exponent,
-                                            mantissaHighBitIdx,
-                                            hasUnequalMargins,
-                                            FormatCutoffMode.Unique,
-                                            0,
-                                            pOutBuffer,
-                                            bufferSize,
-                                            out printExponent);
+                numPrintDigits = Dragon4(mantissa, exponent, mantissaHighBitIdx, hasUnequalMargins, FormatCutoffMode.Unique, 0, outputBuffer, out printExponent);
             }
             else {
-                numPrintDigits = Dragon4(mantissa,
-                                            exponent,
-                                            mantissaHighBitIdx,
-                                            hasUnequalMargins,
-                                            FormatCutoffMode.TotalLength,
-                                            (uint)(precision + 1),
-                                            pOutBuffer,
-                                            bufferSize,
-                                            out printExponent);
+                numPrintDigits = Dragon4(mantissa, exponent, mantissaHighBitIdx, hasUnequalMargins, FormatCutoffMode.TotalLength, (uint)(precision + 1), outputBuffer, out printExponent);
             }
 
             if (numPrintDigits <= 0)
-                throw new InvalidOperationException();
-
-            if (numPrintDigits > bufferSize)
                 throw new InvalidOperationException();
 
             // keep the whole number as the first digit
@@ -254,60 +186,49 @@ namespace SharpFloat.FloatingPoint {
 
             // insert the decimal point prior to the fractional number
             var numFractionDigits = numPrintDigits - 1;
-            if (numFractionDigits > 0 && bufferSize > 1) {
-                var maxFractionDigits = bufferSize - 2;
-                if (numFractionDigits > maxFractionDigits)
-                    numFractionDigits = maxFractionDigits;
-
-                pOutBuffer.Insert(pOutBuffer.Length - 1, '.');
+            if (numFractionDigits > 0) {
+                outputBuffer.Insert(1 + bufferOffset, '.');
             }
 
             // add trailing zeros up to precision length
-            if (precision > (int)numFractionDigits && bufferSize > 1) {
+            if (precision > (int)numFractionDigits) {
                 // add a decimal point if this is the first fractional digit we are printing
                 if (numFractionDigits == 0) {
-                    pOutBuffer.Append('.');
+                    outputBuffer.Append('.');
                 }
 
                 // compute the number of trailing zeros needed
                 var numZeros = (uint)(precision - numFractionDigits);
-                if (numZeros > bufferSize - 1)
-                    numZeros = bufferSize - 1;
-
                 for (var pEnd = 0; pEnd < numZeros; ++pEnd)
-                    pOutBuffer.Append('0');
+                    outputBuffer.Append('0');
             }
 
             // print the exponent into a local buffer and copy into output buffer
-            if (bufferSize > 1) {
-                var exponentBuffer = new char[5];
-                exponentBuffer[0] = 'e';
-                if (printExponent >= 0) {
-                    exponentBuffer[1] = '+';
-                }
-                else {
-                    exponentBuffer[1] = '-';
-                    printExponent = -printExponent;
-                }
-
-                if (printExponent >= 1000)
-                    throw new InvalidOperationException();
-
-                var hundredsPlace = printExponent / 100;
-                var tensPlace = (printExponent - hundredsPlace * 100) / 10;
-                var onesPlace = (printExponent - hundredsPlace * 100 - tensPlace * 10);
-
-                exponentBuffer[2] = (char)('0' + hundredsPlace);
-                exponentBuffer[3] = (char)('0' + tensPlace);
-                exponentBuffer[4] = (char)('0' + onesPlace);
-
-                // copy the exponent buffer into the output
-                var maxExponentSize = bufferSize - 1;
-                var exponentSize = (5 < maxExponentSize) ? 5 : maxExponentSize;
-                pOutBuffer.Insert(0, new string(exponentBuffer));
+            var exponentBuffer = new char[5];
+            exponentBuffer[0] = 'e';
+            if (printExponent >= 0) {
+                exponentBuffer[1] = '+';
+            }
+            else {
+                exponentBuffer[1] = '-';
+                printExponent = -printExponent;
             }
 
-            return (uint)pOutBuffer.Length;
+            if (printExponent >= 1000)
+                throw new InvalidOperationException();
+
+            var hundredsPlace = printExponent / 100;
+            var tensPlace = (printExponent - hundredsPlace * 100) / 10;
+            var onesPlace = (printExponent - hundredsPlace * 100 - tensPlace * 10);
+
+            exponentBuffer[2] = (char)('0' + hundredsPlace);
+            exponentBuffer[3] = (char)('0' + tensPlace);
+            exponentBuffer[4] = (char)('0' + onesPlace);
+
+            // copy the exponent buffer into the output
+            outputBuffer.Append(new string(exponentBuffer));
+
+            return (uint)outputBuffer.Length;
         }
 
         //******************************************************************************
@@ -315,13 +236,8 @@ namespace SharpFloat.FloatingPoint {
         // The output string is always NUL terminated and the string length (not
         // including the NUL) is returned.
         //******************************************************************************
-        private static uint PrintHex(StringBuilder pOutBuffer, uint bufferSize, ulong value, uint width) {
+        private static uint PrintHex(StringBuilder pOutBuffer, ulong value, uint width) {
             var digits = "0123456789abcdef";
-
-            var maxPrintLen = bufferSize - 1;
-            if (width > maxPrintLen)
-                width = maxPrintLen;
-
 
             while (width > 0) {
                 --width;
@@ -338,9 +254,7 @@ namespace SharpFloat.FloatingPoint {
         // The output string is always NUL terminated and the string length (not
         // including the NUL) is returned.
         //******************************************************************************
-        private static uint PrintInfNan(StringBuilder pOutBuffer, uint bufferSize, ulong mantissa, uint mantissaHexWidth) {
-
-            var maxPrintLen = bufferSize - 1;
+        private static uint PrintInfNan(StringBuilder pOutBuffer, ulong mantissa, uint mantissaHexWidth) {
 
             // Check for infinity
             if (mantissa == 0) {
@@ -350,13 +264,8 @@ namespace SharpFloat.FloatingPoint {
                 ;
             }
             else {
-                // copy and make sure the buffer is terminated
                 pOutBuffer.Append("NaN");
-
-                // append HEX value
-                if (maxPrintLen > 3)
-                    PrintHex(pOutBuffer, bufferSize - 3, mantissa, mantissaHexWidth);
-
+                PrintHex(pOutBuffer, mantissa, mantissaHexWidth);
                 return (uint)pOutBuffer.Length;
             }
         }
@@ -365,31 +274,16 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     Print a 32-bit floating-point number as a decimal string.
         /// </summary>
-        /// <param name="pOutBuffer"></param>
-        /// <param name="bufferSize"></param>
-        /// <param name="value"></param>
-        /// <param name="format"></param>
-        /// <param name="precision"></param>
+        /// <param name="outputBffer">output buffer</param>
+        /// <param name="value">value to print</param>
+        /// <param name="format">output format</param>
+        /// <param name="precision">
+        ///     If negative, the minimum number of digits to represent a
+        ///     unique 32-bit floating point value is output. Otherwise,
+        ///     this is the number of digits to print past the decimal point.
+        /// </param>
         /// <returns></returns>
-        public static uint PrintFloat32
-        (
-            StringBuilder pOutBuffer,     // buffer to output into
-            uint bufferSize,     // size of pOutBuffer
-            float value,          // value to print
-            PrintFloatFormat format,         // format to print with
-            int precision       // If negative, the minimum number of digits to represent a
-                                // unique 32-bit floating point value is output. Otherwise,
-                                // this is the number of digits to print past the decimal point.
-        ) {
-            if (bufferSize == 0)
-                return 0;
-
-            if (bufferSize == 1) {
-                pOutBuffer[0] = '\0';
-                return 0;
-            }
-
-            // deconstruct the floating point value
+        public static uint PrintFloat32(StringBuilder outputBffer, float value, PrintFloatFormat format, int precision) {
             var bits = FloatHelpers.SingleToInt32Bits(value);
             var floatExponent = (bits >> 23) & 0xFF;
             var floatMantissa = bits & 0x7FFFFF;
@@ -397,16 +291,14 @@ namespace SharpFloat.FloatingPoint {
 
             // output the sign
             if ((bits >> 63) != 0) {
-                pOutBuffer[0] = '-';
-                --bufferSize;
+                outputBffer.Append('-');
                 ++prefixLength;
             }
 
             // if this is a special value
             if (floatExponent == 0xFF) {
-                return (uint)(PrintInfNan(pOutBuffer, bufferSize, floatMantissa, 6) + prefixLength);
+                return (uint)(PrintInfNan(outputBffer, floatMantissa, 6) + prefixLength);
             }
-            // else this is a number
             else {
                 // factor the value into its parts
                 uint mantissa;
@@ -446,18 +338,16 @@ namespace SharpFloat.FloatingPoint {
 
                 // format the value
                 switch (format) {
-                    case PrintFloatFormat.PrintFloatFormat_Positional:
-                        return (uint)(FormatPositional(pOutBuffer,
-                                                    bufferSize,
+                    case PrintFloatFormat.PositionalFormat:
+                        return (uint)(FormatPositional(outputBffer,
                                                     mantissa,
                                                     exponent,
                                                     mantissaHighBitIdx,
                                                     hasUnequalMargins,
                                                     precision) + prefixLength);
 
-                    case PrintFloatFormat.PrintFloatFormat_Scientific:
-                        return (uint)(FormatScientific(pOutBuffer,
-                                                    bufferSize,
+                    case PrintFloatFormat.ScientificFormat:
+                        return (uint)(FormatScientific(outputBffer,
                                                     mantissa,
                                                     exponent,
                                                     mantissaHighBitIdx,
@@ -465,7 +355,7 @@ namespace SharpFloat.FloatingPoint {
                                                     precision) + prefixLength);
 
                     default:
-                        pOutBuffer[0] = '\0';
+                        outputBffer[0] = '\0';
                         return 0;
                 }
             }
@@ -474,30 +364,16 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         ///     Print a 64-bit floating-point number as a decimal string.
         /// </summary>
-        /// <param name="pOutBuffer"></param>
-        /// <param name="bufferSize"></param>
-        /// <param name="value"></param>
-        /// <param name="format"></param>
-        /// <param name="precision"></param>
+        /// <param name="outputBuffer">output buffer</param>
+        /// <param name="value">value to print</param>
+        /// <param name="format">print format</param>
+        /// <param name="precision">
+        ///     If negative, the minimum number of digits to represent a
+        ///     unique 64-bit floating point value is output. Otherwise,
+        ///     this is the number of digits to print past the decimal point.
+        /// </param>
         /// <returns></returns>
-        public static uint PrintFloat64
-        (
-            StringBuilder pOutBuffer,     // buffer to output into
-            uint bufferSize,     // size of pOutBuffer
-            double value,          // value to print
-            PrintFloatFormat format,         // format to print with
-            int precision       // If negative, the minimum number of digits to represent a
-                                // unique 64-bit floating point value is output. Otherwise,
-                                // this is the number of digits to print past the decimal point.
-        ) {
-            if (bufferSize == 0)
-                return 0;
-
-            if (bufferSize == 1) {
-                pOutBuffer[0] = '\0';
-                return 0;
-            }
-
+        public static uint PrintFloat64(StringBuilder outputBuffer, double value, PrintFloatFormat format, int precision) {
             // deconstruct the floating point value
             var bits = BitConverter.DoubleToInt64Bits(value);
             var floatExponent = (uint)((bits >> 52) & 0x7ffL);
@@ -506,13 +382,13 @@ namespace SharpFloat.FloatingPoint {
 
             // output the sign
             if ((bits >> 31) != 0) {
-                pOutBuffer.Append('-');
+                outputBuffer.Append('-');
                 ++prefixLength;
             }
 
             // if this is a special value
             if (floatExponent == 0x7FF) {
-                return PrintInfNan(pOutBuffer, bufferSize, floatMantissa, 13) + prefixLength;
+                return PrintInfNan(outputBuffer, floatMantissa, 13) + prefixLength;
             }
             // else this is a number
             else {
@@ -555,18 +431,16 @@ namespace SharpFloat.FloatingPoint {
 
                 // format the value
                 switch (format) {
-                    case PrintFloatFormat.PrintFloatFormat_Positional:
-                        return FormatPositional(pOutBuffer,
-                                                    bufferSize,
+                    case PrintFloatFormat.PositionalFormat:
+                        return FormatPositional(outputBuffer,
                                                     mantissa,
                                                     exponent,
                                                     mantissaHighBitIdx,
                                                     hasUnequalMargins,
                                                     precision) + prefixLength;
 
-                    case PrintFloatFormat.PrintFloatFormat_Scientific:
-                        return FormatScientific(pOutBuffer,
-                                                    bufferSize,
+                    case PrintFloatFormat.ScientificFormat:
+                        return FormatScientific(outputBuffer,
                                                     mantissa,
                                                     exponent,
                                                     mantissaHighBitIdx,
@@ -574,7 +448,7 @@ namespace SharpFloat.FloatingPoint {
                                                     precision) + prefixLength;
 
                     default:
-                        pOutBuffer[0] = '\0';
+                        outputBuffer[0] = '\0';
                         return 0;
                 }
             }

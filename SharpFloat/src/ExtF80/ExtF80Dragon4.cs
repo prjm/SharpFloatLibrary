@@ -86,10 +86,10 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="cutoffMode">cutoff mode: how to determine output length</param>
         /// <param name="cutoffNumber">number of digits</param>
         /// <param name="pOutBuffer">output buffer</param>
-        /// <param name="bufferSize">maximal buffer size</param>
         /// <param name="pOutExponent">calculated exponent</param>
         /// <returns>number of digits</returns>
-        public static uint Dragon4(ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, FormatCutoffMode cutoffMode, uint cutoffNumber, StringBuilder pOutBuffer, uint bufferSize, out int pOutExponent) {
+        public static uint Dragon4(ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, FormatCutoffMode cutoffMode, uint cutoffNumber, StringBuilder pOutBuffer, out int pOutExponent) {
+            var bufferOffset = pOutBuffer.Length;
 
             // if the mantissa is zero, the value is zero regardless of the exponent
             if (mantissa == 0) {
@@ -262,9 +262,9 @@ namespace SharpFloat.FloatingPoint {
             }
 
             // Compute the cutoff exponent (the exponent of the final digit to print).
-            // Default to the maximum size of the output buffer.
-            var cutoffExponent = digitExponent - bufferSize;
+            var cutoffExponent = digitExponent - 1000;
             switch (cutoffMode) {
+
                 // print digits until we pass the accuracy margin limits or buffer size
                 case FormatCutoffMode.Unique:
                     break;
@@ -421,7 +421,7 @@ namespace SharpFloat.FloatingPoint {
                     for (; ; )
                     {
                         // if we are at the first digit
-                        if (pOutBuffer.Length == 0) {
+                        if (pOutBuffer.Length - bufferOffset == 0) {
                             // output 1 at the next highest exponent
                             pOutBuffer.Append('1');
                             pOutExponent += 1;
@@ -443,7 +443,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             // return the number of digits output
-            return (uint)pOutBuffer.Length;
+            return (uint)(pOutBuffer.Length - bufferOffset);
         }
 
     }
