@@ -5,16 +5,16 @@ using SharpFloatTests.Common;
 namespace SharpFloatTests.Helpers {
     public class TestToString {
 
-        void TestFormat_F32(StringBuilder pBuffer, PrintFloatFormat format, int precision, float value, string pValueStr) {
-            pBuffer.Clear();
-            var printLen = ExtF80.PrintFloat32(pBuffer, value, format, precision);
-            Assert.EqualString(pValueStr, pBuffer.ToString());
+        void TestFormat_F32(StringBuilder buffer, PrintFloatFormat format, int precision, float value, string expected) {
+            buffer.Clear();
+            ExtF80.PrintFloat32(buffer, value, format, precision);
+            Assert.EqualString(expected, buffer.ToString());
         }
 
-        void TestFormat_F64(StringBuilder pBuffer, PrintFloatFormat format, int precision, double value, string pValueStr) {
-            pBuffer.Clear();
-            var printLen = ExtF80.PrintFloat64(pBuffer, value, format, precision);
-            Assert.EqualString(pValueStr, pBuffer.ToString());
+        void TestFormat_F64(StringBuilder buffer, PrintFloatFormat format, int precision, double value, string expected) {
+            buffer.Clear();
+            var printLen = ExtF80.PrintFloat64(buffer, value, format, precision);
+            Assert.EqualString(expected, buffer.ToString());
         }
 
         [TestCase]

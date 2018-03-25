@@ -238,6 +238,7 @@ namespace SharpFloat.FloatingPoint {
                 BigInt.Multiply(temp, scaledValue, pow10);
                 scaledValue = temp;
 
+                temp = new BigInt();
                 BigInt.Multiply(temp, scaledMarginLow, pow10);
                 scaledMarginLow = temp;
 

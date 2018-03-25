@@ -355,8 +355,7 @@ namespace SharpFloat.FloatingPoint {
                                                     precision) + prefixLength);
 
                     default:
-                        outputBffer[0] = '\0';
-                        return 0;
+                        throw new ArgumentOutOfRangeException(nameof(format));
                 }
             }
         }
@@ -374,14 +373,13 @@ namespace SharpFloat.FloatingPoint {
         /// </param>
         /// <returns></returns>
         public static uint PrintFloat64(StringBuilder outputBuffer, double value, PrintFloatFormat format, int precision) {
-            // deconstruct the floating point value
-            var bits = BitConverter.DoubleToInt64Bits(value);
-            var floatExponent = (uint)((bits >> 52) & 0x7ffL);
-            var floatMantissa = (ulong)bits & 0xfffffffffffffUL;
+            var bits = (ulong)BitConverter.DoubleToInt64Bits(value);
+            var floatExponent = (uint)((bits >> 52) & 0x7ffU);
+            var floatMantissa = bits & 0xFFFFFFFFFFFFFUL;
             var prefixLength = 0U;
 
             // output the sign
-            if ((bits >> 31) != 0) {
+            if ((bits >> 63) != 0) {
                 outputBuffer.Append('-');
                 ++prefixLength;
             }
@@ -448,11 +446,9 @@ namespace SharpFloat.FloatingPoint {
                                                     precision) + prefixLength;
 
                     default:
-                        outputBuffer[0] = '\0';
-                        return 0;
+                        throw new ArgumentOutOfRangeException(nameof(format));
                 }
             }
         }
-
     }
 }
