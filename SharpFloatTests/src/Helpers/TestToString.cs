@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using SharpFloat.FloatingPoint;
+using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.Helpers {
@@ -17,39 +18,52 @@ namespace SharpFloatTests.Helpers {
             Assert.EqualString(expected, buffer.ToString());
         }
 
+        void TestFormat_F80(StringBuilder buffer, PrintFloatFormat format, int precision, in ExtF80 value, string expected) {
+            buffer.Clear();
+            var printLen = ExtF80.PrintFloat80(buffer, value, format, precision);
+            Assert.EqualString(expected, buffer.ToString());
+        }
+
+
         [TestCase]
         public void TestStringFormat() {
             var buffer = new StringBuilder();
+
+            TestFormat_F80(buffer, PrintFloatFormat.PositionalFormat, -1, new ExtF80(0x3FFF, 0x8000000000000000), "1");
+            TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MinValue, "3.3621031431120935063e-4932");
+            TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MaxValue, "1.189731495357231765e+4932");
+            TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MinValueDenormal, "3e-4932");
+
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, -1, 1.0f, "1");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, 1.0f, "1e+000");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, 1.0f, "1e+0000");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, -1, 10.234f, "10.234");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, -1, -10.234f, "-10.234");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, 10.234f, "1.0234e+001");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, -10.234f, "-1.0234e+001");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, 10.234f, "1.0234e+0001");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, -10.234f, "-1.0234e+0001");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, -1, 1000.0f, "1000");
 
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 0, 1.0f, "1");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, 1.0f, "1e+000");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, 1.0f, "1e+0000");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 0, 10.234f, "10");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 0, -10.234f, "-10");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, 10.234f, "1e+001");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, -10.234f, "-1e+001");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, 10.234f, "1e+0001");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 0, -10.234f, "-1e+0001");
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 2, 10.234f, "10.23");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 2, 10.234f, "1.02e+001");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.9999999999999995e-008, "9.9999999999999995e-008");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.8813129168249309e-324, "9.8813129168249309e-324");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.9999999999999694e-311, "9.9999999999999694e-311");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 2, 10.234f, "1.02e+0001");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.9999999999999995e-008, "9.9999999999999995e-0008");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.8813129168249309e-324, "9.8813129168249309e-0324");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 16, 9.9999999999999694e-311, "9.9999999999999694e-0311");
 
             // test rounding
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 10, 3.14159265358979323846f, "3.1415927410"); // 3.1415927410 is closest tF32 to PI
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 10, 3.14159265358979323846f, "3.1415927410e+000");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 10, 3.14159265358979323846f, "3.1415927410e+0000");
             TestFormat_F64(buffer, PrintFloatFormat.PositionalFormat, 10, 3.14159265358979323846, "3.1415926536");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 10, 3.14159265358979323846, "3.1415926536e+000");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 10, 3.14159265358979323846, "3.1415926536e+0000");
 
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 5, 299792458.0f, "299792448.00000"); // 299792448 is closest tF32 to 299792458
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 5, 299792458.0f, "2.99792e+008");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 5, 299792458.0f, "2.99792e+0008");
             TestFormat_F64(buffer, PrintFloatFormat.PositionalFormat, 5, 299792458.0, "299792458.00000");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 5, 299792458.0, "2.99792e+008");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 5, 299792458.0, "2.99792e+0008");
 
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 25, 3.14159265358979323846f, "3.1415927410125732421875000");
             TestFormat_F64(buffer, PrintFloatFormat.PositionalFormat, 50, 3.14159265358979323846, "3.14159265358979311599796346854418516159057617187500");
@@ -66,13 +80,13 @@ namespace SharpFloatTests.Helpers {
             // test trailing zeros               .
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 3, 1.0f, "1.000");
             TestFormat_F64(buffer, PrintFloatFormat.PositionalFormat, 3, 1.0f, "1.000");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 3, 1.0f, "1.000e+000");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 3, 1.0f, "1.000e+000");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 3, 1.0f, "1.000e+0000");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 3, 1.0f, "1.000e+0000");
 
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, 3, 1.5f, "1.500");
             TestFormat_F64(buffer, PrintFloatFormat.PositionalFormat, 3, 1.5f, "1.500");
-            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 3, 1.5f, "1.500e+000");
-            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 3, 1.5f, "1.500e+000");
+            TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, 3, 1.5f, "1.500e+0000");
+            TestFormat_F64(buffer, PrintFloatFormat.ScientificFormat, 3, 1.5f, "1.500e+0000");
         }
     }
 }

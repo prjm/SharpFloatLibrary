@@ -59,7 +59,6 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-
         //******************************************************************************
         // This is an implementation the Dragon4 algorithm to convert a binary number
         // in floating point format to a decimal number in string format. The function
@@ -121,7 +120,9 @@ namespace SharpFloat.FloatingPoint {
                     // 3) Set the margin value to the lowest mantissa bit's scale.
 
                     // scaledValue      = 2 * 2 * mantissa*2^exponent
-                    scaledValue = new BigInt(4 * mantissa);
+                    scaledValue = new BigInt(mantissa);
+                    BigInt.Multiply2(scaledValue);
+                    BigInt.Multiply2(scaledValue);
                     BigInt.ShiftLeft(scaledValue, (uint)exponent);
 
                     // scale            = 2 * 2 * 1
@@ -139,7 +140,9 @@ namespace SharpFloat.FloatingPoint {
                     // In order to track the mantissa data as an integer, we store it as is with a large scale
 
                     // scaledValue      = 2 * 2 * mantissa
-                    scaledValue = new BigInt(4 * mantissa);
+                    scaledValue = new BigInt(mantissa);
+                    BigInt.Multiply2(scaledValue);
+                    BigInt.Multiply2(scaledValue);
 
                     // scale            = 2 * 2 * 2^(-exponent)
                     scale = new BigInt();
@@ -165,7 +168,8 @@ namespace SharpFloat.FloatingPoint {
                     // 3) Set the margin value to the lowest mantissa bit's scale.
 
                     // scaledValue     = 2 * mantissa*2^exponent
-                    scaledValue = new BigInt(2 * mantissa);
+                    scaledValue = new BigInt(mantissa);
+                    BigInt.Multiply2(scaledValue);
                     BigInt.ShiftLeft(scaledValue, (uint)exponent);
 
                     // scale           = 2 * 1
@@ -180,7 +184,8 @@ namespace SharpFloat.FloatingPoint {
                     // In order to track the mantissa data as an integer, we store it as is with a large scale
 
                     // scaledValue     = 2 * mantissa
-                    scaledValue = new BigInt(2 * mantissa);
+                    scaledValue = new BigInt(mantissa);
+                    BigInt.Multiply2(scaledValue);
 
                     // scale           = 2 * 2^(-exponent)
                     scale = new BigInt();

@@ -89,6 +89,24 @@ namespace SharpFloat.FloatingPoint {
             = new ExtF80(DefaultNaNExponent, MaskBit64);
 
         /// <summary>
+        ///     smallest value
+        /// </summary>
+        public static readonly ExtF80 MinValue
+            = new ExtF80(0x0001, 0x8000000000000000);
+
+        /// <summary>
+        ///     largest value
+        /// </summary>
+        public static readonly ExtF80 MaxValue
+            = new ExtF80(0x7FFE, 0xFFFFFFFFFFFFFFFF);
+
+        /// <summary>
+        ///     smallest denormalized value
+        /// </summary>
+        public static readonly ExtF80 MinValueDenormal
+            = new ExtF80(0x0000, 0x0000000000000001);
+
+        /// <summary>
         ///     largest exponent value
         /// </summary>
         private const ushort MaxExponent

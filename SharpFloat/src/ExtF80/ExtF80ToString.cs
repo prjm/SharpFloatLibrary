@@ -204,7 +204,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             // print the exponent into a local buffer and copy into output buffer
-            var exponentBuffer = new char[5];
+            var exponentBuffer = new char[6];
             exponentBuffer[0] = 'e';
             if (printExponent >= 0) {
                 exponentBuffer[1] = '+';
@@ -214,16 +214,18 @@ namespace SharpFloat.FloatingPoint {
                 printExponent = -printExponent;
             }
 
-            if (printExponent >= 1000)
+            if (printExponent >= 10000)
                 throw new InvalidOperationException();
 
-            var hundredsPlace = printExponent / 100;
-            var tensPlace = (printExponent - hundredsPlace * 100) / 10;
-            var onesPlace = (printExponent - hundredsPlace * 100 - tensPlace * 10);
+            var thousandsPlace = printExponent / 1000;
+            var hundredsPlace = (printExponent - thousandsPlace * 1000) / 100;
+            var tensPlace = (printExponent - thousandsPlace * 1000 - hundredsPlace * 100) / 10;
+            var onesPlace = (printExponent - thousandsPlace * 1000 - hundredsPlace * 100 - tensPlace * 10);
 
-            exponentBuffer[2] = (char)('0' + hundredsPlace);
-            exponentBuffer[3] = (char)('0' + tensPlace);
-            exponentBuffer[4] = (char)('0' + onesPlace);
+            exponentBuffer[2] = (char)('0' + thousandsPlace);
+            exponentBuffer[3] = (char)('0' + hundredsPlace);
+            exponentBuffer[4] = (char)('0' + tensPlace);
+            exponentBuffer[5] = (char)('0' + onesPlace);
 
             // copy the exponent buffer into the output
             outputBuffer.Append(new string(exponentBuffer));
@@ -450,5 +452,77 @@ namespace SharpFloat.FloatingPoint {
                 }
             }
         }
+
+
+        /// <summary>
+        ///     Print a 80-bit floating-point number as a decimal string
+        /// </summary>
+        /// <param name="outputBuffer">output buffer</param>
+        /// <param name="value">value to print</param>
+        /// <param name="format">print format</param>
+        /// <param name="precision">
+        ///     If negative, the minimum number of digits to represent a
+        ///     unique 80-bit floating point value is output. Otherwise,
+        ///     this is the number of digits to print past the decimal point.
+        /// </param>
+        /// <returns></returns>
+        public static uint PrintFloat80(StringBuilder outputBuffer, in ExtF80 value, PrintFloatFormat format, int precision) {
+            var floatExponent = value.UnsignedExponent;
+            var floatMantissa = value.signif;
+            var prefixLength = 0U;
+
+            // output the sign
+            if (value.IsNegative) {
+                outputBuffer.Append('-');
+                ++prefixLength;
+            }
+
+            if (value.IsNaN || value.IsSpecialOperand) {
+                return PrintInfNan(outputBuffer, floatMantissa, 13) + prefixLength;
+            }
+            else {
+                // factor the value into its parts
+                ulong mantissa;
+                int exponent;
+                uint mantissaHighBitIdx;
+                bool hasUnequalMargins;
+
+                if (floatExponent != 0) {
+                    mantissa = (1UL << 63) | floatMantissa;
+                    exponent = (int)(floatExponent - 16383 - 63);
+                    mantissaHighBitIdx = 63;
+                    hasUnequalMargins = (floatExponent != 1) && (floatMantissa == 0);
+                }
+                else {
+                    mantissa = floatMantissa;
+                    exponent = -16382;
+                    mantissaHighBitIdx = mantissa.LogBase2();
+                    hasUnequalMargins = false;
+                }
+
+                // format the value
+                switch (format) {
+                    case PrintFloatFormat.PositionalFormat:
+                        return FormatPositional(outputBuffer,
+                                                    mantissa,
+                                                    exponent,
+                                                    mantissaHighBitIdx,
+                                                    hasUnequalMargins,
+                                                    precision) + prefixLength;
+
+                    case PrintFloatFormat.ScientificFormat:
+                        return FormatScientific(outputBuffer,
+                                                    mantissa,
+                                                    exponent,
+                                                    mantissaHighBitIdx,
+                                                    hasUnequalMargins,
+                                                    precision) + prefixLength;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(format));
+                }
+            }
+        }
+
     }
 }
