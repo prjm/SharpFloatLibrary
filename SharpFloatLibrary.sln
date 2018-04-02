@@ -8,12 +8,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14F01D46-F0CD-4C8F-86C0-7243A7597726}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		COPYING.txt = COPYING.txt
+		LICENSE.txt = LICENSE.txt
+		LICENSE_Default.txt = LICENSE_Default.txt
+		LICENSE_Dragon4.txt = LICENSE_Dragon4.txt
+		LICENSE_Roslyn.txt = LICENSE_Roslyn.txt
+		LICENSE_Softfloat_Library.txt = LICENSE_Softfloat_Library.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloatTests", "SharpFloatTests\SharpFloatTests.csproj", "{EDE92716-0EAA-4B38-A5E6-C5ACE9DA9949}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpFloatTestFloatRunner", "SharpFloatTestFloatRunner\SharpFloatTestFloatRunner.csproj", "{73F27A50-34E4-46E8-B587-0898C8D2416D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloatTestFloatRunner", "SharpFloatTestFloatRunner\SharpFloatTestFloatRunner.csproj", "{73F27A50-34E4-46E8-B587-0898C8D2416D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

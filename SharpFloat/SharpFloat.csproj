@@ -9,4 +9,8 @@
     <DocumentationFile>bin\Debug\netstandard2.0\SharpFloat.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE*.txt" />
+  </ItemGroup>
+
 </Project>

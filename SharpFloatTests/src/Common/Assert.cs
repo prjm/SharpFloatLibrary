@@ -1,4 +1,5 @@
 ﻿using System;
+using SharpFloat.FloatingPoint;
 using SharpFloat.Globals;
 using XAssert = Xunit.Assert;
 
@@ -38,6 +39,17 @@ namespace SharpFloatTests.Common {
 
         public static void EqualString(string expected, string value)
             => XAssert.Equal(expected, value);
+
+        public static void EqualExtF80(ExtF80 expected, ExtF80 value) {
+            EqualUShort(expected.signExp, value.signExp);
+            EqualULong(expected.signif, value.signif);
+        }
+
+        public static void EqualExtF80(ExtF80 expected, string value) {
+            var b = ExtF80.TryParse(value, out var d);
+            EqualBool(true, b);
+            EqualExtF80(expected, d);
+        }
 
 
     }
