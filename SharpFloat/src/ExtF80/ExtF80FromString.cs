@@ -3,13 +3,9 @@
 // See License_Roslyn.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
-using SharpFloat.Helpers;
 
 namespace SharpFloat.FloatingPoint {
 
@@ -45,7 +41,6 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         private abstract class FloatingPointType {
             public abstract ushort MantissaBits { get; }
-            public abstract ushort ExponentBits { get; }
             public int MinBinaryExponent => 1 - MaxBinaryExponent;
             public abstract int MaxBinaryExponent { get; }
             public int OverflowDecimalExponent => (MaxBinaryExponent + 2 * MantissaBits) / 3;
@@ -76,7 +71,7 @@ namespace SharpFloat.FloatingPoint {
             /// <param name="hasZeroTail">Whether there are any nonzero bits past the supplied mantissa</param>
             /// <param name="result">Where the bits of the floating-point number are stored</param>
             /// <returns>A status indicating whether the conversion succeeded and why</returns>
-            public Status AssembleFloatingPointValue(ulong initialMantissa, int initialExponent, bool hasZeroTail, out ExtF80 result) {
+            public Status AssembleFloatingPointValue(BigInteger initialMantissa, int initialExponent, bool hasZeroTail, out ExtF80 result) {
 
                 // number of bits by which we must adjust the mantissa to shift it into the
                 // correct position, and compute the resulting base two exponent for the
@@ -110,7 +105,7 @@ namespace SharpFloat.FloatingPoint {
                         // Use two steps for right shifts:  for a shift of N bits, we first
                         // shift by N-1 bits, then shift the last bit and use its value to
                         // round the mantissa.
-                        mantissa = RightShiftWithRounding(mantissa, -denormalMantissaShift, hasZeroTail);
+                        RightShiftWithRounding(ref mantissa, -denormalMantissaShift, hasZeroTail);
 
                         // If the mantissa is now zero, we have underflowed:
                         if (mantissa == 0) {
@@ -154,7 +149,7 @@ namespace SharpFloat.FloatingPoint {
                         // Use two steps for right shifts:  for a shift of N bits, we first
                         // shift by N-1 bits, then shift the last bit and use its value to
                         // round the mantissa.
-                        mantissa = RightShiftWithRounding(mantissa, -normalMantissaShift, hasZeroTail);
+                        RightShiftWithRounding(ref mantissa, -normalMantissaShift, hasZeroTail);
 
                         // When we round the mantissa, it may produce a result that is too
                         // large.  In this case, we divide the mantissa by two and increment
@@ -177,7 +172,7 @@ namespace SharpFloat.FloatingPoint {
                     }
                 }
 
-                result = new ExtF80((ushort)exponent, mantissa);
+                result = new ExtF80((ushort)(exponent + ExponentBias), (ulong)mantissa);
                 return Status.OK;
             }
         }
@@ -189,9 +184,8 @@ namespace SharpFloat.FloatingPoint {
             public static ExtF80FloatingPointType Instance = new ExtF80FloatingPointType();
             private ExtF80FloatingPointType() { }
             public override ushort MantissaBits => 64;
-            public override ushort ExponentBits => 14;
             public override int MaxBinaryExponent => 16383;
-            public override int ExponentBias => 16383;
+            public override int ExponentBias => 16382;
             public override int DenormalizedExponentBias => 16832;
         }
 
@@ -217,12 +211,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="shift">The amount of shift</param>
         /// <param name="hasZeroTail">Whether there are any less significant nonzero bits in the value</param>
         /// <returns></returns>
-        private static ulong RightShiftWithRounding(ulong value, int shift, bool hasZeroTail) {
-            // If we'd need to shift further than it is possible to shift, the answer
-            // is always zero:
-            if (shift >= 64)
-                return 0;
-
+        private static void RightShiftWithRounding(ref BigInteger value, int shift, bool hasZeroTail) {
             var extraBitsMask = (1UL << (shift - 1)) - 1;
             var roundBitMask = (1UL << (shift - 1));
             var lsbBitMask = 1UL << shift;
@@ -231,7 +220,8 @@ namespace SharpFloat.FloatingPoint {
             var roundBit = (value & roundBitMask) != 0;
             var hasTailBits = !hasZeroTail || (value & extraBitsMask) != 0;
 
-            return (value >> shift) + (ShouldRoundUp(lsbBit: lsbBit, roundBit: roundBit, hasTailBits: hasTailBits) ? 1UL : 0);
+            ShiftRight(ref value, (uint)shift);
+            value = value + (ShouldRoundUp(lsbBit: lsbBit, roundBit: roundBit, hasTailBits: hasTailBits) ? 1UL : 0);
         }
 
         /// <summary>
@@ -273,7 +263,7 @@ namespace SharpFloat.FloatingPoint {
             // extra bit is used to correctly round the mantissa (if there are fewer bits
             // than this available, then that's totally okay; in that case we use what we
             // have and we don't need to round).
-            uint requiredBitsOfPrecision = (uint)type.MantissaBits + 1;
+            var requiredBitsOfPrecision = (uint)type.MantissaBits + 1;
 
             // The input is of the form 0.Mantissa x 10^Exponent, where 'Mantissa' are
             // the decimal digits of the mantissa and 'Exponent' is the decimal exponent.
@@ -402,28 +392,24 @@ namespace SharpFloat.FloatingPoint {
                 : fractionalShift;
 
             ShiftLeft(ref fractionalNumerator, remainingBitsOfPrecisionRequired);
-            BigInteger fractionalRemainder;
-            BigInteger bigFractionalMantissa = BigInteger.DivRem(fractionalNumerator, fractionalDenominator, out fractionalRemainder);
-            ulong fractionalMantissa = (ulong)bigFractionalMantissa;
-
-            bool hasZeroTail = fractionalRemainder.IsZero;
+            var bigFractionalMantissa = BigInteger.DivRem(fractionalNumerator, fractionalDenominator, out var fractionalRemainder);
+            var hasZeroTail = fractionalRemainder.IsZero;
 
             // We may have produced more bits of precision than were required.  Check,
             // and remove any "extra" bits:
-            uint fractionalMantissaBits = CountSignificantBits(fractionalMantissa);
+            uint fractionalMantissaBits = CountSignificantBits(bigFractionalMantissa);
             if (fractionalMantissaBits > requiredFractionalBitsOfPrecision) {
-                int shift = (int)(fractionalMantissaBits - requiredFractionalBitsOfPrecision);
-                hasZeroTail = hasZeroTail && (fractionalMantissa & ((1UL << shift) - 1)) == 0;
-                fractionalMantissa >>= shift;
+                var shift = (int)(fractionalMantissaBits - requiredFractionalBitsOfPrecision);
+                var tailMask = new BigInteger(1);
+                ShiftLeft(ref tailMask, (uint)shift);
+                tailMask = -1;
+                hasZeroTail = hasZeroTail && (bigFractionalMantissa & tailMask) == 0;
+                ShiftRight(ref bigFractionalMantissa, (uint)shift);
             }
 
             // Compose the mantissa from the integer and fractional parts:
-            Debug.Assert(integerBitsOfPrecision < 60); // we can use BigInteger's built-in conversion
-            ulong integerMantissa = (ulong)integerValue;
-
-            ulong completeMantissa =
-                (integerMantissa << (int)requiredFractionalBitsOfPrecision) +
-                fractionalMantissa;
+            ShiftLeft(ref integerValue, requiredFractionalBitsOfPrecision);
+            var completeMantissa = integerValue + bigFractionalMantissa;
 
             // Compute the final exponent:
             // * If the mantissa had an integer part, then the exponent is one less than
@@ -590,6 +576,11 @@ namespace SharpFloat.FloatingPoint {
         private static void ShiftLeft(ref BigInteger number, uint shift) {
             var powerOfTwo = BigInteger.Pow(new BigInteger(2), (int)shift);
             number = number * powerOfTwo;
+        }
+
+        private static void ShiftRight(ref BigInteger number, uint shift) {
+            var powerOfTwo = BigInteger.Pow(new BigInteger(2), (int)shift);
+            number = number / powerOfTwo;
         }
 
         /// <summary>

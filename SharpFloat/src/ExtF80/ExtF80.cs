@@ -92,7 +92,7 @@ namespace SharpFloat.FloatingPoint {
         ///     smallest value
         /// </summary>
         public static readonly ExtF80 MinValue
-            = new ExtF80(0x0001, 0x8000000000000000);
+            = new ExtF80(0x0001, 0x0000000000000001);
 
         /// <summary>
         ///     largest value
@@ -190,7 +190,7 @@ namespace SharpFloat.FloatingPoint {
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay
-            => string.Format("0x{0:X4}{1:X16}", signExp, signExp);
+            => string.Format("0x{0:X4}{1:X16}", signExp, signif);
 
     }
 }
