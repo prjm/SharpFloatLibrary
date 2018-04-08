@@ -130,13 +130,13 @@ namespace SharpFloat.FloatingPoint {
                         // We detect this case here and re-adjust the mantissa and exponent
                         // appropriately, to form a normal number:
                         //if (mantissa > DenormalMantissaMask) {
-                        if (false) {
+                        if (mantissa > new BigInteger(0x7FFFFFFFFFFFFFFF)) {
                             // We add one to the denormal_mantissa_shift to account for the
                             // hidden mantissa bit (we subtracted one to account for this bit
                             // when we computed the denormal_mantissa_shift above).
                             exponent =
                                 initialExponent -
-                                (denormalMantissaShift + 1) -
+                                (denormalMantissaShift) -
                                 normalMantissaShift;
                         }
                     }
@@ -172,7 +172,7 @@ namespace SharpFloat.FloatingPoint {
                     }
                 }
 
-                result = new ExtF80((ushort)(exponent + ExponentBias), (ulong)mantissa);
+                result = new ExtF80((ushort)(exponent + ExponentBias), 0x8000000000000000 | (ulong)mantissa);
                 return Status.OK;
             }
         }
@@ -184,7 +184,7 @@ namespace SharpFloat.FloatingPoint {
             public static ExtF80FloatingPointType Instance = new ExtF80FloatingPointType();
             private ExtF80FloatingPointType() { }
             public override ushort MantissaBits => 64;
-            public override int MaxBinaryExponent => 16383;
+            public override int MaxBinaryExponent => 16382;
             public override int ExponentBias => 16382;
             public override int DenormalizedExponentBias => 16832;
         }
@@ -321,6 +321,7 @@ namespace SharpFloat.FloatingPoint {
             uint fractionalDenominatorExponent = data.Exponent < 0
                 ? fractionalDigitsPresent + (uint)-data.Exponent
                 : fractionalDigitsPresent;
+
             if (integerBitsOfPrecision == 0 && (fractionalDenominatorExponent - (int)data.MantissaCount) > type.OverflowDecimalExponent) {
                 // If there were any digits in the integer part, it is impossible to
                 // underflow (because the exponent cannot possibly be small enough),

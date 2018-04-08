@@ -23,9 +23,9 @@ namespace SharpFloatTests.Common {
         public static void EqualByte(byte expected, byte value)
             => XAssert.Equal(expected, value);
 
-        public static void EqualAfterRoundTripFormatting(ExtF80 value) {
+        public static void EqualAfterRoundTripFormatting(ExtF80 value, PrintFloatFormat floatFormat = PrintFloatFormat.ScientificFormat) {
             var buffer = new StringBuilder();
-            ExtF80.PrintFloat80(buffer, value, PrintFloatFormat.PositionalFormat, -1);
+            ExtF80.PrintFloat80(buffer, value, floatFormat, -1);
             ExtF80.TryParse(buffer.ToString(), out var newValue);
             EqualExtF80(value, newValue);
         }

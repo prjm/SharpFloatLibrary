@@ -92,7 +92,7 @@ namespace SharpFloat.FloatingPoint {
         ///     smallest value
         /// </summary>
         public static readonly ExtF80 MinValue
-            = new ExtF80(0x0001, 0x0000000000000001);
+            = new ExtF80(0x0001, 0x8000000000000000);
 
         /// <summary>
         ///     largest value
