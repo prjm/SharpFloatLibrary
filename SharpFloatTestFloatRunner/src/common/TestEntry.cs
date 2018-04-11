@@ -108,7 +108,7 @@ namespace SharpFloatTestFloatRunner.Common {
             var buffer = new StringBuilder();
             ExtF80.PrintFloat80(buffer, value, floatFormat, -1);
             ExtF80.TryParse(buffer.ToString(), out var newValue);
-            AssertEqual(value, newValue);
+            AssertEqual(value, newValue, true);
         }
 
         /// <summary>
@@ -185,11 +185,13 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
-        protected static void AssertEqual(in ExtF80 expected, in ExtF80 actual) {
+        /// <param name="ignoreOneBit">ignore the last bit</param>
+        protected static void AssertEqual(in ExtF80 expected, in ExtF80 actual, bool ignoreOneBit = false) {
             if (expected.signExp != actual.signExp)
                 throw new NumbersNotEqualException(expected.signExp, actual.signExp);
             if (expected.signif != actual.signif)
-                throw new NumbersNotEqualException(expected.signif, actual.signif);
+                if (!ignoreOneBit || (actual.signif > expected.signif ? actual.signif - expected.signif : expected.signif - actual.signif) > 1)
+                    throw new NumbersNotEqualException(expected.signif, actual.signif);
         }
 
 

@@ -495,7 +495,7 @@ namespace SharpFloat.FloatingPoint {
                 }
                 else {
                     mantissa = floatMantissa;
-                    exponent = -16382;
+                    exponent = 1 - 16383 - 63;
                     mantissaHighBitIdx = mantissa.LogBase2();
                     hasUnequalMargins = false;
                 }

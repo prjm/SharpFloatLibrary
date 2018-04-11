@@ -27,7 +27,7 @@ namespace SharpFloatTests.Common {
             var buffer = new StringBuilder();
             ExtF80.PrintFloat80(buffer, value, floatFormat, -1);
             ExtF80.TryParse(buffer.ToString(), out var newValue);
-            EqualExtF80(value, newValue);
+            EqualExtF80(value, newValue, true);
         }
 
         public static void EqualInt(int expected, int value)
@@ -48,15 +48,19 @@ namespace SharpFloatTests.Common {
         public static void EqualString(string expected, string value)
             => XAssert.Equal(expected, value);
 
-        public static void EqualExtF80(ExtF80 expected, ExtF80 value) {
+        public static void EqualExtF80(ExtF80 expected, ExtF80 value, bool ignoreLastBit) {
             EqualUShort(expected.signExp, value.signExp);
-            EqualULong(expected.signif, value.signif);
+
+            if (ignoreLastBit)
+                EqualBool(true, (value.signif > expected.signif ? value.signif - expected.signif : expected.signif - value.signif) <= 1);
+            else
+                EqualULong(expected.signif, value.signif);
         }
 
         public static void EqualExtF80(ExtF80 expected, string value) {
             var b = ExtF80.TryParse(value, out var d);
             EqualBool(true, b);
-            EqualExtF80(expected, d);
+            EqualExtF80(expected, d, false);
         }
 
 

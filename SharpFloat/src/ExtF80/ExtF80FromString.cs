@@ -92,18 +92,19 @@ namespace SharpFloat.FloatingPoint {
                 // type as a normal value, but it may be representable as a denormal
                 // value.  Compute the number of bits by which we need to shift the
                 // mantissa in order to form a denormal number.
-                var denormalMantissaShift = normalMantissaShift + normalExponent + ExponentBias;
+                var denormalMantissaShift = normalMantissaShift + normalExponent + ExponentBias - 1;
 
                 // Denormal values have an exponent of zero, so the debiased exponent is
                 // the negation of the exponent bias:
-                exponent = DenormalizedExponentBias;
+                exponent = -ExponentBias;
 
                 if (denormalMantissaShift < 0) {
 
                     // Use two steps for right shifts:  for a shift of N bits, we first
                     // shift by N-1 bits, then shift the last bit and use its value to
                     // round the mantissa.
-                    RightShiftWithRounding(ref mantissa, -denormalMantissaShift, hasZeroTail);
+                    //RightShiftWithRounding(ref mantissa, -denormalMantissaShift, hasZeroTail);
+                    ShiftRight(ref mantissa, (uint)-denormalMantissaShift);
 
                     // If the mantissa is now zero, we have underflowed:
                     if (mantissa == 0) {
@@ -128,7 +129,7 @@ namespace SharpFloat.FloatingPoint {
                     // We detect this case here and re-adjust the mantissa and exponent
                     // appropriately, to form a normal number:
                     //if (mantissa > DenormalMantissaMask) {
-                    if (mantissa > new BigInteger(0x7FFFFFFFFFFFFFFF)) {
+                    if (mantissa > new BigInteger(0xFFFFFFFFFFFFFFFF)) {
                         exponent = initialExponent - denormalMantissaShift - normalMantissaShift;
                     }
                 }
@@ -163,8 +164,9 @@ namespace SharpFloat.FloatingPoint {
                 }
             }
 
-            var shortExponent = (ushort)(exponent + ExponentBias);
-            result = new ExtF80(shortExponent.PackToExtF80UI64(isNegative), 0x8000000000000000 | (ulong)mantissa);
+            var finalExponent = (ushort)(exponent + ExponentBias);
+            var finalMantissa = (finalExponent == 0 ? 0 : 0x8000000000000000) | (ulong)mantissa;
+            result = new ExtF80(finalExponent.PackToExtF80UI64(isNegative), finalMantissa);
             return Status.OK;
         }
 
@@ -531,21 +533,13 @@ namespace SharpFloat.FloatingPoint {
         /// <returns>An indicator of the kind of result</returns>
         private static Status ConvertBigIntegerToFloatingPointBits(byte[] integerValueAsBytes, uint integerBitsOfPrecision, bool hasNonzeroFractionalPart, bool isNegative, out ExtF80 result) {
             int baseExponent = DenormalMantissaBits;
-            int exponent;
-            ulong mantissa;
             var has_zero_tail = !hasNonzeroFractionalPart;
             var topElementIndex = ((int)integerBitsOfPrecision - 1) / 8;
-
-            // The high-order byte of integerValueAsBytes might not have a full eight bits.  However,
-            // since the data are stored in quanta of 8 bits, and we really only need around 54
-            // bits of mantissa for a double (and fewer for a float), we can just assemble data
-            // from the eight high-order bytes and we will get between 59 and 64 bits, which is more
-            // than enough.
-            var bottomElementIndex = Math.Max(0, topElementIndex - (64 / 8) + 1);
-            exponent = baseExponent + bottomElementIndex * 8;
-            mantissa = 0;
+            var bottomElementIndex = Math.Max(0, topElementIndex - (72 / 8) + 1);
+            var exponent = baseExponent + bottomElementIndex * 8;
+            var mantissa = new BigInteger();
             for (var i = topElementIndex; i >= bottomElementIndex; i--) {
-                mantissa <<= 8;
+                ShiftLeft(ref mantissa, 8);
                 mantissa |= integerValueAsBytes[i];
             }
             for (var i = bottomElementIndex - 1; has_zero_tail && i >= 0; i--) {
