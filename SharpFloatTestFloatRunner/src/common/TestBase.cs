@@ -53,6 +53,8 @@ namespace SharpFloatTestFloatRunner.Common {
         /// <param name="dir">data files directory</param>
         public void Run(string dir) {
             foreach (var entry in GetTestEntries()) {
+                Console.Write(Name.ToUpperInvariant());
+                Console.Write("_");
                 Console.WriteLine(entry.Name.ToUpperInvariant());
                 var w = new Stopwatch();
 

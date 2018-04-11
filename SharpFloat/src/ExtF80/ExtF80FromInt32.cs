@@ -30,58 +30,43 @@
  *    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using SharpFloat.Globals;
+
+using SharpFloat.Helpers;
 
 namespace SharpFloat.FloatingPoint {
 
-    public partial struct ExtF80 : IEquatable<ExtF80> {
+    public partial struct ExtF80 {
 
         /// <summary>
-        ///     compare two floating point numbers
+        ///     convert an unsigned integer to an extended floating point value
         /// </summary>
-        /// <param name="l">left side</param>
-        /// <param name="r">ride side</param>
-        /// <returns><c>true</c> if the numbers are equal</returns>
-        /// <remarks>comparisons with <c>NaN</c> return false</remarks>
-        public static bool operator ==(in ExtF80 l, in ExtF80 r) {
+        /// <param name="value"></param>
+        public static implicit operator ExtF80(in uint value) {
+            if (value == 0)
+                return Zero;
 
-            if (l.IsNaN || r.IsNaN) {
-                if (l.IsSignalingNaN || r.IsSignalingNaN)
-                    Settings.Raise(ExceptionFlags.Invalid);
-                return false;
-            }
-
-            return //
-                (l.signif == r.signif)
-                && ((l.signExp == r.signExp) || (l.signif == 0 && 0 == ((l.signExp | r.signExp) & 0x7FFF)));
+            var shiftDist = value.CountLeadingZeros();
+            var exponent = 0x401E - shiftDist;
+            var mantissa = (ulong)value << shiftDist + 32;
+            return new ExtF80((ushort)exponent, mantissa);
         }
 
         /// <summary>
-        ///     compare this value to another object
+        ///     convert an signed integer to an extended floating point value
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj) {
-            if (obj is ExtF80 e)
-                return e == this;
-            return false;
+        /// <param name="value"></param>
+        public static implicit operator ExtF80(in int value) {
+            if (value == 0)
+                return Zero;
+
+            var sign = value < 0;
+            var absoluteValue = value < 0 ? (uint)-value : (uint)value;
+            var shiftDist = absoluteValue.CountLeadingZeros();
+            var exponent = (0x401E - shiftDist).PackToExtF80(sign);
+            var mantissa = (ulong)absoluteValue << shiftDist + 32;
+            return new ExtF80(exponent, mantissa);
         }
 
-        /// <summary>
-        ///     compare this value to another floating point value
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(ExtF80 other)
-            => this == other;
 
-        /// <summary>
-        ///     compute a hash code
-        /// </summary>
-        /// <returns>computed hash code</returns>
-        public override int GetHashCode()
-            => (signExp.GetHashCode() * 397) ^ signif.GetHashCode();
     }
-
 }

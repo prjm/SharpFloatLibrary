@@ -57,6 +57,28 @@ namespace SharpFloatTests.Common {
                 EqualULong(expected.signif, value.signif);
         }
 
+        public static void EqualExtF80(ExtF80 expected, uint value) {
+            ExtF80 d = value;
+            EqualExtF80(expected, d, false);
+        }
+
+        public static void EqualExtF80(ExtF80 expected, int value) {
+            ExtF80 d = value;
+            EqualExtF80(expected, d, false);
+        }
+
+        public static void EqualExtF80(ExtF80 expected, ulong value) {
+            ExtF80 d = value;
+            EqualExtF80(expected, d, false);
+        }
+
+        public static void EqualExtF80(ExtF80 expected, long value) {
+            ExtF80 d = value;
+            EqualExtF80(expected, d, false);
+        }
+
+
+
         public static void EqualExtF80(ExtF80 expected, string value) {
             var b = ExtF80.TryParse(value, out var d);
             EqualBool(true, b);

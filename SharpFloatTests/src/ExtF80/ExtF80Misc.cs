@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpFloat.FloatingPoint;
+﻿using SharpFloat.FloatingPoint;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.FloatingPoint {
@@ -20,6 +15,25 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualExtF80(ExtF80.Zero, "0.0000");
             Assert.EqualExtF80(ExtF80.Zero, "0.0000E88888");
         }
+
+        [TestCase]
+        public void TestFromInt() {
+            Assert.EqualExtF80(ExtF80.Zero, 0U);
+            Assert.EqualExtF80(new ExtF80(0x3FFF, 0x8000000000000000), 1U);
+            Assert.EqualExtF80(ExtF80.Zero, 0);
+            Assert.EqualExtF80(new ExtF80(0x3FFF, 0x8000000000000000), 1);
+            Assert.EqualExtF80(new ExtF80(0xBFFF, 0x8000000000000000), -1);
+        }
+
+        [TestCase]
+        public void TestFromLong() {
+            Assert.EqualExtF80(ExtF80.Zero, 0UL);
+            Assert.EqualExtF80(new ExtF80(0x3FFF, 0x8000000000000000), 1UL);
+            Assert.EqualExtF80(ExtF80.Zero, 0L);
+            Assert.EqualExtF80(new ExtF80(0x3FFF, 0x8000000000000000), 1L);
+            Assert.EqualExtF80(new ExtF80(0xBFFF, 0x8000000000000000), -1L);
+        }
+
 
         [TestCase]
         public void TestRoundtripFormatting() {

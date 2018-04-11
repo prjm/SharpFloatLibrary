@@ -20,4 +20,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="data\I32\" />
+    <Folder Include="data\I64\" />
+    <Folder Include="data\UI32\" />
+    <Folder Include="data\UI64\" />
+  </ItemGroup>
+
 </Project>

@@ -32,7 +32,7 @@ namespace SharpFloatTests.Helpers {
             TestFormat_F80(buffer, PrintFloatFormat.PositionalFormat, -1, new ExtF80(0x3FFF, 0x8000000000000000), "1");
             TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MinValue, "3.3621031431120935063e-4932");
             TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MaxValue, "1.189731495357231765e+4932");
-            TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MinValueDenormal, "3e-4932");
+            TestFormat_F80(buffer, PrintFloatFormat.ScientificFormat, -1, ExtF80.MinValueDenormal, "4e-4951");
 
             TestFormat_F32(buffer, PrintFloatFormat.PositionalFormat, -1, 1.0f, "1");
             TestFormat_F32(buffer, PrintFloatFormat.ScientificFormat, -1, 1.0f, "1e+0000");

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using SharpFloatTestFloatRunner.Tests.ExtF80;
+using SharpFloatTestFloatRunner.Tests.I32;
+using SharpFloatTestFloatRunner.Tests.I64;
+using SharpFloatTestFloatRunner.Tests.UI32;
+using SharpFloatTestFloatRunner.Tests.UI64;
 
 namespace SharpFloatTestFloatRunner.Common {
 
@@ -11,8 +15,12 @@ namespace SharpFloatTestFloatRunner.Common {
 
         public TestFloatTestsuite(string dataPath) {
             dataDir = dataPath;
-            tests = new[] {
-                new ExtF80TestCase()
+            tests = new TestBase[] {
+                new ExtF80TestCase(),
+                new I32TestCase(),
+                new UI32TestCase(),
+                new I64TestCase(),
+                new UI64TestCase(),
             };
         }
 
