@@ -26,6 +26,8 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualAfterRoundTripFormatting(ExtF80.Zero);
             Assert.EqualAfterRoundTripFormatting(new ExtF80(0x3FFF, 0x8000000000000000));
             Assert.EqualAfterRoundTripFormatting(new ExtF80(0x4000, 0x8000000000000000));
+            Assert.EqualAfterRoundTripFormatting(new ExtF80(0x3687, 0x801003FFFFFFFFFE));
+            Assert.EqualAfterRoundTripFormatting(new ExtF80(0xB687, 0x801003FFFFFFFFFE));
             Assert.EqualAfterRoundTripFormatting(ExtF80.MinValue);
         }
 

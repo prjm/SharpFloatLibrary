@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Text;
+using SharpFloat.Helpers;
 
 namespace SharpFloat.FloatingPoint {
 
@@ -21,8 +22,7 @@ namespace SharpFloat.FloatingPoint {
         /// <returns>True if the input was converted; false if there was an overflow</returns>
         public static bool TryParse(string s, out ExtF80 d) {
             var str = DecimalFloatingPointString.FromSource(s);
-            var dbl = ExtF80FloatingPointType.Instance;
-            var status = ConvertDecimalToFloatingPoint(str, dbl, out d);
+            var status = ConvertDecimalToFloatingPoint(str, out d);
             return status != Status.Overflow;
         }
 
@@ -36,157 +36,136 @@ namespace SharpFloat.FloatingPoint {
             Overflow
         }
 
+        private const ushort DenormalMantissaBits = 63;
+        private const ushort NormalMantissaBits = (DenormalMantissaBits + 1);
+        private const int MaxBinaryExponent = 16383;
+        private const int ExponentBias = 16383;
+        private const int DenormalizedExponentBias = 16883;
+        private const int OverflowDecimalExponent = (MaxBinaryExponent + 2 * NormalMantissaBits) / 3;
+        private const int MinBinaryExponent = 1 - MaxBinaryExponent;
+
         /// <summary>
-        ///     helper class Properties of an IEEE floating-point representation.
+        /// Converts the floating point value 0.mantissa * 2^exponent into the
+        /// correct form for the FloatingPointType and stores the bits of the resulting value
+        /// into the result object.
+        /// The caller must ensure that the mantissa and exponent are correctly computed
+        /// such that either [1] the most significant bit of the mantissa is in the
+        /// correct position for the FloatingType, or [2] the exponent has been correctly
+        /// adjusted to account for the shift of the mantissa that will be required.
+        ///
+        /// This function correctly handles range errors and stores a zero or infinity in
+        /// the result object on underflow and overflow errors, respectively.  This
+        /// function correctly forms denormal numbers when required.
+        ///
+        /// If the provided mantissa has more bits of precision than can be stored in the
+        /// result object, the mantissa is rounded to the available precision.  Thus, if
+        /// possible, the caller should provide a mantissa with at least one more bit of
+        /// precision than is required, to ensure that the mantissa is correctly rounded.
+        /// (The caller should not round the mantissa before calling this function.)
         /// </summary>
-        private abstract class FloatingPointType {
-            public abstract ushort MantissaBits { get; }
-            public int MinBinaryExponent => 1 - MaxBinaryExponent;
-            public abstract int MaxBinaryExponent { get; }
-            public int OverflowDecimalExponent => (MaxBinaryExponent + 2 * MantissaBits) / 3;
-            public abstract int ExponentBias { get; }
-            public abstract int DenormalizedExponentBias { get; }
+        /// <param name="initialMantissa">The bits of the mantissa</param>
+        /// <param name="initialExponent">The exponent</param>
+        /// <param name="hasZeroTail">Whether there are any nonzero bits past the supplied mantissa</param>
+        /// <param name="result">Where the bits of the floating-point number are stored</param>
+        /// <param name="isNegative"><c>true</c> if this value is negative</param>
+        /// <returns>A status indicating whether the conversion succeeded and why</returns>
+        private static Status AssembleFloatingPointValue(BigInteger initialMantissa, int initialExponent, bool hasZeroTail, bool isNegative, out ExtF80 result) {
 
-            /// <summary>
-            /// Converts the floating point value 0.mantissa * 2^exponent into the
-            /// correct form for the FloatingPointType and stores the bits of the resulting value
-            /// into the result object.
-            /// The caller must ensure that the mantissa and exponent are correctly computed
-            /// such that either [1] the most significant bit of the mantissa is in the
-            /// correct position for the FloatingType, or [2] the exponent has been correctly
-            /// adjusted to account for the shift of the mantissa that will be required.
-            ///
-            /// This function correctly handles range errors and stores a zero or infinity in
-            /// the result object on underflow and overflow errors, respectively.  This
-            /// function correctly forms denormal numbers when required.
-            ///
-            /// If the provided mantissa has more bits of precision than can be stored in the
-            /// result object, the mantissa is rounded to the available precision.  Thus, if
-            /// possible, the caller should provide a mantissa with at least one more bit of
-            /// precision than is required, to ensure that the mantissa is correctly rounded.
-            /// (The caller should not round the mantissa before calling this function.)
-            /// </summary>
-            /// <param name="initialMantissa">The bits of the mantissa</param>
-            /// <param name="initialExponent">The exponent</param>
-            /// <param name="hasZeroTail">Whether there are any nonzero bits past the supplied mantissa</param>
-            /// <param name="result">Where the bits of the floating-point number are stored</param>
-            /// <returns>A status indicating whether the conversion succeeded and why</returns>
-            public Status AssembleFloatingPointValue(BigInteger initialMantissa, int initialExponent, bool hasZeroTail, out ExtF80 result) {
+            // number of bits by which we must adjust the mantissa to shift it into the
+            // correct position, and compute the resulting base two exponent for the
+            // normalized mantissa:
+            var initialMantissaBits = CountSignificantBits(initialMantissa);
+            var normalMantissaShift = NormalMantissaBits - (int)initialMantissaBits;
+            var normalExponent = initialExponent - normalMantissaShift;
 
-                // number of bits by which we must adjust the mantissa to shift it into the
-                // correct position, and compute the resulting base two exponent for the
-                // normalized mantissa:
-                var initialMantissaBits = CountSignificantBits(initialMantissa);
-                var normalMantissaShift = MantissaBits - (int)initialMantissaBits;
-                var normalExponent = initialExponent - normalMantissaShift;
+            var mantissa = initialMantissa;
+            var exponent = normalExponent;
 
-                var mantissa = initialMantissa;
-                var exponent = normalExponent;
+            if (normalExponent > MaxBinaryExponent) {
+                // The exponent is too large to be represented by the floating point
+                // type; report the overflow condition:
+                result = Infinity;
+                return Status.Overflow;
+            }
+            else if (normalExponent < MinBinaryExponent) {
+                // The exponent is too small to be represented by the floating point
+                // type as a normal value, but it may be representable as a denormal
+                // value.  Compute the number of bits by which we need to shift the
+                // mantissa in order to form a denormal number.
+                var denormalMantissaShift = normalMantissaShift + normalExponent + ExponentBias;
 
-                if (normalExponent > MaxBinaryExponent) {
-                    // The exponent is too large to be represented by the floating point
-                    // type; report the overflow condition:
-                    result = Infinity;
-                    return Status.Overflow;
-                }
-                else if (normalExponent < MinBinaryExponent) {
-                    // The exponent is too small to be represented by the floating point
-                    // type as a normal value, but it may be representable as a denormal
-                    // value.  Compute the number of bits by which we need to shift the
-                    // mantissa in order to form a denormal number.
-                    var denormalMantissaShift = normalMantissaShift + normalExponent + ExponentBias;
+                // Denormal values have an exponent of zero, so the debiased exponent is
+                // the negation of the exponent bias:
+                exponent = DenormalizedExponentBias;
 
-                    // Denormal values have an exponent of zero, so the debiased exponent is
-                    // the negation of the exponent bias:
-                    exponent = DenormalizedExponentBias;
+                if (denormalMantissaShift < 0) {
 
-                    if (denormalMantissaShift < 0) {
+                    // Use two steps for right shifts:  for a shift of N bits, we first
+                    // shift by N-1 bits, then shift the last bit and use its value to
+                    // round the mantissa.
+                    RightShiftWithRounding(ref mantissa, -denormalMantissaShift, hasZeroTail);
 
-                        // Use two steps for right shifts:  for a shift of N bits, we first
-                        // shift by N-1 bits, then shift the last bit and use its value to
-                        // round the mantissa.
-                        RightShiftWithRounding(ref mantissa, -denormalMantissaShift, hasZeroTail);
-
-                        // If the mantissa is now zero, we have underflowed:
-                        if (mantissa == 0) {
-                            result = Zero;
-                            return Status.Underflow;
-                        }
-
-                        // When we round the mantissa, the result may be so large that the
-                        // number becomes a normal value.  For example, consider the single
-                        // precision case where the mantissa is 0x01ffffff and a right shift
-                        // of 2 is required to shift the value into position. We perform the
-                        // shift in two steps:  we shift by one bit, then we shift again and
-                        // round using the dropped bit.  The initial shift yields 0x00ffffff.
-                        // The rounding shift then yields 0x007fffff and because the least
-                        // significant bit was 1, we add 1 to this number to round it.  The
-                        // final result is 0x00800000.
-                        //
-                        // 0x00800000 is 24 bits, which is more than the 23 bits available
-                        // in the mantissa.  Thus, we have rounded our denormal number into
-                        // a normal number.
-                        //
-                        // We detect this case here and re-adjust the mantissa and exponent
-                        // appropriately, to form a normal number:
-                        //if (mantissa > DenormalMantissaMask) {
-                        if (mantissa > new BigInteger(0x7FFFFFFFFFFFFFFF)) {
-                            // We add one to the denormal_mantissa_shift to account for the
-                            // hidden mantissa bit (we subtracted one to account for this bit
-                            // when we computed the denormal_mantissa_shift above).
-                            exponent =
-                                initialExponent -
-                                (denormalMantissaShift) -
-                                normalMantissaShift;
-                        }
+                    // If the mantissa is now zero, we have underflowed:
+                    if (mantissa == 0) {
+                        result = Zero;
+                        return Status.Underflow;
                     }
-                    else {
-                        mantissa <<= denormalMantissaShift;
+
+                    // When we round the mantissa, the result may be so large that the
+                    // number becomes a normal value.  For example, consider the single
+                    // precision case where the mantissa is 0x01ffffff and a right shift
+                    // of 2 is required to shift the value into position. We perform the
+                    // shift in two steps:  we shift by one bit, then we shift again and
+                    // round using the dropped bit.  The initial shift yields 0x00ffffff.
+                    // The rounding shift then yields 0x007fffff and because the least
+                    // significant bit was 1, we add 1 to this number to round it.  The
+                    // final result is 0x00800000.
+                    //
+                    // 0x00800000 is 24 bits, which is more than the 23 bits available
+                    // in the mantissa.  Thus, we have rounded our denormal number into
+                    // a normal number.
+                    //
+                    // We detect this case here and re-adjust the mantissa and exponent
+                    // appropriately, to form a normal number:
+                    //if (mantissa > DenormalMantissaMask) {
+                    if (mantissa > new BigInteger(0x7FFFFFFFFFFFFFFF)) {
+                        exponent = initialExponent - denormalMantissaShift - normalMantissaShift;
                     }
                 }
                 else {
-                    if (normalMantissaShift < 0) {
-                        // Use two steps for right shifts:  for a shift of N bits, we first
-                        // shift by N-1 bits, then shift the last bit and use its value to
-                        // round the mantissa.
-                        RightShiftWithRounding(ref mantissa, -normalMantissaShift, hasZeroTail);
+                    mantissa <<= denormalMantissaShift;
+                }
+            }
+            else {
+                if (normalMantissaShift < 0) {
+                    // Use two steps for right shifts:  for a shift of N bits, we first
+                    // shift by N-1 bits, then shift the last bit and use its value to
+                    // round the mantissa.
+                    RightShiftWithRounding(ref mantissa, -normalMantissaShift, hasZeroTail);
 
-                        // When we round the mantissa, it may produce a result that is too
-                        // large.  In this case, we divide the mantissa by two and increment
-                        // the exponent (this does not change the value).
-                        //if (mantissa > NormalMantissaMask) {
-                        if (false) {
-                            mantissa >>= 1;
-                            ++exponent;
+                    // When we round the mantissa, it may produce a result that is too
+                    // large.  In this case, we divide the mantissa by two and increment
+                    // the exponent (this does not change the value).
+                    if (CountSignificantBits(mantissa) > NormalMantissaBits) {
+                        mantissa >>= 1;
+                        ++exponent;
 
-                            // The increment of the exponent may have generated a value too
-                            // large to be represented.  In this case, report the overflow:
-                            if (exponent > MaxBinaryExponent) {
-                                result = Infinity;
-                                return Status.Overflow;
-                            }
+                        // The increment of the exponent may have generated a value too
+                        // large to be represented.  In this case, report the overflow:
+                        if (exponent > MaxBinaryExponent) {
+                            result = Infinity;
+                            return Status.Overflow;
                         }
                     }
-                    else if (normalMantissaShift > 0) {
-                        mantissa <<= normalMantissaShift;
-                    }
                 }
-
-                result = new ExtF80((ushort)(exponent + ExponentBias), 0x8000000000000000 | (ulong)mantissa);
-                return Status.OK;
+                else if (normalMantissaShift > 0) {
+                    mantissa <<= normalMantissaShift;
+                }
             }
-        }
 
-        /// <summary>
-        /// Properties of a C# double.
-        /// </summary>
-        private sealed class ExtF80FloatingPointType : FloatingPointType {
-            public static ExtF80FloatingPointType Instance = new ExtF80FloatingPointType();
-            private ExtF80FloatingPointType() { }
-            public override ushort MantissaBits => 64;
-            public override int MaxBinaryExponent => 16382;
-            public override int ExponentBias => 16382;
-            public override int DenormalizedExponentBias => 16832;
+            var shortExponent = (ushort)(exponent + ExponentBias);
+            result = new ExtF80(shortExponent.PackToExtF80UI64(isNegative), 0x8000000000000000 | (ulong)mantissa);
+            return Status.OK;
         }
 
         /// <summary>
@@ -253,7 +232,7 @@ namespace SharpFloat.FloatingPoint {
         /// <summary>
         /// Convert a DecimalFloatingPointString to the bits of the given floating-point type.
         /// </summary>
-        private static Status ConvertDecimalToFloatingPoint(DecimalFloatingPointString data, FloatingPointType type, out ExtF80 result) {
+        private static Status ConvertDecimalToFloatingPoint(DecimalFloatingPointString data, out ExtF80 result) {
             if (data.Mantissa.Length == 0) {
                 result = Zero;
                 return Status.NoDigits;
@@ -263,7 +242,7 @@ namespace SharpFloat.FloatingPoint {
             // extra bit is used to correctly round the mantissa (if there are fewer bits
             // than this available, then that's totally okay; in that case we use what we
             // have and we don't need to round).
-            var requiredBitsOfPrecision = (uint)type.MantissaBits + 1;
+            var requiredBitsOfPrecision = (uint)NormalMantissaBits + 1;
 
             // The input is of the form 0.Mantissa x 10^Exponent, where 'Mantissa' are
             // the decimal digits of the mantissa and 'Exponent' is the decimal exponent.
@@ -272,21 +251,21 @@ namespace SharpFloat.FloatingPoint {
             // first 'exponent' digits, or all present digits if there are fewer digits.
             // If the exponent is zero or negative, then the integer part is empty.  In
             // either case, the remaining digits form the fractional part of the mantissa.
-            uint positiveExponent = (uint)Math.Max(0, data.Exponent);
-            uint integerDigitsPresent = Math.Min(positiveExponent, data.MantissaCount);
-            uint integerDigitsMissing = positiveExponent - integerDigitsPresent;
-            uint integerFirstIndex = 0;
-            uint integerLastIndex = integerDigitsPresent;
+            var positiveExponent = (uint)Math.Max(0, data.Exponent);
+            var integerDigitsPresent = Math.Min(positiveExponent, data.MantissaCount);
+            var integerDigitsMissing = positiveExponent - integerDigitsPresent;
+            var integerFirstIndex = 0U;
+            var integerLastIndex = integerDigitsPresent;
 
-            uint fractionalFirstIndex = integerLastIndex;
-            uint fractionalLastIndex = data.MantissaCount;
-            uint fractionalDigitsPresent = fractionalLastIndex - fractionalFirstIndex;
+            var fractionalFirstIndex = integerLastIndex;
+            var fractionalLastIndex = data.MantissaCount;
+            var fractionalDigitsPresent = fractionalLastIndex - fractionalFirstIndex;
 
             // First, we accumulate the integer part of the mantissa into a big_integer:
-            BigInteger integerValue = AccumulateDecimalDigitsIntoBigInteger(data, integerFirstIndex, integerLastIndex);
+            var integerValue = AccumulateDecimalDigitsIntoBigInteger(data, integerFirstIndex, integerLastIndex);
 
             if (integerDigitsMissing > 0) {
-                if (integerDigitsMissing > type.OverflowDecimalExponent) {
+                if (integerDigitsMissing > OverflowDecimalExponent) {
                     result = Infinity;
                     return Status.Overflow;
                 }
@@ -298,15 +277,14 @@ namespace SharpFloat.FloatingPoint {
             // of the mantissa.  If either [1] this number has more than the required
             // number of bits of precision or [2] the mantissa has no fractional part,
             // then we can assemble the result immediately:
-            byte[] integerValueAsBytes;
-            uint integerBitsOfPrecision = CountSignificantBits(integerValue, out integerValueAsBytes);
+            var integerBitsOfPrecision = CountSignificantBits(integerValue, out var integerValueAsBytes);
             if (integerBitsOfPrecision >= requiredBitsOfPrecision ||
                 fractionalDigitsPresent == 0) {
                 return ConvertBigIntegerToFloatingPointBits(
                     integerValueAsBytes,
                     integerBitsOfPrecision,
                     fractionalDigitsPresent != 0,
-                    type,
+                    data.IsNegative,
                     out result);
             }
 
@@ -318,11 +296,11 @@ namespace SharpFloat.FloatingPoint {
             // computed as the power of 10 such that N/M is equal to the value of the
             // fractional part of the mantissa.
 
-            uint fractionalDenominatorExponent = data.Exponent < 0
+            var fractionalDenominatorExponent = data.Exponent < 0
                 ? fractionalDigitsPresent + (uint)-data.Exponent
                 : fractionalDigitsPresent;
 
-            if (integerBitsOfPrecision == 0 && (fractionalDenominatorExponent - (int)data.MantissaCount) > type.OverflowDecimalExponent) {
+            if (integerBitsOfPrecision == 0 && (fractionalDenominatorExponent - (int)data.MantissaCount) > OverflowDecimalExponent) {
                 // If there were any digits in the integer part, it is impossible to
                 // underflow (because the exponent cannot possibly be small enough),
                 // so if we underflow here it is a true underflow and we return zero.
@@ -330,10 +308,9 @@ namespace SharpFloat.FloatingPoint {
                 return Status.Underflow;
             }
 
-            BigInteger fractionalNumerator = AccumulateDecimalDigitsIntoBigInteger(data, fractionalFirstIndex, fractionalLastIndex);
-            Debug.Assert(!fractionalNumerator.IsZero);
+            var fractionalNumerator = AccumulateDecimalDigitsIntoBigInteger(data, fractionalFirstIndex, fractionalLastIndex);
 
-            BigInteger fractionalDenominator = new BigInteger(1);
+            var fractionalDenominator = new BigInteger(1);
             MultiplyByPowerOfTen(ref fractionalDenominator, fractionalDenominatorExponent);
 
             // Because we are using only the fractional part of the mantissa here, the
@@ -342,10 +319,10 @@ namespace SharpFloat.FloatingPoint {
             // the same position as the most significant bit in the denominator.  This
             // ensures that when we later shift the numerator N bits to the left, we
             // will produce N bits of precision.
-            uint fractionalNumeratorBits = CountSignificantBits(fractionalNumerator);
-            uint fractionalDenominatorBits = CountSignificantBits(fractionalDenominator);
+            var fractionalNumeratorBits = CountSignificantBits(fractionalNumerator);
+            var fractionalDenominatorBits = CountSignificantBits(fractionalDenominator);
 
-            uint fractionalShift = fractionalDenominatorBits > fractionalNumeratorBits
+            var fractionalShift = fractionalDenominatorBits > fractionalNumeratorBits
                 ? fractionalDenominatorBits - fractionalNumeratorBits
                 : 0;
 
@@ -353,11 +330,12 @@ namespace SharpFloat.FloatingPoint {
                 ShiftLeft(ref fractionalNumerator, fractionalShift);
             }
 
-            uint requiredFractionalBitsOfPrecision =
+            var requiredFractionalBitsOfPrecision =
                 requiredBitsOfPrecision -
                 integerBitsOfPrecision;
 
-            uint remainingBitsOfPrecisionRequired = requiredFractionalBitsOfPrecision;
+            var remainingBitsOfPrecisionRequired = requiredFractionalBitsOfPrecision;
+
             if (integerBitsOfPrecision > 0) {
                 // If the fractional part of the mantissa provides no bits of precision
                 // and cannot affect rounding, we can just take whatever bits we got from
@@ -376,7 +354,7 @@ namespace SharpFloat.FloatingPoint {
                         integerValueAsBytes,
                         integerBitsOfPrecision,
                         fractionalDigitsPresent != 0,
-                        type,
+                        data.IsNegative,
                         out result);
                 }
 
@@ -388,7 +366,7 @@ namespace SharpFloat.FloatingPoint {
             // of two by which we must multiply the fractional part to move it into the
             // range [1.0, 2.0).  This will either be the same as the shift we computed
             // earlier, or one greater than that shift:
-            uint fractionalExponent = fractionalNumerator < fractionalDenominator
+            var fractionalExponent = fractionalNumerator < fractionalDenominator
                 ? fractionalShift + 1
                 : fractionalShift;
 
@@ -398,12 +376,12 @@ namespace SharpFloat.FloatingPoint {
 
             // We may have produced more bits of precision than were required.  Check,
             // and remove any "extra" bits:
-            uint fractionalMantissaBits = CountSignificantBits(bigFractionalMantissa);
+            var fractionalMantissaBits = CountSignificantBits(bigFractionalMantissa);
             if (fractionalMantissaBits > requiredFractionalBitsOfPrecision) {
                 var shift = (int)(fractionalMantissaBits - requiredFractionalBitsOfPrecision);
                 var tailMask = new BigInteger(1);
                 ShiftLeft(ref tailMask, (uint)shift);
-                tailMask = -1;
+                tailMask = tailMask - 1;
                 hasZeroTail = hasZeroTail && (bigFractionalMantissa & tailMask) == 0;
                 ShiftRight(ref bigFractionalMantissa, (uint)shift);
             }
@@ -422,11 +400,11 @@ namespace SharpFloat.FloatingPoint {
             // Then, in both cases, we subtract an additional one from the exponent, to
             // account for the fact that we've generated an extra bit of precision, for
             // use in rounding.
-            int finalExponent = integerBitsOfPrecision > 0
+            var finalExponent = integerBitsOfPrecision > 0
                 ? (int)integerBitsOfPrecision - 2
                 : -(int)(fractionalExponent) - 1;
 
-            return type.AssembleFloatingPointValue(completeMantissa, finalExponent, hasZeroTail, out result);
+            return AssembleFloatingPointValue(completeMantissa, finalExponent, hasZeroTail, data.IsNegative, out result);
         }
 
 
@@ -442,11 +420,13 @@ namespace SharpFloat.FloatingPoint {
         /// Note that this represents only nonnegative floating-point literals; the
         /// negative sign in C# and VB is actually a separate unary negation operator.
         /// </summary>
-        [DebuggerDisplay("0.{Mantissa}e{Exponent}")]
+        [DebuggerDisplay("{Sign}0.{Mantissa}e{Exponent}")]
         private struct DecimalFloatingPointString {
             public int Exponent;
             public string Mantissa;
+            public bool IsNegative;
             public uint MantissaCount => (uint)Mantissa.Length;
+            public string Sign => IsNegative ? "-" : string.Empty;
 
             /// <summary>
             /// Create a DecimalFloatingPointString from a string representing a floating-point literal.
@@ -456,6 +436,13 @@ namespace SharpFloat.FloatingPoint {
                 var mantissaBuilder = new StringBuilder();
                 var exponent = 0;
                 var i = 0;
+                var result = default(DecimalFloatingPointString);
+
+                if (source[i] == '-') {
+                    result.IsNegative = true;
+                    i++;
+                }
+
                 while (i < source.Length && source[i] == '0')
                     i++;
                 var skippedDecimals = 0;
@@ -485,7 +472,7 @@ namespace SharpFloat.FloatingPoint {
                         i++;
                     }
                 }
-                var result = default(DecimalFloatingPointString);
+
                 result.Mantissa = mantissaBuilder.ToString();
                 if (i < source.Length && (source[i] == 'e' || source[i] == 'E')) {
                     const int MAX_EXP = (1 << 30); // even playing ground
@@ -539,34 +526,34 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="integerValueAsBytes">the bits of the integer, least significant bits first</param>
         /// <param name="integerBitsOfPrecision">the number of bits of precision in integerValueAsBytes</param>
         /// <param name="hasNonzeroFractionalPart">whether there are nonzero digits after the decimal</param>
-        /// <param name="type">the kind of real number to build</param>
+        /// <param name="isNegative"><c>true</c> if this is a negative number</param>
         /// <param name="result">the result</param>
         /// <returns>An indicator of the kind of result</returns>
-        private static Status ConvertBigIntegerToFloatingPointBits(byte[] integerValueAsBytes, uint integerBitsOfPrecision, bool hasNonzeroFractionalPart, FloatingPointType type, out ExtF80 result) {
-            int baseExponent = type.MantissaBits;
+        private static Status ConvertBigIntegerToFloatingPointBits(byte[] integerValueAsBytes, uint integerBitsOfPrecision, bool hasNonzeroFractionalPart, bool isNegative, out ExtF80 result) {
+            int baseExponent = DenormalMantissaBits;
             int exponent;
             ulong mantissa;
-            bool has_zero_tail = !hasNonzeroFractionalPart;
-            int topElementIndex = ((int)integerBitsOfPrecision - 1) / 8;
+            var has_zero_tail = !hasNonzeroFractionalPart;
+            var topElementIndex = ((int)integerBitsOfPrecision - 1) / 8;
 
             // The high-order byte of integerValueAsBytes might not have a full eight bits.  However,
             // since the data are stored in quanta of 8 bits, and we really only need around 54
             // bits of mantissa for a double (and fewer for a float), we can just assemble data
             // from the eight high-order bytes and we will get between 59 and 64 bits, which is more
             // than enough.
-            int bottomElementIndex = Math.Max(0, topElementIndex - (64 / 8) + 1);
+            var bottomElementIndex = Math.Max(0, topElementIndex - (64 / 8) + 1);
             exponent = baseExponent + bottomElementIndex * 8;
             mantissa = 0;
-            for (int i = (int)topElementIndex; i >= bottomElementIndex; i--) {
+            for (var i = topElementIndex; i >= bottomElementIndex; i--) {
                 mantissa <<= 8;
                 mantissa |= integerValueAsBytes[i];
             }
-            for (int i = bottomElementIndex - 1; has_zero_tail && i >= 0; i--) {
+            for (var i = bottomElementIndex - 1; has_zero_tail && i >= 0; i--) {
                 if (integerValueAsBytes[i] != 0)
                     has_zero_tail = false;
             }
 
-            return type.AssembleFloatingPointValue(mantissa, exponent, has_zero_tail, out result);
+            return AssembleFloatingPointValue(mantissa, exponent, has_zero_tail, isNegative, out result);
         }
 
         /// <summary>
@@ -608,7 +595,7 @@ namespace SharpFloat.FloatingPoint {
             }
 
             dataBytes = data.ToByteArray(); // the bits of the BigInteger, least significant bits first
-            for (int i = dataBytes.Length - 1; i >= 0; i--) {
+            for (var i = dataBytes.Length - 1; i >= 0; i--) {
                 var v = dataBytes[i];
                 if (v != 0)
                     return 8 * (uint)i + CountSignificantBits(v);
@@ -621,8 +608,7 @@ namespace SharpFloat.FloatingPoint {
         /// Return the number of significant bits set.
         /// </summary>
         private static uint CountSignificantBits(BigInteger data) {
-            byte[] dataBytes;
-            return CountSignificantBits(data, out dataBytes);
+            return CountSignificantBits(data, out var dataBytes);
         }
 
     }

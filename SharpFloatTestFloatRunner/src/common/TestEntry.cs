@@ -94,7 +94,21 @@ namespace SharpFloatTestFloatRunner.Common {
             if (ulong.TryParse(value.Substring(4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult2))
                 significant = parsedResult2;
 
-            return new ExtF80(signedExponent, significant);
+            var result = new ExtF80(signedExponent, significant);
+            EnsureRoundTripFormattingCorrectness(result);
+            return result;
+        }
+
+        /// <summary>
+        ///     test if a given value is round-trip consistent
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="floatFormat"></param>
+        public static void EnsureRoundTripFormattingCorrectness(ExtF80 value, PrintFloatFormat floatFormat = PrintFloatFormat.ScientificFormat) {
+            var buffer = new StringBuilder();
+            ExtF80.PrintFloat80(buffer, value, floatFormat, -1);
+            ExtF80.TryParse(buffer.ToString(), out var newValue);
+            AssertEqual(value, newValue);
         }
 
         /// <summary>
