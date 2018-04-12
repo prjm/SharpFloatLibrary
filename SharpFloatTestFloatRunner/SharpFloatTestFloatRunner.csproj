@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="data\F32\" />
+    <Folder Include="data\F64\" />
     <Folder Include="data\I32\" />
     <Folder Include="data\I64\" />
     <Folder Include="data\UI32\" />

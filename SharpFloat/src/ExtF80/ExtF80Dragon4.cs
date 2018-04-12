@@ -87,7 +87,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="pOutBuffer">output buffer</param>
         /// <param name="pOutExponent">calculated exponent</param>
         /// <returns>number of digits</returns>
-        public static uint Dragon4(ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, FormatCutoffMode cutoffMode, uint cutoffNumber, StringBuilder pOutBuffer, out int pOutExponent) {
+        private static uint Dragon4(ulong mantissa, int exponent, uint mantissaHighBitIdx, bool hasUnequalMargins, FormatCutoffMode cutoffMode, uint cutoffNumber, StringBuilder pOutBuffer, out int pOutExponent) {
             var bufferOffset = pOutBuffer.Length;
 
             // if the mantissa is zero, the value is zero regardless of the exponent

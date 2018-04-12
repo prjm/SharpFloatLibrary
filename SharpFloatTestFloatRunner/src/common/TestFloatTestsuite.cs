@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using SharpFloatTestFloatRunner.Tests.ExtF80;
+using SharpFloatTestFloatRunner.Tests.F32;
+using SharpFloatTestFloatRunner.Tests.F64;
 using SharpFloatTestFloatRunner.Tests.I32;
 using SharpFloatTestFloatRunner.Tests.I64;
 using SharpFloatTestFloatRunner.Tests.UI32;
@@ -21,12 +24,14 @@ namespace SharpFloatTestFloatRunner.Common {
                 new UI32TestCase(),
                 new I64TestCase(),
                 new UI64TestCase(),
+                new F64TestCase(),
+                new F32TestCase(),
             };
         }
 
         public void Run() {
 
-            foreach (var dir in Directory.EnumerateDirectories(dataDir)) {
+            foreach (var dir in Directory.EnumerateDirectories(dataDir).OrderBy(t => t)) {
                 var dirName = Path.GetFileName(dir);
                 var testCase = FindTestCase(dirName);
                 if (testCase != null)

@@ -1,4 +1,5 @@
-﻿using SharpFloat.Helpers;
+﻿using SharpFloat.FloatingPoint;
+using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.Helpers {
