@@ -8,6 +8,11 @@
     <Version>1.0.0</Version>
     <FileVersion>1.0.0.0</FileVersion>
     <Copyright>2018 Bastian Turcs</Copyright>
+    <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/prjm/SharpFloatLibrary</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/prjm/SharpFloatLibrary/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
