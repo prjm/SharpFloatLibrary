@@ -34,6 +34,13 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualExtF80(new ExtF80(0xBFFF, 0x8000000000000000), -1L);
         }
 
+        [TestCase]
+        public void TestNegate() {
+            ExtF80 a = 5;
+            ExtF80 b = -5;
+            Assert.EqualExtF80(a, -b, false);
+            Assert.EqualExtF80(ExtF80.Zero, -ExtF80.NegativeZero, false);
+        }
 
         [TestCase]
         public void TestRoundtripFormatting() {
