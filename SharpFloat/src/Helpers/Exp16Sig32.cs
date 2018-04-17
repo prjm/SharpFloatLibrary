@@ -32,19 +32,20 @@
  */
 
 
+using System;
 using System.Diagnostics;
 
 namespace SharpFloat.Helpers {
 
 
     /// <summary>
-    ///     helper structure: 15-bit exponent and 64-bit significant
+    ///     helper structure: 16-bit exponent and 32-bit significant
     /// </summary>
     [DebuggerDisplay("exp = {exp}, sig = {sig}")]
-    public readonly partial struct Exp16Sig32 {
+    public readonly partial struct Exp16Sig32 : IEquatable<Exp16Sig32> {
 
         /// <summary>
-        ///     exponent
+        ///     exponent value
         /// </summary>
         public readonly ushort exp;
 
@@ -63,5 +64,46 @@ namespace SharpFloat.Helpers {
             sig = aSig;
         }
 
+        /// <summary>
+        ///     compare this value to another value
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+            => obj is Exp16Sig32 value && Equals(value);
+
+        /// <summary>
+        ///     compare this value to another value
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(Exp16Sig32 other)
+            => (exp == other.exp) && (sig == other.sig);
+
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            => (exp.GetHashCode() * 397) ^ sig.GetHashCode();
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(in Exp16Sig32 left, in Exp16Sig32 right)
+            => left.Equals(right);
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(in Exp16Sig32 left, in Exp16Sig32 right) {
+            return !(left == right);
+        }
     }
 }

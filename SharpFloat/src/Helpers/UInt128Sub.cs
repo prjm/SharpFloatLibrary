@@ -36,6 +36,14 @@ namespace SharpFloat.Helpers {
     public partial struct UInt128 {
 
         /// <summary>
+        ///     subtract another value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public UInt128 Subtract(in UInt128 value)
+            => this - value;
+
+        /// <summary>
         ///     subtract two 128-bit numbers
         /// </summary>
         /// <param name="a"></param>

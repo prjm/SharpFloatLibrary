@@ -52,7 +52,7 @@ namespace SharpFloat.Helpers {
             }
 
             var maxResultLen = large.length + small.length;
-            result.Zero = true;
+            result.Clear();
             result.SetLength(maxResultLen);
 
             var pLargeBeg = 0U;

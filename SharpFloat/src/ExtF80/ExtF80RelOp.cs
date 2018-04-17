@@ -139,7 +139,7 @@ namespace SharpFloat.FloatingPoint {
             else if (obj is ExtF80 value)
                 return CompareTo(value);
 
-            throw new ArgumentException();
+            throw new ArgumentException("Invalid comparison", nameof(obj));
         }
     }
 }

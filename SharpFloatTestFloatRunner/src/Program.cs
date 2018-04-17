@@ -15,7 +15,7 @@ namespace SharpFloatTestFloatRunner {
         ///     search the data files, compute own results and compare
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args) {
+        static void Main() {
             var dataDir = SearchDataDir(Environment.CurrentDirectory);
 
             if (dataDir == null)

@@ -36,7 +36,7 @@ namespace SharpFloat.Globals {
     /// <summary>
     ///     possible rounding modes
     /// </summary>
-    public enum RoundingMode : byte {
+    public enum RoundingMode {
 
         /// <summary>
         ///     round to the nearest even value

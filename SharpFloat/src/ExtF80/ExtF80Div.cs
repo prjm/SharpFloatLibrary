@@ -38,6 +38,14 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     division
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ExtF80 Divide(in ExtF80 value)
+            => this / value;
+
+        /// <summary>
         ///     division: compute a quotient of two 80-bit floating point numbers
         /// </summary>
         /// <param name="a">dividend (first operand)</param>
@@ -102,7 +110,7 @@ namespace SharpFloat.FloatingPoint {
                 rem = UInt128.ShortShiftLeft(0, sigA, 31);
             }
 
-            var recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
+            var recip32 = ((uint)(sigB >> 32)).ApproxRecip32();
             var sigZ = 0UL;
             var ix = 2;
             var q = 0U;

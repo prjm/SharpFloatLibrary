@@ -41,7 +41,7 @@ namespace SharpFloat.Helpers {
         public static void ShiftLeft(BigInt pResult, uint shift) {
 
             if (shift == 0)
-                throw new System.ArgumentOutOfRangeException();
+                throw new System.ArgumentOutOfRangeException(nameof(shift));
 
             var shiftBlocks = shift / 32;
             var shiftBits = (int)(shift % 32);

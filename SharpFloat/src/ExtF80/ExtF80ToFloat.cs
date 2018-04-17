@@ -43,6 +43,13 @@ namespace SharpFloat.FloatingPoint {
         ///     convert this number to a float value
         /// </summary>
         /// <returns></returns>
+        public float ToSingle()
+            => (float)this;
+
+        /// <summary>
+        ///     convert this number to a float value
+        /// </summary>
+        /// <returns></returns>
         public static explicit operator float(in ExtF80 a)
             => a.ToFloat(RoundingMode.MinimumMagnitude);
 

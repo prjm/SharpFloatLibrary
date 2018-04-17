@@ -38,7 +38,7 @@ namespace SharpFloat.FloatingPoint {
     /// <summary>
     ///     floating point format to use
     /// </summary>
-    public enum PrintFloatFormat : byte {
+    public enum PrintFloatFormat {
 
         /// <summary>
         ///     undefined format

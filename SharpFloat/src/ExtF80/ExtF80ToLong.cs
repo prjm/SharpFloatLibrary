@@ -47,11 +47,25 @@ namespace SharpFloat.FloatingPoint {
         private const ulong ui64_fromNaN = 0xFFFFFFFFFFFFFFFF;
 
         /// <summary>
+        ///     convert this number to a long value
+        /// </summary>
+        /// <returns></returns>
+        public long ToInt64()
+            => (long)this;
+
+        /// <summary>
         ///     truncate a 80-bit floating point number to long
         /// </summary>
         /// <param name="a">number</param>
         public static explicit operator long(in ExtF80 a)
             => a.ToLong(RoundingMode.MinimumMagnitude, true);
+
+        /// <summary>
+        ///     convert this value to an unsigned long
+        /// </summary>
+        /// <returns></returns>
+        public ulong ToUInt64()
+            => (ulong)this;
 
         /// <summary>
         ///     truncate a 80-bit floating point number to unsigned long
@@ -131,7 +145,7 @@ namespace SharpFloat.FloatingPoint {
             return RoundToUI64(sign, sig, sigExtra, roundingMode, exact);
         }
 
-        private long RoundToI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
+        private static long RoundToI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
             long z;
 
             if ((roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == RoundingMode.NearEven)) {
@@ -174,7 +188,7 @@ namespace SharpFloat.FloatingPoint {
         }
 
 
-        private ulong RoundToUI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
+        private static ulong RoundToUI64(bool sign, ulong sig, ulong sigExtra, RoundingMode roundingMode, bool exact) {
 
             if ((roundingMode == RoundingMode.NearMaximumMagnitude) || (roundingMode == RoundingMode.NearEven)) {
                 if (MaskBit64 <= sigExtra) {

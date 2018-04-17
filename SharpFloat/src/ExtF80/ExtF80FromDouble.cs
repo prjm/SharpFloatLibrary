@@ -47,10 +47,18 @@ namespace SharpFloat.FloatingPoint {
         }
 
         /// <summary>
+        ///     convert a double value to an extended precision value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ExtF80 ToExtF80(in double value)
+            => value;
+
+        /// <summary>
         ///     convert a double value to an ExtF80 value
         /// </summary>
         /// <param name="value">double value to convert</param>
-        public static implicit operator ExtF80(double value) {
+        public static implicit operator ExtF80(in double value) {
             var bits = BitConverter.DoubleToInt64Bits(value);
             var sign = bits >> 63 != 0;
             var exp = (ushort)((bits >> 52) & 0x7FF);

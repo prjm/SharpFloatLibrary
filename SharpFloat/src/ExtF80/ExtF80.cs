@@ -6,6 +6,7 @@
  */
 
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -69,7 +70,7 @@ namespace SharpFloat.FloatingPoint {
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay
-            => string.Format("0x{0:X4}{1:X16}", signExp, signif);
+            => string.Format(CultureInfo.InvariantCulture, "0x{0:X4}{1:X16}", signExp, signif);
 
     }
 }

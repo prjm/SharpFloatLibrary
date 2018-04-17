@@ -1,4 +1,4 @@
-﻿using System;
+﻿using SharpFloat.FloatingPoint;
 using SharpFloat.Globals;
 using SharpFloatTests.Common;
 
@@ -6,8 +6,8 @@ namespace SharpFloatTests.FloatingPoint {
 
     public class TestExtF80RoundPack {
 
-        private SharpFloat.FloatingPoint.ExtF80 Rp80(bool sign, int exp, ulong sig, ulong sigExtra)
-            => SharpFloat.FloatingPoint.ExtF80.RoundPack(sign, exp, sig, sigExtra, 80);
+        private static ExtF80 Rp80(bool sign, int exp, ulong sig, ulong sigExtra)
+            => ExtF80.RoundPack(sign, exp, sig, sigExtra, 80);
 
 
         [TestCase]
@@ -19,7 +19,7 @@ namespace SharpFloatTests.FloatingPoint {
             TestExtF80RoundPack80Odd();
         }
 
-        private void TestExtF80RoundPack80Odd() {
+        private static void TestExtF80RoundPack80Odd() {
             Settings.RoundingMode = RoundingMode.Odd;
 
             // standard values
@@ -41,7 +41,7 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualULong(0x3800000000000009, Rp80(false, 0, 0x7000000000000010UL, 0x8000000000000001UL).signif);
         }
 
-        private void TestExtF80RoundPack80NearMaximumMagnitude() {
+        private static void TestExtF80RoundPack80NearMaximumMagnitude() {
             Settings.RoundingMode = RoundingMode.NearMaximumMagnitude;
 
             // standard values
@@ -63,7 +63,7 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualULong(0x3800000000000008, Rp80(false, 0, 0x7000000000000010UL, 0x8000000000000001UL).signif);
         }
 
-        private void TestExtF80RoundPack80Maximum() {
+        private static void TestExtF80RoundPack80Maximum() {
             Settings.RoundingMode = RoundingMode.Maximum;
 
             // standard values
@@ -85,7 +85,7 @@ namespace SharpFloatTests.FloatingPoint {
             Assert.EqualULong(0x3800000000000009, Rp80(false, 0, 0x7000000000000010UL, 0x8000000000000001UL).signif);
         }
 
-        private void TestExtF80RoundPack80Minimum() {
+        private static void TestExtF80RoundPack80Minimum() {
             Settings.RoundingMode = RoundingMode.Minimum;
 
             // standard values
@@ -108,7 +108,7 @@ namespace SharpFloatTests.FloatingPoint {
 
         }
 
-        private void TestExtF80RoundPack80MinimumMagnitude() {
+        private static void TestExtF80RoundPack80MinimumMagnitude() {
             Settings.RoundingMode = RoundingMode.MinimumMagnitude;
 
             // standard values

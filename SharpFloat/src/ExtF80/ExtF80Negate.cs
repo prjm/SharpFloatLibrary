@@ -13,6 +13,13 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     negate this value
+        /// </summary>
+        /// <returns></returns>
+        public ExtF80 Negate()
+            => -this;
+
+        /// <summary>
         ///     negate an extended value
         /// </summary>
         /// <param name="value">value to negate</param>

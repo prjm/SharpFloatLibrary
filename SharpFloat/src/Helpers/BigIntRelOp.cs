@@ -29,7 +29,6 @@
     distribution.
 ******************************************************************************/
 
-
 using System;
 
 namespace SharpFloat.Helpers {
@@ -73,7 +72,15 @@ namespace SharpFloat.Helpers {
         /// <param name="obj"></param>
         /// <returns></returns>
         public int CompareTo(object obj)
-            => obj is BigInt b ? CompareTo(b) : throw new ArgumentException();
+            => obj is BigInt b ? CompareTo(b) : throw new ArgumentException("Invalid argument.", nameof(obj));
+
+        /// <summary>
+        ///     compare this value to another value
+        /// </summary>
+        /// <param name="obj">other value</param>
+        /// <returns><c>true</c> if the other value is a <c>BigInt</c> with the same value</returns>
+        public override bool Equals(object obj)
+            => obj is BigInt bigInt && Equals(bigInt);
 
         /// <summary>
         ///     compare two big integer values
@@ -93,5 +100,24 @@ namespace SharpFloat.Helpers {
                 result += 17 * blocks[index].GetHashCode();
             return result;
         }
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(BigInt left, BigInt right)
+            => left.Equals(right);
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(BigInt left, BigInt right)
+            => !(left == right);
+
     }
 }

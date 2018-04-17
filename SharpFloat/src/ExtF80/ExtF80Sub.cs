@@ -38,6 +38,14 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     subtract a value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ExtF80 Subtract(in ExtF80 value)
+            => this - value;
+
+        /// <summary>
         ///     subtract operation for extF80 floats
         /// </summary>
         /// <param name="a">first operand</param>

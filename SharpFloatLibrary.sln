@@ -7,12 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloat", "SharpFloat\Sh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14F01D46-F0CD-4C8F-86C0-7243A7597726}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		LICENSE.txt = LICENSE.txt
 		LICENSE_Default.txt = LICENSE_Default.txt
 		LICENSE_Dragon4.txt = LICENSE_Dragon4.txt
 		LICENSE_Roslyn.txt = LICENSE_Roslyn.txt
 		LICENSE_Softfloat_Library.txt = LICENSE_Softfloat_Library.txt
+		README.md = README.md
+		SharpFloatLibrary.ruleset = SharpFloatLibrary.ruleset
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpFloatTests", "SharpFloatTests\SharpFloatTests.csproj", "{EDE92716-0EAA-4B38-A5E6-C5ACE9DA9949}"

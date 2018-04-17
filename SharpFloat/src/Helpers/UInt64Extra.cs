@@ -32,12 +32,14 @@
  */
 
 
+using System;
+
 namespace SharpFloat.Helpers {
 
     /// <summary>
     ///     128-bit helper structure
     /// </summary>
-    public readonly partial struct UInt64Extra {
+    public readonly partial struct UInt64Extra : IEquatable<UInt64Extra> {
 
         /// <summary>
         ///     value
@@ -59,5 +61,45 @@ namespace SharpFloat.Helpers {
             extra = extraValue;
         }
 
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(UInt64Extra other)
+            => (v == other.v) && (extra == other.extra);
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+            => obj is UInt64Extra value && Equals(value);
+
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            => (v.GetHashCode() * 397) ^ extra.GetHashCode();
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(in UInt64Extra left, in UInt64Extra right)
+            => left.Equals(right);
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(in UInt64Extra left, in UInt64Extra right)
+            => !(left == right);
     }
 }

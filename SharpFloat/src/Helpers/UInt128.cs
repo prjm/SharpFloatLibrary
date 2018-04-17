@@ -31,6 +31,7 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Diagnostics;
 using SharpFloat.FloatingPoint;
 
@@ -40,7 +41,7 @@ namespace SharpFloat.Helpers {
     ///     128-bit unsigned integer helper structure
     /// </summary>
     [DebuggerDisplay("v64 = {v64}, v0 = {v0}")]
-    public readonly partial struct UInt128 {
+    public readonly partial struct UInt128 : IEquatable<UInt128> {
 
         /// <summary>
         ///     lower half (bits 0 to 63)
@@ -68,5 +69,41 @@ namespace SharpFloat.Helpers {
         /// <param name="a"></param>
         public UInt128(ExtF80 a) : this(a.signExp, a.signif) { }
 
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+            => obj is UInt128 value && Equals(value);
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(UInt128 other)
+            => (v64 == other.v64) && (v0 == other.v0);
+
+        public override int GetHashCode()
+            => (v64.GetHashCode() * 397) ^ v0.GetHashCode();
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(UInt128 left, UInt128 right)
+            => left.Equals(right);
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(UInt128 left, UInt128 right)
+            => !(left == right);
     }
 }

@@ -32,6 +32,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 namespace SharpFloat.Helpers {
@@ -47,7 +48,7 @@ namespace SharpFloat.Helpers {
         /// </summary>
         public BigInt() {
             length = 0;
-            blocks = new uint[0];
+            blocks = Array.Empty<uint>();
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace SharpFloat.Helpers {
         ///     create a new big integer
         /// </summary>
         /// <param name="value">value</param>
-        public BigInt(ulong value) {
+        public BigInt(in ulong value) {
             AsULong = value;
         }
 
@@ -154,9 +155,13 @@ namespace SharpFloat.Helpers {
                         return false;
                 return true;
             }
-
-            set => SetLength(0);
         }
+
+        /// <summary>
+        ///     set this value to zero
+        /// </summary>
+        public void Clear()
+            => SetLength(0);
 
         /// <summary>
         ///     get the value as unsigned long
@@ -225,7 +230,7 @@ namespace SharpFloat.Helpers {
                 var sb = new StringBuilder();
                 sb.Append("0x");
                 for (var i = (int)(length - 1); i >= 0; i--)
-                    sb.Append(string.Format("{0:X8}", blocks[i]));
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X8}", blocks[i]));
                 return sb.ToString();
             }
         }

@@ -52,12 +52,12 @@ namespace SharpFloat.Helpers {
         /// <param name="dividend"></param>
         /// <param name="divisor"></param>
         /// <returns></returns>
-        public static uint DivideWithRemainder_MaxQuotient9(BigInt dividend, BigInt divisor) {
+        public static uint DivideWithRemainderWithMaxQuotient9(BigInt dividend, BigInt divisor) {
 
             // Check that the divisor has been correctly shifted into range and that it is not
             // smaller than the dividend in length.
             if (divisor.Zero || divisor[divisor.Length - 1] < 8 || divisor[divisor.length - 1] >= 0xFFFFFFFF || dividend.Length > divisor.Length)
-                throw new System.ArgumentOutOfRangeException();
+                throw new System.ArgumentOutOfRangeException(nameof(divisor));
 
             // If the dividend is smaller than the divisor, the quotient is zero and the divisor is already
             // the remainder.

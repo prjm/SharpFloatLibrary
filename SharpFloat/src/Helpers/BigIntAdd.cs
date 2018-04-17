@@ -55,7 +55,7 @@ namespace SharpFloat.Helpers {
             var smallLen = small.length;
 
             // The output will be at least as long as the largest input
-            result.Zero = true;
+            result.Clear();
             result.SetLength(largeLen);
 
             // Add each block and add carry the overflow to the next block

@@ -62,7 +62,7 @@ namespace SharpFloat.Helpers {
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        public static uint ApproxRecip32_1(this uint a) {
+        public static uint ApproxRecip32(this uint a) {
             uint index;
             ushort eps, r0;
             uint sigma0;

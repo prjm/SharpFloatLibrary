@@ -37,7 +37,7 @@ namespace SharpFloat.Globals {
     ///     possible exception flags
     /// </summary>
     [System.Flags]
-    public enum ExceptionFlags : byte {
+    public enum ExceptionFlags {
 
         /// <summary>
         ///     no exception flag

@@ -29,4 +29,8 @@
     <Folder Include="data\UI64\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0" />
+  </ItemGroup>
+
 </Project>

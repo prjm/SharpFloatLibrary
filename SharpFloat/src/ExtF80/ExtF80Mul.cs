@@ -39,6 +39,14 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     multiply this value with another value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ExtF80 Multiply(in ExtF80 value)
+            => this * value;
+
+        /// <summary>
         ///     calculate a multiplication: return the product of two 80-bit floating point values
         /// </summary>
         /// <param name="a">multiplicand</param>

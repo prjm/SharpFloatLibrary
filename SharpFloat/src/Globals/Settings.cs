@@ -38,7 +38,7 @@ namespace SharpFloat.Globals {
     /// <summary>
     ///     global settings
     /// </summary>
-    public class Settings {
+    public static class Settings {
 
         private static ThreadLocal<DetectTininess> detectTininess
             = new ThreadLocal<DetectTininess>(() => DetectTininess.AfterRounding);

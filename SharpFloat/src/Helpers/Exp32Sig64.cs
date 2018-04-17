@@ -31,6 +31,7 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Diagnostics;
 
 namespace SharpFloat.Helpers {
@@ -39,7 +40,7 @@ namespace SharpFloat.Helpers {
     ///     helper structure: 32-bit exponent and 64-bit significant
     /// </summary>
     [DebuggerDisplay("exp = {exp}, sig = {sig}")]
-    public readonly struct Exp32Sig64 {
+    public readonly struct Exp32Sig64 : IEquatable<Exp32Sig64> {
 
         /// <summary>
         ///     exponent
@@ -60,5 +61,46 @@ namespace SharpFloat.Helpers {
             exp = aExp;
             sig = aSig;
         }
+
+        /// <summary>
+        ///     compare to another value
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(Exp32Sig64 other)
+            => (sig == other.sig) && (exp == other.exp);
+
+        /// <summary>
+        ///     compare to another value
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+            => obj is Exp32Sig64 value && Equals(value);
+
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            => (exp.GetHashCode() * 397) ^ sig.GetHashCode();
+
+        /// <summary>
+        ///     compare for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(in Exp32Sig64 left, in Exp32Sig64 right)
+            => left.Equals(right);
+
+        /// <summary>
+        ///     compare for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(in Exp32Sig64 left, in Exp32Sig64 right)
+            => !(left == right);
     }
 }

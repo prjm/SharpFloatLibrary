@@ -51,7 +51,7 @@ namespace SharpFloat.Helpers {
         /// <param name="a"></param>
         /// <param name="oddExpA"></param>
         /// <returns></returns>
-        public static uint ApproxRecipSqrt32_1(this uint a, uint oddExpA) {
+        public static uint ApproxRecipSqrt32(this uint a, uint oddExpA) {
             int index;
             ushort eps, r0;
             uint ESqrR0;

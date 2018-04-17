@@ -80,7 +80,7 @@ namespace SharpFloat.FloatingPoint {
             var sig32A = (uint)(sigA >> 32);
 
             expA &= 1;
-            var recipSqrt32 = sig32A.ApproxRecipSqrt32_1((uint)expA);
+            var recipSqrt32 = sig32A.ApproxRecipSqrt32((uint)expA);
 
             var sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
             if (0 != expA) {

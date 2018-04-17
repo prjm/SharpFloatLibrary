@@ -52,11 +52,11 @@ namespace SharpFloat.FloatingPoint {
                 return RoundPackToExtF80WithReducedPrecision(sign, unsignedExponent, significant, sigExtra, roundingPrecision);
             }
             else {
-                return RoundPackToExtF80WithStandardPrecision(sign, unsignedExponent, significant, sigExtra, roundingPrecision);
+                return RoundPackToExtF80WithStandardPrecision(sign, unsignedExponent, significant, sigExtra);
             }
         }
 
-        private static ExtF80 RoundPackToExtF80WithStandardPrecision(bool sign, int exp, ulong sig, ulong sigExtra, byte roundingPrecision) {
+        private static ExtF80 RoundPackToExtF80WithStandardPrecision(bool sign, int exp, ulong sig, ulong sigExtra) {
             var roundingMode = Settings.RoundingMode;
             var doIncrement = MaskBit64 <= sigExtra;
 

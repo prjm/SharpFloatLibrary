@@ -50,5 +50,13 @@ namespace SharpFloat.FloatingPoint {
                 return SubMagsExtF80(a, b, signA);
         }
 
+        /// <summary>
+        ///     add another value
+        /// </summary>
+        /// <param name="otherValue">value to add</param>
+        /// <returns></returns>
+        public ExtF80 Add(in ExtF80 otherValue)
+            => this + otherValue;
+
     }
 }

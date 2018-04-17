@@ -73,7 +73,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool ToBool(string value) {
+        public static bool ToBool(string value) {
             if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return parsedResult != 0;
             return false;
@@ -84,7 +84,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected ExtF80 ToExtF80(string value) {
+        protected static ExtF80 ToExtF80(string value) {
             ushort signedExponent = 0;
             ulong significant = 0;
 
@@ -118,7 +118,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected int ToInt(string value) {
+        protected static int ToInt(string value) {
             if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return (int)parsedResult;
             return 0;
@@ -129,20 +129,18 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected uint ToUInt(string value) {
+        protected static uint ToUInt(string value) {
             if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return parsedResult;
             return 0;
         }
-
-
 
         /// <summary>
         ///     read a signed long number
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected long ToLong(string value) {
+        protected static long ToLong(string value) {
             if (ulong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return (long)parsedResult;
             return 0;
@@ -153,7 +151,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected ulong ToULong(string value) {
+        protected static ulong ToULong(string value) {
             if (ulong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return parsedResult;
             return 0;
@@ -164,7 +162,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected double ToDouble(string value) {
+        protected static double ToDouble(string value) {
             if (ulong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return BitConverter.Int64BitsToDouble((long)parsedResult);
             return 0;
@@ -175,7 +173,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected float ToFloat(string value) {
+        protected static float ToFloat(string value) {
             if (uint.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var parsedResult))
                 return FloatHelpers.Int32BitsToSingle(parsedResult);
             return 0;

@@ -38,7 +38,7 @@ namespace SharpFloat.FloatingPoint {
     /// <summary>
     ///     cutoff-mode for formatting
     /// </summary>
-    public enum FormatCutoffMode : byte {
+    public enum FormatCutoffMode {
 
         /// <summary>
         ///     all digits required for a unique number
@@ -342,7 +342,7 @@ namespace SharpFloat.FloatingPoint {
                     digitExponent = digitExponent - 1;
 
                     // divide out the scale to extract the digit
-                    outputDigit = BigInt.DivideWithRemainder_MaxQuotient9(scaledValue, scale);
+                    outputDigit = BigInt.DivideWithRemainderWithMaxQuotient9(scaledValue, scale);
 
                     if (outputDigit > 9)
                         throw new InvalidOperationException();
@@ -380,7 +380,7 @@ namespace SharpFloat.FloatingPoint {
                     digitExponent = digitExponent - 1;
 
                     // divide out the scale to extract the digit
-                    outputDigit = BigInt.DivideWithRemainder_MaxQuotient9(scaledValue, scale);
+                    outputDigit = BigInt.DivideWithRemainderWithMaxQuotient9(scaledValue, scale);
 
                     if (outputDigit > 9)
                         throw new InvalidOperationException();

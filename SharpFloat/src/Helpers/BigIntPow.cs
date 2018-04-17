@@ -378,7 +378,7 @@ namespace SharpFloat.Helpers {
         public static void Pow10(BigInt result, uint exponent) {
 
             if (exponent > 8192)
-                throw new System.ArgumentOutOfRangeException();
+                throw new System.ArgumentOutOfRangeException(nameof(exponent));
 
             // create two temporary values to reduce large integer copy operations
             var pCurTemp = new BigInt();
@@ -424,7 +424,7 @@ namespace SharpFloat.Helpers {
         public static void MultiplyPow10(BigInt result, BigInt input, uint exponent) {
 
             if (exponent >= 8192)
-                throw new System.ArgumentOutOfRangeException();
+                throw new System.ArgumentOutOfRangeException(nameof(exponent));
 
             // create two temporary values to reduce large integer copy operations
             var pCurTemp = new BigInt();
@@ -472,7 +472,7 @@ namespace SharpFloat.Helpers {
         /// <param name="exponent">exponent value</param>
         public static void Pow2(BigInt result, uint exponent) {
             var blockIdx = exponent / 32;
-            result.Zero = true;
+            result.Clear();
             result.Length = 1 + blockIdx;
 
             var bitIdx = (int)(exponent % 32);

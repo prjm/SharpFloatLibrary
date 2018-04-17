@@ -40,11 +40,25 @@ namespace SharpFloat.FloatingPoint {
     public partial struct ExtF80 {
 
         /// <summary>
+        ///     convert this number to an integer
+        /// </summary>
+        /// <returns></returns>
+        public int ToInt32()
+            => (int)this;
+
+        /// <summary>
         ///     truncate a 80-bit floating point number to an integer
         /// </summary>
         /// <param name="a">number</param>
         public static explicit operator int(in ExtF80 a)
             => a.ToInt(RoundingMode.MinimumMagnitude, true);
+
+        /// <summary>
+        ///     convert this number to an unsigned integer
+        /// </summary>
+        /// <returns></returns>
+        public uint ToUInt32()
+            => (uint)this;
 
         /// <summary>
         ///     truncate a 80-bit floating point number to an unsigned integer
@@ -55,10 +69,8 @@ namespace SharpFloat.FloatingPoint {
 
         private const int i32_fromNegOverflow = (-0x7FFFFFFF - 1);
         private const int i32_fromPosOverflow = (-0x7FFFFFFF - 1);
-        private const int i32_fromNaN = (-0x7FFFFFFF - 1);
         private const uint ui32_fromPosOverflow = 0xFFFFFFFF;
         private const uint ui32_fromNegOverflow = 0xFFFFFFFF;
-        private const uint ui32_fromNaN = 0xFFFFFFFF;
 
         /// <summary>
         ///     round a 80-bit floating point number to an integer
@@ -82,7 +94,7 @@ namespace SharpFloat.FloatingPoint {
             return RoundToUI32(IsNegative, sig, roundingMode, exact);
         }
 
-        private uint RoundToUI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {
+        private static uint RoundToUI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {
             var roundIncrement = 0x800UL;
             if ((roundingMode != RoundingMode.NearMaximumMagnitude) && (roundingMode != RoundingMode.NearEven)) {
                 roundIncrement = 0;
@@ -123,7 +135,7 @@ namespace SharpFloat.FloatingPoint {
             return z;
         }
 
-        private int RoundToI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {
+        private static int RoundToI32(bool sign, ulong sig, RoundingMode roundingMode, bool exact) {
             ushort roundIncrement = 0x800;
             if ((roundingMode != RoundingMode.NearMaximumMagnitude) && (roundingMode != RoundingMode.NearEven)) {
                 roundIncrement = 0;

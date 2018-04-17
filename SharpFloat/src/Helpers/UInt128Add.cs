@@ -37,6 +37,14 @@ namespace SharpFloat.Helpers {
     public readonly partial struct UInt128 {
 
         /// <summary>
+        ///     add another value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public UInt128 Add(in UInt128 value)
+            => this + value;
+
+        /// <summary>
         ///     add two 128-bit integers
         /// </summary>
         /// <param name="a"></param>

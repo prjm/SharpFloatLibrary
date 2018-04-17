@@ -36,7 +36,7 @@ namespace SharpFloat.Globals {
     /// <summary>
     ///     underflow detection mode
     /// </summary>
-    public enum DetectTininess : byte {
+    public enum DetectTininess {
 
         /// <summary>
         ///     before rounding

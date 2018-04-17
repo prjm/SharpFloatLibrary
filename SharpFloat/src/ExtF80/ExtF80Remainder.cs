@@ -118,7 +118,7 @@ namespace SharpFloat.FloatingPoint {
             else {
                 var term = new UInt128();
                 var q64 = 0UL;
-                var recip32 = ((uint)(sigB >> 32)).ApproxRecip32_1();
+                var recip32 = ((uint)(sigB >> 32)).ApproxRecip32();
                 expDiff -= 30;
                 for (; ; ) {
                     q64 = (ulong)(uint)(rem.v64 >> 2) * recip32;

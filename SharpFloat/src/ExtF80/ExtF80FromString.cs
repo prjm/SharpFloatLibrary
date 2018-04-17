@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 using SharpFloat.Helpers;
@@ -40,7 +41,6 @@ namespace SharpFloat.FloatingPoint {
         private const ushort NormalMantissaBits = (DenormalMantissaBits + 1);
         private const int MaxBinaryExponent = 16383;
         private const int ExponentBias = 16383;
-        private const int DenormalizedExponentBias = 16883;
         private const int OverflowDecimalExponent = (MaxBinaryExponent + 2 * NormalMantissaBits) / 3;
         private const int MinBinaryExponent = 1 - MaxBinaryExponent;
 
@@ -576,7 +576,7 @@ namespace SharpFloat.FloatingPoint {
             if (integer_first_index == integer_last_index)
                 return new BigInteger(0);
             var valueString = data.Mantissa.Substring((int)integer_first_index, (int)(integer_last_index - integer_first_index));
-            return BigInteger.Parse(valueString);
+            return BigInteger.Parse(valueString, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
