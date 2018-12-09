@@ -267,8 +267,7 @@ namespace SharpFloat.FloatingPoint {
             }
             else {
                 pOutBuffer.Append("NaN");
-                PrintHex(pOutBuffer, mantissa, mantissaHexWidth);
-                return (uint)pOutBuffer.Length;
+                return PrintHex(pOutBuffer, mantissa, mantissaHexWidth);
             }
         }
 
@@ -489,7 +488,7 @@ namespace SharpFloat.FloatingPoint {
 
                 if (floatExponent != 0) {
                     mantissa = (1UL << 63) | floatMantissa;
-                    exponent = (int)(floatExponent - 16383 - 63);
+                    exponent = floatExponent - 16383 - 63;
                     mantissaHighBitIdx = 63;
                     hasUnequalMargins = (floatExponent != 1) && (floatMantissa == 0);
                 }

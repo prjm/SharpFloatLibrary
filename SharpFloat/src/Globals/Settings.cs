@@ -33,6 +33,8 @@
 
 using System.Threading;
 
+[assembly: System.CLSCompliant(false)]
+
 namespace SharpFloat.Globals {
 
     /// <summary>
@@ -79,14 +81,16 @@ namespace SharpFloat.Globals {
         ///     raise a flag
         /// </summary>
         /// <param name="newFlag">flag to set</param>
-        public static void Raise(ExceptionFlags newFlag)
-            => flags.Value |= newFlag;
+        public static void Raise(ExceptionFlags newFlag) {
+            flags.Value |= newFlag;
+        }
 
         /// <summary>
         ///     clear all flags
         /// </summary>
-        public static void ClearFlags()
-            => flags.Value = ExceptionFlags.None;
+        public static void ClearFlags() {
+            flags.Value = ExceptionFlags.None;
+        }
 
         private static ThreadLocal<byte> extF80_roundingPrecision
             = new ThreadLocal<byte>(() => 80);

@@ -41,7 +41,7 @@ namespace SharpFloat.FloatingPoint {
         ///     convert an unsigned long to an extended floating point value
         /// </summary>
         /// <param name="value"></param>
-        public static implicit operator ExtF80(in ulong value) {
+        public static implicit operator ExtF80(ulong value) {
             if (value == 0)
                 return Zero;
 
@@ -55,7 +55,7 @@ namespace SharpFloat.FloatingPoint {
         ///     convert an signed long to an extended floating point value
         /// </summary>
         /// <param name="value"></param>
-        public static implicit operator ExtF80(in long value) {
+        public static implicit operator ExtF80(long value) {
             if (value == 0)
                 return Zero;
 

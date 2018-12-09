@@ -17,7 +17,7 @@ namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
         /// <summary>
         ///     test entries
         /// </summary>
-        private TestEntry[] entries = new TestEntry[] {
+        private readonly TestEntry[] entries = new TestEntry[] {
             new ExtF80AddTest(),
             new ExtF80SubTest(),
             new ExtF80MulTest(),
@@ -40,7 +40,8 @@ namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
         ///     get test entries
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TestEntry> GetTestEntries()
-            => entries;
+        public override IEnumerable<TestEntry> GetTestEntries() {
+            return entries;
+        }
     }
 }

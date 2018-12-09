@@ -28,9 +28,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180" />
-        <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0" />
+        <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

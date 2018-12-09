@@ -17,7 +17,7 @@ namespace SharpFloatTestFloatRunner.Tests.I32 {
         /// <summary>
         ///     test entries
         /// </summary>
-        private TestEntry[] entries = new TestEntry[] {
+        private readonly TestEntry[] entries = new TestEntry[] {
             new I32ToExtF80Test(),
         };
 
@@ -25,7 +25,8 @@ namespace SharpFloatTestFloatRunner.Tests.I32 {
         ///     get test entries
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TestEntry> GetTestEntries()
-            => entries;
+        public override IEnumerable<TestEntry> GetTestEntries() {
+            return entries;
+        }
     }
 }

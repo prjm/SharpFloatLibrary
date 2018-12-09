@@ -113,7 +113,7 @@ namespace SharpFloat.FloatingPoint {
             return NormalizeRoundPack(signZ, expZ, sig128.v64, sig128.v0, Settings.ExtF80RoundingPrecision);
         }
 
-        private static ExtF80 SubLargerAndSmallerExponent(ExtF80 a, ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
+        private static ExtF80 SubLargerAndSmallerExponent(in ExtF80 a, in ExtF80 b, int expA, int expB, bool signZ, int expDiff) {
             var sigA = a.signif;
             var sigB = b.signif;
             var sigExtra = 0UL;

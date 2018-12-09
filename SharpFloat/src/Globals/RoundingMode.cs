@@ -64,6 +64,11 @@ namespace SharpFloat.Globals {
         NearMaximumMagnitude = 4,
 
         /// <summary>
+        ///     undefined mode
+        /// </summary>
+        Undefined = 5,
+
+        /// <summary>
         ///     round to odd (jamming)
         /// </summary>
         Odd = 6
