@@ -23,7 +23,7 @@ namespace SharpFloatTests.Common {
         public static void EqualByte(byte expected, byte value)
             => XAssert.Equal(expected, value);
 
-        public static void EqualAfterRoundTripFormatting(ExtF80 value, PrintFloatFormat floatFormat = PrintFloatFormat.ScientificFormat) {
+        public static void EqualAfterRoundTripFormatting(in ExtF80 value, PrintFloatFormat floatFormat = PrintFloatFormat.ScientificFormat) {
             var buffer = new StringBuilder();
             ExtF80.PrintFloat80(buffer, value, floatFormat, -1);
             IsTrue(ExtF80.TryParse(buffer.ToString(), out var newValue));
@@ -48,7 +48,7 @@ namespace SharpFloatTests.Common {
         public static void EqualString(string expected, string value)
             => XAssert.Equal(expected, value);
 
-        public static void EqualExtF80(ExtF80 expected, ExtF80 value, bool ignoreLastBit) {
+        public static void EqualExtF80(in ExtF80 expected, in ExtF80 value, bool ignoreLastBit) {
             EqualUShort(expected.signExp, value.signExp);
 
             if (ignoreLastBit)
@@ -57,29 +57,29 @@ namespace SharpFloatTests.Common {
                 EqualULong(expected.signif, value.signif);
         }
 
-        public static void EqualExtF80(ExtF80 expected, uint value) {
+        public static void EqualExtF80(in ExtF80 expected, uint value) {
             ExtF80 d = value;
             EqualExtF80(expected, d, false);
         }
 
-        public static void EqualExtF80(ExtF80 expected, int value) {
+        public static void EqualExtF80(in ExtF80 expected, int value) {
             ExtF80 d = value;
             EqualExtF80(expected, d, false);
         }
 
-        public static void EqualExtF80(ExtF80 expected, ulong value) {
+        public static void EqualExtF80(in ExtF80 expected, ulong value) {
             ExtF80 d = value;
             EqualExtF80(expected, d, false);
         }
 
-        public static void EqualExtF80(ExtF80 expected, long value) {
+        public static void EqualExtF80(in ExtF80 expected, long value) {
             ExtF80 d = value;
             EqualExtF80(expected, d, false);
         }
 
 
 
-        public static void EqualExtF80(ExtF80 expected, string value) {
+        public static void EqualExtF80(in ExtF80 expected, string value) {
             var b = ExtF80.TryParse(value, out var d);
             EqualBool(true, b);
             EqualExtF80(expected, d, false);

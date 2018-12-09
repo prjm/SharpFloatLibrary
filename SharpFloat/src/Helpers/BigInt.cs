@@ -63,7 +63,7 @@ namespace SharpFloat.Helpers {
         ///     create a new big integer
         /// </summary>
         /// <param name="value">value</param>
-        public BigInt(in ulong value) {
+        public BigInt(ulong value) {
             AsULong = value;
         }
 

@@ -1,34 +1,36 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Product>SharpFloatLibrary</Product>
-    <Description>Provides 80-bit precision floating point operations.</Description>
-    <Version>1.0.2</Version>
-    <FileVersion>1.0.2.0</FileVersion>
-    <VersionPrefix>1.0.2</VersionPrefix>
-    <VersionSuffix>0</VersionSuffix>
-    <Copyright>2018 Bastian Turcs</Copyright>
-    <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/prjm/SharpFloatLibrary</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/prjm/SharpFloatLibrary/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageId>SharpFloatLibrary</PackageId>
-    <CodeAnalysisRuleSet>../SharpFloatLibrary.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Product>SharpFloatLibrary</Product>
+        <Description>Provides 80-bit precision floating point operations.</Description>
+        <Version>1.0.2</Version>
+        <FileVersion>1.0.2.0</FileVersion>
+        <VersionPrefix>1.0.2</VersionPrefix>
+        <VersionSuffix>0</VersionSuffix>
+        <Copyright>2018 Bastian Turcs</Copyright>
+        <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/prjm/SharpFloatLibrary</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/prjm/SharpFloatLibrary/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageId>SharpFloatLibrary</PackageId>
+        <CodeAnalysisRuleSet>../SharpFloatLibrary.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\SharpFloat.xml</DocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.0\SharpFloat.xml</DocumentationFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="..\LICENSE*.txt" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="..\LICENSE*.txt" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180" />
+        <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0" />
+    </ItemGroup>
 
 </Project>

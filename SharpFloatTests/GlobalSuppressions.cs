@@ -46,4 +46,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpFloatTests.FloatingPoint.ExtF80Eq.TestEquals")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpFloatTests.FloatingPoint.ExtF80Misc.TestFromString")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpFloatTests.FloatingPoint.TestExtF80RoundPack.TestExtF80RoundPack80")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Bug", "ERP001:Non-observed return value of the pure method.", Justification = "<Pending>", Scope = "member", Target = "~M:SharpFloatTests.Common.Assert.EqualAfterRoundTripFormatting(SharpFloat.FloatingPoint.ExtF80,SharpFloat.FloatingPoint.PrintFloatFormat)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Bug", "ERP001:Non-observed return value of the pure method.", Justification = "<Pending>", Scope = "member", Target = "~M:SharpFloatTests.Common.Assert.EqualAfterRoundTripFormatting(SharpFloat.FloatingPoint.ExtF80@,SharpFloat.FloatingPoint.PrintFloatFormat)")]
 

@@ -48,7 +48,7 @@ namespace SharpFloat.Helpers {
         /// <param name="sig"></param>
         /// <param name="roundingMode"></param>
         /// <returns></returns>
-        public static double NormRoundPackToF64(bool sign, short exp, ulong sig, RoundingMode roundingMode) {
+        public static double NormRoundPackToF64(bool sign, short exp, in ulong sig, RoundingMode roundingMode) {
             short shiftDist;
 
             shiftDist = (short)(sig.CountLeadingZeros() - 1);
