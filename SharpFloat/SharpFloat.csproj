@@ -13,7 +13,8 @@
         <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/prjm/SharpFloatLibrary</PackageProjectUrl>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <!--<PackageLicenseFile>LICENSE.txt</PackageLicenseFile> -->
+        <PackageLicenseUrl>https://github.com/prjm/SharpFloatLibrary/blob/master/LICENSE.txt</PackageLicenseUrl>
         <PackageReleaseNotes></PackageReleaseNotes>
         <PackageId>SharpFloatLibrary</PackageId>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
