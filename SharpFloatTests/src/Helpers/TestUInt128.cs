@@ -1,5 +1,4 @@
-﻿using SharpFloat.FloatingPoint;
-using SharpFloat.Helpers;
+﻿using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.Helpers {
@@ -58,6 +57,13 @@ namespace SharpFloatTests.Helpers {
             Assert.IsTrue(v2 > v1);
             Assert.IsTrue(v3 > v1);
             Assert.IsTrue(v4 > v1);
+        }
+
+        [TestCase]
+        public void TestMulDiv64() {
+            Assert.EqualULong(2, UInt128.Mul64To128DivTo64(4, 5, 10));
+            Assert.EqualULong(long.MaxValue / 2, UInt128.Mul64To128DivTo64(long.MaxValue, 4, 8));
+            Assert.EqualULong(unchecked((ulong)-long.MaxValue / 2), UInt128.Mul64To128DivTo64(unchecked((ulong)-long.MaxValue), 4, 8));
         }
 
 
