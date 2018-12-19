@@ -15,33 +15,28 @@ namespace SharpFloatTestFloatRunner.Tests.ExtF80 {
             => "ExtF80";
 
         /// <summary>
-        ///     test entries
-        /// </summary>
-        private readonly TestEntry[] entries = new TestEntry[] {
-            new ExtF80AddTest(),
-            new ExtF80SubTest(),
-            new ExtF80MulTest(),
-            new ExtF80DivTest(),
-            new ExtF80RemTest(),
-            new ExtF80EqTest(),
-            new ExtF80LtTest(),
-            new ExtF80LeTest(),
-            new ExtF80SqrtTest(),
-            new ExtF80RoundToIntTest(),
-            new ExtF80ToInt32Test(),
-            new ExtF80ToUInt32Test(),
-            new ExtF80ToInt64Test(),
-            new ExtF80ToUInt64Test(),
-            new ExtF80ToDoubleTest(),
-            new ExtF80ToFloatTest(),
-        };
-
-        /// <summary>
         ///     get test entries
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TestEntry> GetTestEntries() {
-            return entries;
+        public override void GetTestEntries(List<TestEntry> entries) {
+            entries.AddRange(new TestEntry[] {
+                new ExtF80AddTest(),
+                new ExtF80SubTest(),
+                new ExtF80MulTest(),
+                new ExtF80DivTest(),
+                new ExtF80RemTest(),
+                new ExtF80EqTest(),
+                new ExtF80LtTest(),
+                new ExtF80LeTest(),
+                new ExtF80SqrtTest(),
+                new ExtF80RoundToIntTest(),
+                new ExtF80ToInt32Test(),
+                new ExtF80ToUInt32Test(),
+                new ExtF80ToInt64Test(),
+                new ExtF80ToUInt64Test(),
+                new ExtF80ToDoubleTest(),
+                new ExtF80ToFloatTest(),
+            });
         }
     }
 }

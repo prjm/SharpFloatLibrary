@@ -1,4 +1,5 @@
-﻿using SharpFloat.FloatingPoint;
+﻿using System.Text;
+using SharpFloat.FloatingPoint;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.FloatingPoint {
@@ -7,6 +8,13 @@ namespace SharpFloatTests.FloatingPoint {
         [TestCase]
         public void TestLicense() {
             Assert.EqualBool(string.IsNullOrEmpty(ExtF80.License), false);
+        }
+
+        [TestCase]
+        public void TestPi() {
+            var buffer = new StringBuilder();
+            ExtF80.PrintFloat80(buffer, ExtF80.Pi, PrintFloatFormat.PositionalFormat, -1);
+            Assert.EqualString("3.1415926535897932385", buffer.ToString());
         }
 
         [TestCase]

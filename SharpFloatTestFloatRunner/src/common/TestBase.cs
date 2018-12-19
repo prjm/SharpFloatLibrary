@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using SharpFloat.Globals;
+
+[assembly: CLSCompliant(false)]
 
 namespace SharpFloatTestFloatRunner.Common {
 
@@ -21,7 +24,7 @@ namespace SharpFloatTestFloatRunner.Common {
         ///     enumerate test case entries
         /// </summary>
         /// <returns>test cases</returns>
-        public abstract IEnumerable<TestEntry> GetTestEntries();
+        public abstract void GetTestEntries(List<TestEntry> entries);
 
         /// <summary>
         ///     convert a rounding mode value to a string constant
@@ -52,13 +55,16 @@ namespace SharpFloatTestFloatRunner.Common {
         /// </summary>
         /// <param name="dir">data files directory</param>
         public void Run(string dir) {
-            foreach (var entry in GetTestEntries()) {
+            var entries = new List<TestEntry>();
+            GetTestEntries(entries);
+            foreach (var entry in entries) {
                 Console.Write(Name.ToUpperInvariant());
                 Console.Write("_");
                 Console.WriteLine(entry.Name.ToUpperInvariant());
                 var w = new Stopwatch();
 
-                foreach (var roundingMode in Enum.GetValues(typeof(RoundingMode)).Cast<RoundingMode>()) {
+                var values = Enum.GetValues(typeof(RoundingMode)).Cast<RoundingMode>();
+                foreach (var roundingMode in values) {
                     var testFileName = entry.Name + "_" + GetRoundingModeAsString(roundingMode) + ".zip";
                     var path = Path.Combine(dir, testFileName);
                     if (!File.Exists(path))
@@ -69,7 +75,7 @@ namespace SharpFloatTestFloatRunner.Common {
                     w.Start();
                     entry.Run(path);
                     w.Stop();
-                    Console.WriteLine($" [OK] {w.ElapsedTicks}");
+                    Console.WriteLine($" [OK] {w.ElapsedTicks.ToString(CultureInfo.InvariantCulture)}");
                 }
             }
         }

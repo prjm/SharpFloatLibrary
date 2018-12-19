@@ -1,39 +1,42 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <LangVersion>latest</LangVersion>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+        <CodeAnalysisRuleSet>../SharpFloatLibrary.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\SharpFloatTestFloatRunner.xml</DocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netcoreapp2.0\SharpFloatTestFloatRunner.xml</DocumentationFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SharpFloat\SharpFloat.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharpFloat\SharpFloat.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="data\ExtF80\add_near_even.zip">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="data\ExtF80\add_near_even.zip">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="data\F32\" />
-    <Folder Include="data\F64\" />
-    <Folder Include="data\I32\" />
-    <Folder Include="data\I64\" />
-    <Folder Include="data\UI32\" />
-    <Folder Include="data\UI64\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="data\F32\" />
+        <Folder Include="data\F64\" />
+        <Folder Include="data\I32\" />
+        <Folder Include="data\I64\" />
+        <Folder Include="data\UI32\" />
+        <Folder Include="data\UI64\" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ClrHeapAllocationAnalyzer" Version="1.0.0.9">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
 </Project>

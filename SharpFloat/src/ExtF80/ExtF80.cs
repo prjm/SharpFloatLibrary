@@ -70,7 +70,7 @@ namespace SharpFloat.FloatingPoint {
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay
-            => string.Format(CultureInfo.InvariantCulture, "0x{0:X4}{1:X16}", signExp, signif);
+            => string.Format(CultureInfo.InvariantCulture, "0x{0}{1}", signExp.ToString("X4", CultureInfo.InvariantCulture), signif.ToString("X16", CultureInfo.InvariantCulture));
 
     }
 }

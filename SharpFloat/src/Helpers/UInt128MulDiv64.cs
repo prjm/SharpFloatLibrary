@@ -33,11 +33,23 @@ namespace SharpFloat.Helpers {
 
     public readonly partial struct UInt128 {
 
+        /// <summary>
+        ///     muldiv64
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="mul"></param>
+        /// <param name="div"></param>
+        /// <returns></returns>
         public static ulong Mul64To128DivTo64(ulong value, ulong mul, ulong div) {
             var result = Mul64To128(value, mul);
             return result.DivTo64(div);
         }
 
+        /// <summary>
+        ///     divide to an ulong
+        /// </summary>
+        /// <param name="div"></param>
+        /// <returns></returns>
         public ulong DivTo64(ulong div) {
             var temp = v64 % div;
             var mid = (temp << 32) + (v0 >> 32);

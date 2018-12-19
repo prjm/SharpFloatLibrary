@@ -15,18 +15,11 @@ namespace SharpFloatTestFloatRunner.Tests.UI64 {
             => "UI64";
 
         /// <summary>
-        ///     test entries
-        /// </summary>
-        private readonly TestEntry[] entries = new TestEntry[] {
-            new UI64ToExtF80Test(),
-        };
-
-        /// <summary>
         ///     get test entries
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TestEntry> GetTestEntries() {
-            return entries;
+        public override void GetTestEntries(List<TestEntry> entries) {
+            entries.Add(new UI64ToExtF80Test());
         }
     }
 }

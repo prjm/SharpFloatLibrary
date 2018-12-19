@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using SharpFloat.FloatingPoint;
 using SharpFloat.Globals;
 using XAssert = Xunit.Assert;
+
+[assembly: CLSCompliant(false)]
 
 namespace SharpFloatTests.Common {
 

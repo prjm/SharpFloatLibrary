@@ -70,6 +70,12 @@ namespace SharpFloat.FloatingPoint {
             = new ExtF80(0x0000, 0x0000000000000001);
 
         /// <summary>
+        ///     pi constant
+        /// </summary>
+        public static readonly ExtF80 Pi
+            = new ExtF80(0x4000, 0xc90fdaa22168C235);
+
+        /// <summary>
         ///     largest exponent value
         /// </summary>
         private const ushort MaxExponent

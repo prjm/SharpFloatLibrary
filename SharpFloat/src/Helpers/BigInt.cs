@@ -160,8 +160,9 @@ namespace SharpFloat.Helpers {
         /// <summary>
         ///     set this value to zero
         /// </summary>
-        public void Clear()
-            => SetLength(0);
+        public void Clear() {
+            SetLength(0);
+        }
 
         /// <summary>
         ///     get the value as unsigned long
@@ -230,7 +231,7 @@ namespace SharpFloat.Helpers {
                 var sb = new StringBuilder();
                 sb.Append("0x");
                 for (var i = (int)(length - 1); i >= 0; i--)
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X8}", blocks[i]));
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blocks[i].ToString("X8", CultureInfo.InvariantCulture)));
                 return sb.ToString();
             }
         }

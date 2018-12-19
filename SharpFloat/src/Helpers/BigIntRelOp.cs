@@ -63,32 +63,36 @@ namespace SharpFloat.Helpers {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(BigInt other)
-            => Compare(this, other);
+        public int CompareTo(BigInt other) {
+            return Compare(this, other);
+        }
 
         /// <summary>
         ///     compare this integer to another
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int CompareTo(object obj)
-            => obj is BigInt b ? CompareTo(b) : throw new ArgumentException("Invalid argument.", nameof(obj));
+        public int CompareTo(object obj) {
+            return obj is BigInt b ? CompareTo(b) : throw new ArgumentException("Invalid argument.", nameof(obj));
+        }
 
         /// <summary>
         ///     compare this value to another value
         /// </summary>
         /// <param name="obj">other value</param>
         /// <returns><c>true</c> if the other value is a <c>BigInt</c> with the same value</returns>
-        public override bool Equals(object obj)
-            => obj is BigInt bigInt && Equals(bigInt);
+        public override bool Equals(object obj) {
+            return obj is BigInt bigInt && Equals(bigInt);
+        }
 
         /// <summary>
         ///     compare two big integer values
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(BigInt other)
-            => CompareTo(other) == 0;
+        public bool Equals(BigInt other) {
+            return CompareTo(other) == 0;
+        }
 
         /// <summary>
         ///     compute a hash code
@@ -107,8 +111,9 @@ namespace SharpFloat.Helpers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(BigInt left, BigInt right)
-            => left.Equals(right);
+        public static bool operator ==(BigInt left, BigInt right) {
+            return left.Equals(right);
+        }
 
         /// <summary>
         ///     compare for inequality
@@ -116,8 +121,50 @@ namespace SharpFloat.Helpers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(BigInt left, BigInt right)
-            => !(left == right);
+        public static bool operator !=(BigInt left, BigInt right) {
+            return !(left == right);
+        }
+
+        /// <summary>
+        ///     compare two big ints
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator <(BigInt left, BigInt right) {
+            return Compare(left, right) < 0;
+        }
+
+        /// <summary>
+        ///     compare two big ints
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator >(BigInt left, BigInt right) {
+            return Compare(left, right) > 0;
+        }
+
+        /// <summary>
+        ///     compare two big ints
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator >=(BigInt left, BigInt right) {
+            return Compare(left, right) >= 0;
+        }
+
+        /// <summary>
+        ///     compare two big ints
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator <=(BigInt left, BigInt right) {
+            return Compare(left, right) <= 0;
+        }
+
 
     }
 }

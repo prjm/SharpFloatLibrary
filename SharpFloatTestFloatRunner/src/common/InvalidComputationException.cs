@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace SharpFloatTestFloatRunner.Common {
@@ -34,7 +35,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// <param name="line"></param>
         /// <param name="innerException"></param>
         public InvalidComputationException(ulong lineCount, string line, Exception innerException) :
-            base($"Invalid computation at line {lineCount}. Data: {line}.", innerException) { }
+            base($"Invalid computation at line {lineCount.ToString(CultureInfo.InvariantCulture)}. Data: {line}.", innerException) { }
 
         /// <summary>
         ///     create a new invalid computation exception

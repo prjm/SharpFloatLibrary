@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace SharpFloatTestFloatRunner.Common {
@@ -26,7 +27,7 @@ namespace SharpFloatTestFloatRunner.Common {
         /// <param name="expected">expected value</param>
         /// <param name="actual">actual value</param>
         public NumbersNotEqualException(ulong expected, ulong actual)
-            : base($"Expected value: {expected:X16}. Actual value {actual:X16}.") { }
+            : base($"Expected value: {expected.ToString("X16", CultureInfo.InvariantCulture)}. Actual value {actual.ToString("X16", CultureInfo.InvariantCulture)}.") { }
 
 
         /// <summary>

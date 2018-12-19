@@ -1,21 +1,18 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using SharpFloatTestFloatRunner.Common;
-using SharpFloat.Helpers;
 
 namespace SharpFloatTestFloatRunner {
 
     /// <summary>
     ///     helper program to compare the output of the <c>testfloat_get</c> program with the internal implementation
     /// </summary>
-    class Program {
+    internal class Program {
 
         /// <summary>
         ///     search the data files, compute own results and compare
         /// </summary>
-        /// <param name="args"></param>
-        static void Main() {
+        private static void Main() {
             var dataDir = SearchDataDir(Environment.CurrentDirectory);
 
             if (dataDir == null)

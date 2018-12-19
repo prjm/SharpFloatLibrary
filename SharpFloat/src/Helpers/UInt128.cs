@@ -74,19 +74,26 @@ namespace SharpFloat.Helpers {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj)
-            => obj is UInt128 value && Equals(value);
+        public override bool Equals(object obj) {
+            return obj is UInt128 value && Equals(value);
+        }
 
         /// <summary>
         ///     compare for equality
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(UInt128 other)
-            => (v64 == other.v64) && (v0 == other.v0);
+        public bool Equals(UInt128 other) {
+            return (v64 == other.v64) && (v0 == other.v0);
+        }
 
-        public override int GetHashCode()
-            => (v64.GetHashCode() * 397) ^ v0.GetHashCode();
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode() {
+            return unchecked((v64.GetHashCode() * 397) ^ v0.GetHashCode());
+        }
 
         /// <summary>
         ///     compare for equality
@@ -94,8 +101,9 @@ namespace SharpFloat.Helpers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(UInt128 left, UInt128 right)
-            => left.Equals(right);
+        public static bool operator ==(UInt128 left, UInt128 right) {
+            return left.Equals(right);
+        }
 
         /// <summary>
         ///     compare for inequality
@@ -103,7 +111,8 @@ namespace SharpFloat.Helpers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(UInt128 left, UInt128 right)
-            => !(left == right);
+        public static bool operator !=(UInt128 left, UInt128 right) {
+            return !(left == right);
+        }
     }
 }
