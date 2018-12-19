@@ -6,15 +6,14 @@
         <Product>SharpFloatLibrary</Product>
         <Description>Provides 80-bit precision floating point operations.</Description>
         <Version>1.0.3</Version>
-        <FileVersion>1.0.3.0</FileVersion>
-        <VersionPrefix>1.0.3</VersionPrefix>
+        <FileVersion>1.0.4.0</FileVersion>
+        <VersionPrefix>1.0.4</VersionPrefix>
         <VersionSuffix>0</VersionSuffix>
         <Copyright>2018, 2019 Bastian Turcs</Copyright>
         <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/prjm/SharpFloatLibrary</PackageProjectUrl>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-        <PackageLicenseUrl>https://github.com/prjm/SharpFloatLibrary/blob/master/LICENSE.txt</PackageLicenseUrl>
         <PackageReleaseNotes></PackageReleaseNotes>
         <PackageId>SharpFloatLibrary</PackageId>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
