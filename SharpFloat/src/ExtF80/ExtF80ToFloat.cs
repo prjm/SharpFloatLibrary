@@ -3,7 +3,7 @@
  *    Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the
  *    University of California.  All rights reserved.
  *
- *    Copyright 2018 Bastian Turcs. All rights reserved.
+ *    Copyright 2018, 2019 Bastian Turcs. All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
  *    modification, are permitted provided that the following conditions are met:

@@ -2,7 +2,7 @@
  *  terms of the default license. See "LICENSE_Default.txt" in the project
  *  root directory.
  *
- *  Copyright 2018 Bastian Turcs. All rights reserved.
+ *  Copyright 2018, 2019 Bastian Turcs. All rights reserved.
  */
 
 using System.Diagnostics;

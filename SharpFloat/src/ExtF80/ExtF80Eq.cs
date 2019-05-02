@@ -3,7 +3,7 @@
  *    Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the
  *    University of California.  All rights reserved.
  *
- *    Copyright 2018 Bastian Turcs. All rights reserved.
+ *    Copyright 2018, 2019 Bastian Turcs. All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
  *    modification, are permitted provided that the following conditions are met:
@@ -73,6 +73,14 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
+        public bool Equals(in ExtF80 other)
+            => this == other;
+
+        /// <summary>
+        ///     compare this value to another floating point value
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(ExtF80 other)
             => this == other;
 
@@ -81,7 +89,7 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         /// <returns>computed hash code</returns>
         public override int GetHashCode()
-            => (signExp.GetHashCode() * 397) ^ signif.GetHashCode();
+            => unchecked((signExp.GetHashCode() * 397) ^ signif.GetHashCode());
     }
 
 }

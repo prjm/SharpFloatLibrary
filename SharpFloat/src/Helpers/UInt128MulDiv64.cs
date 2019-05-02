@@ -1,6 +1,6 @@
 ﻿/*  This library is a port of the standard softfloat library, Release 3e, from John Hauser to C#.
  *
- *    Copyright 2018 Bastian Turcs. All rights reserved.
+ *    Copyright 2018, 2019 Bastian Turcs. All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
  *    modification, are permitted provided that the following conditions are met:

@@ -2,7 +2,7 @@
  *    This library is a port of the Dragon4 algorithm of Ryan Juckett.
  *    This is not the original software library -- it is an adapted version for C#.
  *
- *    Copyright 2018 Bastian Turcs. All rights reserved.
+ *    Copyright 2018, 2019 Bastian Turcs. All rights reserved.
  *
  */
 /******************************************************************************
