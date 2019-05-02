@@ -6,8 +6,8 @@
         <Product>SharpFloatLibrary</Product>
         <Description>Provides 80-bit precision floating point operations.</Description>
         <Version>1.0.4</Version>
-        <FileVersion>1.0.4.0</FileVersion>
-        <VersionPrefix>1.0.4</VersionPrefix>
+        <FileVersion>1.0.5.0</FileVersion>
+        <VersionPrefix>1.0.5</VersionPrefix>
         <VersionSuffix>0</VersionSuffix>
         <Copyright>2018, 2019 Bastian Turcs</Copyright>
         <RepositoryUrl>https://github.com/prjm/SharpFloatLibrary.git</RepositoryUrl>
