@@ -90,6 +90,13 @@ namespace SharpFloat.FloatingPoint {
         /// <returns>computed hash code</returns>
         public override int GetHashCode()
             => unchecked((signExp.GetHashCode() * 397) ^ signif.GetHashCode());
+
+        /// <summary>
+        ///     compute a hash code
+        /// </summary>
+        /// <returns>computed hash code</returns>
+        public static int GetHashCode(in ExtF80 f)
+            => unchecked((f.signExp.GetHashCode() * 397) ^ f.signif.GetHashCode());
     }
 
 }

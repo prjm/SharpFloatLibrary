@@ -59,7 +59,6 @@ namespace SharpFloat.FloatingPoint {
 
             if (UnsignedExponent == MaxExponent) {
                 if (0 != (signif & MaskAll63Bits)) {
-                    var sign = IsNegative;
                     var v64 = signif << 1;
 
                     var uiZ = ((IsNegative ? 1UL : 0UL) << 63) | 0x7FF8000000000000uL | (v64 >> 12);

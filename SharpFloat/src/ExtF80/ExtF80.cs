@@ -51,6 +51,12 @@ namespace SharpFloat.FloatingPoint {
             => (signExp >> 15) != 0;
 
         /// <summary>
+        ///     <c>true</c> if this number is negative
+        /// </summary>
+        public static bool IsNegativeValue(in ExtF80 f)
+            => (f.signExp >> 15) != 0;
+
+        /// <summary>
         ///     unsigned exponent value
         /// </summary>
         public ushort UnsignedExponent
