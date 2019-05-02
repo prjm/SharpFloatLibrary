@@ -5,7 +5,7 @@
         <LangVersion>latest</LangVersion>
         <Product>SharpFloatLibrary</Product>
         <Description>Provides 80-bit precision floating point operations.</Description>
-        <Version>1.0.3</Version>
+        <Version>1.0.4</Version>
         <FileVersion>1.0.4.0</FileVersion>
         <VersionPrefix>1.0.4</VersionPrefix>
         <VersionSuffix>0</VersionSuffix>
@@ -40,7 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ClrHeapAllocationAnalyzer" Version="1.0.0.9" >
+        <PackageReference Include="ClrHeapAllocationAnalyzer" Version="1.0.0.9">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180">
@@ -49,7 +49,7 @@
         <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02">

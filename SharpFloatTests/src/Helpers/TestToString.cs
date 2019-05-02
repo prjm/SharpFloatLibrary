@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using SharpFloat.FloatingPoint;
-using SharpFloat.Helpers;
 using SharpFloatTests.Common;
 
 namespace SharpFloatTests.Helpers {
@@ -14,13 +13,13 @@ namespace SharpFloatTests.Helpers {
 
         static void TestFormat_F64(StringBuilder buffer, PrintFloatFormat format, int precision, double value, string expected) {
             buffer.Clear();
-            var printLen = ExtF80.PrintFloat64(buffer, value, format, precision);
+            _ = ExtF80.PrintFloat64(buffer, value, format, precision);
             Assert.EqualString(expected, buffer.ToString());
         }
 
         static void TestFormat_F80(StringBuilder buffer, PrintFloatFormat format, int precision, in ExtF80 value, string expected) {
             buffer.Clear();
-            var printLen = ExtF80.PrintFloat80(buffer, value, format, precision);
+            _ = ExtF80.PrintFloat80(buffer, value, format, precision);
             Assert.EqualString(expected, buffer.ToString());
         }
 

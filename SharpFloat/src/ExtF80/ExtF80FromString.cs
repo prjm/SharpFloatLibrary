@@ -202,7 +202,7 @@ namespace SharpFloat.FloatingPoint {
             var hasTailBits = !hasZeroTail || (value & extraBitsMask) != 0;
 
             ShiftRight(ref value, (uint)shift);
-            value = value + (ShouldRoundUp(lsbBit: lsbBit, roundBit: roundBit, hasTailBits: hasTailBits) ? 1UL : 0);
+            value += (ShouldRoundUp(lsbBit: lsbBit, roundBit: roundBit, hasTailBits: hasTailBits) ? 1UL : 0);
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace SharpFloat.FloatingPoint {
                 var shift = (int)(fractionalMantissaBits - requiredFractionalBitsOfPrecision);
                 var tailMask = new BigInteger(1);
                 ShiftLeft(ref tailMask, (uint)shift);
-                tailMask = tailMask - 1;
+                tailMask -= 1;
                 hasZeroTail = hasZeroTail && (bigFractionalMantissa & tailMask) == 0;
                 ShiftRight(ref bigFractionalMantissa, (uint)shift);
             }
@@ -515,7 +515,7 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="power">The power of ten to multiply it by</param>
         private static void MultiplyByPowerOfTen(ref BigInteger number, uint power) {
             var powerOfTen = BigInteger.Pow(new BigInteger(10), (int)power);
-            number = number * powerOfTen;
+            number *= powerOfTen;
         }
 
         /// <summary>
@@ -557,12 +557,12 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="shift">The power of two to multiply it by</param>
         private static void ShiftLeft(ref BigInteger number, uint shift) {
             var powerOfTwo = BigInteger.Pow(new BigInteger(2), (int)shift);
-            number = number * powerOfTwo;
+            number *= powerOfTwo;
         }
 
         private static void ShiftRight(ref BigInteger number, uint shift) {
             var powerOfTwo = BigInteger.Pow(new BigInteger(2), (int)shift);
-            number = number / powerOfTwo;
+            number /= powerOfTwo;
         }
 
         /// <summary>
@@ -602,7 +602,7 @@ namespace SharpFloat.FloatingPoint {
         /// Return the number of significant bits set.
         /// </summary>
         private static uint CountSignificantBits(BigInteger data) {
-            return CountSignificantBits(data, out var dataBytes);
+            return CountSignificantBits(data, out _);
         }
 
     }

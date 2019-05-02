@@ -114,7 +114,6 @@ namespace SharpFloat.FloatingPoint {
                     return a;
             }
 
-            var expZ = a.UnsignedExponent;
             if (b.UnsignedExponent == 0)
                 --expDiff;
 

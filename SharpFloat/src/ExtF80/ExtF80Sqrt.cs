@@ -75,7 +75,6 @@ namespace SharpFloat.FloatingPoint {
                 sigA = normExpSig.sig;
             }
 
-            var rem = default(UInt128);
             var expZ = ((expA - 0x3FFF) >> 1) + 0x3FFF;
             var sig32A = (uint)(sigA >> 32);
 
@@ -83,6 +82,8 @@ namespace SharpFloat.FloatingPoint {
             var recipSqrt32 = sig32A.ApproxRecipSqrt32((uint)expA);
 
             var sig32Z = (uint)(((ulong)sig32A * recipSqrt32) >> 32);
+
+            UInt128 rem;
             if (0 != expA) {
                 sig32Z >>= 1;
                 rem = UInt128.ShortShiftLeft(0, sigA, 61);
@@ -116,9 +117,9 @@ namespace SharpFloat.FloatingPoint {
                 sigZExtra = q << 39;
                 var term = UInt128.Mul64ByShifted32To128(x64 + (q >> 27), (uint)q);
                 x64 = (uint)(q << 5) * (ulong)(uint)q;
-                term = term + new UInt128(0, x64);
+                term += new UInt128(0, x64);
                 rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 28);
-                rem = rem - term;
+                rem -= term;
                 if (0 != (rem.v64 & MaskBit64)) {
                     if (0 == sigZExtra)
                         --sigZ;

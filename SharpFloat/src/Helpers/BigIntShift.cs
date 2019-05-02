@@ -101,7 +101,7 @@ namespace SharpFloat.Helpers {
 
                 // check if the terminating block has no set bits
                 if (pResult[pResult.Length - 1] == 0)
-                    pResult.Length = pResult.Length - 1;
+                    pResult.Length -= 1;
             }
         }
 

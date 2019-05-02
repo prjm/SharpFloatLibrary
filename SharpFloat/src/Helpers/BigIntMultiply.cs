@@ -104,7 +104,7 @@ namespace SharpFloat.Helpers {
             }
 
             if (carry != 0) {
-                result.Length = result.Length + 1;
+                result.Length += 1;
                 result[pResultCur] = (uint)carry;
             }
         }
@@ -128,7 +128,7 @@ namespace SharpFloat.Helpers {
             }
 
             if (carry != 0) {
-                result.Length = result.Length + 1;
+                result.Length += 1;
                 result[pResultCur] = carry;
             }
         }
@@ -149,7 +149,7 @@ namespace SharpFloat.Helpers {
             }
 
             if (carry != 0) {
-                number.Length = number.Length + 1;
+                number.Length += 1;
                 number[cur] = carry;
             }
         }
@@ -170,7 +170,7 @@ namespace SharpFloat.Helpers {
             }
 
             if (carry != 0) {
-                number.Length = number.Length + 1;
+                number.Length += 1;
                 number[cur] = (uint)carry;
             }
         }

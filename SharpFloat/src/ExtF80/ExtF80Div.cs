@@ -113,8 +113,8 @@ namespace SharpFloat.FloatingPoint {
             var recip32 = ((uint)(sigB >> 32)).ApproxRecip32();
             var sigZ = 0UL;
             var ix = 2;
-            var q = 0U;
 
+            uint q;
             for (; ; ) {
                 var q64 = ((ulong)(uint)(rem.v64 >> 2)) * recip32;
                 q = (uint)((q64 + 0x80000000) >> 32);
@@ -123,10 +123,10 @@ namespace SharpFloat.FloatingPoint {
                     break;
                 rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 29);
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
-                rem = rem - term;
+                rem -= term;
                 if (0 != (rem.v64 & MaskBit64)) {
                     --q;
-                    rem = rem + new UInt128(sigB >> 32, sigB << 32);
+                    rem += new UInt128(sigB >> 32, sigB << 32);
                 }
                 sigZ = (sigZ << 29) + q;
             }
@@ -134,15 +134,15 @@ namespace SharpFloat.FloatingPoint {
             if (((q + 1) & 0x3FFFFF) < 2) {
                 rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 29);
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
-                rem = rem - term;
+                rem -= term;
                 term = UInt128.ShortShiftLeft(0, sigB, 32);
                 if (0 != (rem.v64 & MaskBit64)) {
                     --q;
-                    rem = rem + term;
+                    rem += term;
                 }
                 else if (term <= rem) {
                     ++q;
-                    rem = rem - term;
+                    rem -= term;
                 }
                 if (0 != (rem.v64 | rem.v0))
                     q |= 1;

@@ -42,7 +42,7 @@ namespace SharpFloat.Globals {
     /// </summary>
     public static class Settings {
 
-        private static ThreadLocal<DetectTininess> detectTininess
+        private static readonly ThreadLocal<DetectTininess> detectTininess
             = new ThreadLocal<DetectTininess>(() => DetectTininess.AfterRounding);
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace SharpFloat.Globals {
         /// <summary>
         ///     rounding mode
         /// </summary>
-        private static ThreadLocal<RoundingMode> roundingMode
+        private static readonly ThreadLocal<RoundingMode> roundingMode
             = new ThreadLocal<RoundingMode>(() => RoundingMode.NearEven);
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace SharpFloat.Globals {
         /// <summary>
         ///     exception flags
         /// </summary>
-        private static ThreadLocal<ExceptionFlags> flags
+        private static readonly ThreadLocal<ExceptionFlags> flags
             = new ThreadLocal<ExceptionFlags>(() => ExceptionFlags.None);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace SharpFloat.Globals {
             flags.Value = ExceptionFlags.None;
         }
 
-        private static ThreadLocal<byte> extF80_roundingPrecision
+        private static readonly ThreadLocal<byte> extF80_roundingPrecision
             = new ThreadLocal<byte>(() => 80);
 
         /// <summary>

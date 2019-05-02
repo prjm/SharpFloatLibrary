@@ -31,7 +31,6 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using SharpFloat.Globals;
 using SharpFloat.Helpers;
 
@@ -58,9 +57,10 @@ namespace SharpFloat.FloatingPoint {
         /// </summary>
         /// <returns></returns>
         public float ToFloat(RoundingMode roundingMode) {
-            var uiZ = 0U;
             var exp = (short)UnsignedExponent;
 
+
+            uint uiZ;
             if (exp == MaxExponent) {
                 if ((signif & MaskAll63Bits) != 0) {
                     var sign = signExp >> 15;

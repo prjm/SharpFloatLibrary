@@ -6,7 +6,7 @@ namespace SharpFloat.FloatingPoint {
 
     public partial struct ExtF80 {
 
-        private static Lazy<string> license
+        private static readonly Lazy<string> license
             = new Lazy<string>(GetLicenseText, true);
 
         private static string GetLicenseText() {

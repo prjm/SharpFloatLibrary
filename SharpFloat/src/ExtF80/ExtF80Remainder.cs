@@ -99,9 +99,11 @@ namespace SharpFloat.FloatingPoint {
             var rem = UInt128.ShortShiftLeft(0, sigA, 32);
             var shiftedSigB = UInt128.ShortShiftLeft(0, sigB, 32);
             var skipLoop = false;
-            var q = 0U;
+
             var altRem = new UInt128();
 
+
+            uint q;
             if (expDiff < 1) {
                 if (expDiff != 0) {
                     --expB;
@@ -111,15 +113,19 @@ namespace SharpFloat.FloatingPoint {
                 else {
                     q = (sigB <= sigA) ? 1U : 0U;
                     if (q != 0) {
-                        rem = rem - shiftedSigB;
+                        rem -= shiftedSigB;
                     }
                 }
             }
             else {
-                var term = new UInt128();
-                var q64 = 0UL;
+                _ = new UInt128();
+
                 var recip32 = ((uint)(sigB >> 32)).ApproxRecip32();
                 expDiff -= 30;
+
+                ulong q64;
+
+                UInt128 term;
                 for (; ; ) {
                     q64 = (ulong)(uint)(rem.v64 >> 2) * recip32;
                     if (expDiff < 0)
@@ -127,16 +133,16 @@ namespace SharpFloat.FloatingPoint {
                     q = (uint)((q64 + 0x80000000) >> 32);
                     rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, 29);
                     term = UInt128.Mul64ByShifted32To128(sigB, q);
-                    rem = rem - term;
+                    rem -= term;
                     if (0 != (rem.v64 & MaskBit64)) {
-                        rem = rem + shiftedSigB;
+                        rem += shiftedSigB;
                     }
                     expDiff -= 29;
                 }
                 q = (uint)(q64 >> 32) >> (~expDiff & 31);
                 rem = UInt128.ShortShiftLeft(rem.v64, rem.v0, (byte)(expDiff + 30));
                 term = UInt128.Mul64ByShifted32To128(sigB, q);
-                rem = rem - term;
+                rem -= term;
                 if (0 != (rem.v64 & MaskBit64)) {
                     altRem = rem + shiftedSigB;
                     skipLoop = true;
@@ -147,7 +153,7 @@ namespace SharpFloat.FloatingPoint {
                 do {
                     altRem = rem;
                     ++q;
-                    rem = rem - shiftedSigB;
+                    rem -= shiftedSigB;
                 } while (0 == (rem.v64 & MaskBit64));
             }
 

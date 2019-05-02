@@ -256,7 +256,7 @@ namespace SharpFloat.FloatingPoint {
                 // The exponent estimate was incorrect.
                 // Increment the exponent and don't perform the premultiply needed
                 // for the first loop iteration.
-                digitExponent = digitExponent + 1;
+                digitExponent += 1;
             }
             else {
                 // The exponent estimate was correct.
@@ -339,7 +339,7 @@ namespace SharpFloat.FloatingPoint {
                 // out of space in the output buffer, we terminate early.
                 for (; ; )
                 {
-                    digitExponent = digitExponent - 1;
+                    digitExponent -= 1;
 
                     // divide out the scale to extract the digit
                     outputDigit = BigInt.DivideWithRemainderWithMaxQuotient9(scaledValue, scale);
@@ -377,7 +377,7 @@ namespace SharpFloat.FloatingPoint {
 
                 for (; ; )
                 {
-                    digitExponent = digitExponent - 1;
+                    digitExponent -= 1;
 
                     // divide out the scale to extract the digit
                     outputDigit = BigInt.DivideWithRemainderWithMaxQuotient9(scaledValue, scale);

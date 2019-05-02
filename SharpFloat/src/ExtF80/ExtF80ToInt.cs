@@ -113,7 +113,7 @@ namespace SharpFloat.FloatingPoint {
                 }
             }
             var roundBits = sig & 0xFFF;
-            sig = sig + roundIncrement;
+            sig += roundIncrement;
             if (0 != (sig & 0xFFFFF00000000000UL)) {
                 Settings.Raise(ExceptionFlags.Invalid);
                 return sign ? ui32_fromNegOverflow : ui32_fromPosOverflow;

@@ -31,7 +31,6 @@
  *    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using SharpFloat.Globals;
 using SharpFloat.Helpers;
 
@@ -80,7 +79,6 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="exact">if <c>true</c> the inexact flag is raised</param>
         /// <param name="roundingMode">explicit rounding mode</param>
         public long ToLong(RoundingMode roundingMode, bool exact = false) {
-            ushort uiA64;
             bool sign;
             int exp;
             ulong sig;
@@ -88,7 +86,6 @@ namespace SharpFloat.FloatingPoint {
             ulong sigExtra;
             UInt64Extra sig64Extra;
 
-            uiA64 = signExp;
             sign = IsNegative;
             exp = UnsignedExponent;
             sig = signif;
@@ -120,8 +117,6 @@ namespace SharpFloat.FloatingPoint {
         /// <param name="exact">if <c>true</c> the inexact flag is raised</param>
         /// <param name="roundingMode">explicit rounding mode</param>
         public ulong ToULong(RoundingMode roundingMode, bool exact = false) {
-
-            var uiA64 = signExp;
             var sign = IsNegative;
             var exp = UnsignedExponent;
             var sig = signif;

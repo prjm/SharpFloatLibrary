@@ -40,9 +40,7 @@ namespace SharpFloat.FloatingPoint {
 
         private static ExtF80 SubMagsExtF80(in ExtF80 a, in ExtF80 b, bool signZ) {
             var expA = a.UnsignedExponent;
-            var sigA = a.signif;
             var expB = b.UnsignedExponent;
-            var sigB = b.signif;
             var expDiff = expA - expB;
 
             if (0 < expDiff) {

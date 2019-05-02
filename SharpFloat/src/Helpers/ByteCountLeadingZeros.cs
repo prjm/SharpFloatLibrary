@@ -46,7 +46,7 @@ namespace SharpFloat.Helpers {
         public static byte CountLeadingZeros(this byte value)
             => lookup[value];
 
-        private static byte[] lookup = new byte[256] {
+        private static readonly byte[] lookup = new byte[256] {
             /* 000 = */ 8,
             /* 001 = */ 7,
             /* 002 = */ 6,

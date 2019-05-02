@@ -64,7 +64,7 @@ namespace SharpFloat.FloatingPoint {
                     return PropagateNaN(a, b);
                 }
 
-                var isInvalid = false;
+                bool isInvalid;
                 if (expB != MaxExponent)
                     isInvalid = 0 == ((uint)expB | sigB);
                 else
@@ -105,7 +105,7 @@ namespace SharpFloat.FloatingPoint {
 
             if (sig128Z.v64 < MaskBit64) {
                 --expZ;
-                sig128Z = sig128Z + sig128Z;
+                sig128Z += sig128Z;
             }
             return NormalizeRoundPack(signZ, expZ, sig128Z.v64, sig128Z.v0, Settings.ExtF80RoundingPrecision);
         }
