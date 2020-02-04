@@ -40,7 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ClrHeapAllocationAnalyzer" Version="1.0.0.9">
+        <PackageReference Include="ClrHeapAllocationAnalyzer" Version="3.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180">
